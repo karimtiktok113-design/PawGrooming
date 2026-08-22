@@ -152,12 +152,12 @@ export const AdminDashboard: React.FC = () => {
     });
   }, [authDatabase.profiles, searchTerm, statusFilter, planFilter, today]);
 
-  // Live ticker to re-evaluate real-time online/offline presence every 1 second
+  // Live ticker to re-evaluate real-time online/offline presence every 3 seconds
   const [, setPresenceTick] = useState(0);
   useEffect(() => {
     const timer = setInterval(() => {
       setPresenceTick(t => t + 1);
-    }, 1000);
+    }, 3000);
     return () => clearInterval(timer);
   }, []);
 
