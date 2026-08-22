@@ -1,0 +1,93 @@
+{
+  "entities": {
+    "ClientProfile": {
+      "title": "Client Profile",
+      "description": "Registered Paw Grooming client profile and salon customization settings.",
+      "type": "object",
+      "properties": {
+        "profileId": {
+          "type": "string",
+          "description": "Unique Client Profile ID (e.g. PG001)",
+          "pattern": "^PG[0-9]{3,}$"
+        },
+        "businessName": {
+          "type": "string",
+          "description": "Salon or business trade name",
+          "minLength": 2,
+          "maxLength": 150
+        },
+        "ownerName": {
+          "type": "string",
+          "description": "Salon owner contact name",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Client login email address",
+          "maxLength": 150
+        },
+        "password": {
+          "type": "string",
+          "description": "Client login password",
+          "minLength": 4,
+          "maxLength": 100
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Contact phone number",
+          "maxLength": 50
+        },
+        "plan": {
+          "type": "string",
+          "enum": ["Starter", "Pro", "Premium", "Enterprise"],
+          "description": "Subscription tier"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO date string when created"
+        },
+        "expiryDate": {
+          "type": "string",
+          "description": "ISO date string when subscription expires"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "inactive"],
+          "description": "Account status"
+        },
+        "customSettings": {
+          "type": "object",
+          "description": "Custom salon branding and metadata settings"
+        }
+      },
+      "required": ["profileId", "businessName", "ownerName", "email", "password", "status", "plan"]
+    },
+    "AdminConfig": {
+      "title": "Admin Configuration",
+      "description": "Super admin credential and config document.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "password": { "type": "string" },
+        "role": { "type": "string" },
+        "avatar": { "type": "string" },
+        "lastLogin": { "type": "string" }
+      },
+      "required": ["id", "name", "email", "password", "role"]
+    }
+  },
+  "firestore": {
+    "/client_profiles/{profileId}": {
+      "schema": "ClientProfile",
+      "description": "Collection of all registered client salon profiles"
+    },
+    "/admin_config/{adminId}": {
+      "schema": "AdminConfig",
+      "description": "Admin configuration and security credentials"
+    }
+  }
+}

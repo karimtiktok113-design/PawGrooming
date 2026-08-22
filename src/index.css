@@ -1,0 +1,562 @@
+@import "tailwindcss";
+
+@layer base {
+  :root,
+  [data-theme="terracotta"] {
+    /* 1. Warm Terracotta & Espresso (Default Warm Studio) */
+    --studio-canvas: #FAF8F5;
+    --app-bg: #FAF8F5;
+    --paper: #FFFFFF;
+    --sidebar-bg: #240C0B;
+    --sidebar-dark: #180504;
+    --primary-color: #FF6B00;
+    --primary-hover: #E55C00;
+    --primary-light: #FFF0E6;
+    --primary-border: #E6DFD5;
+    --primary-gradient: linear-gradient(135deg, #FF6B00 0%, #FF8833 100%);
+    --header-gradient: linear-gradient(135deg, rgba(255, 107, 0, 0.08) 0%, rgba(46, 138, 129, 0.05) 100%);
+    --accent-color: #2E8A81;
+    --accent-light: #E6F4F2;
+    --ink: #240C0B;
+    --ink-muted: #6E5B58;
+    --ink-light: #A08E8B;
+    --ring-glow: rgba(255, 107, 0, 0.25);
+  }
+
+  [data-theme="emerald"] {
+    /* 2. Emerald & Forest Sage (Fresh Botanical Pet Spa) */
+    --studio-canvas: #F4F8F6;
+    --app-bg: #F4F8F6;
+    --paper: #FFFFFF;
+    --sidebar-bg: #0E2925;
+    --sidebar-dark: #071715;
+    --primary-color: #059669;
+    --primary-hover: #047857;
+    --primary-light: #ECFDF5;
+    --primary-border: #D1E7DD;
+    --primary-gradient: linear-gradient(135deg, #059669 0%, #10B981 100%);
+    --header-gradient: linear-gradient(135deg, rgba(5, 150, 105, 0.08) 0%, rgba(217, 119, 6, 0.05) 100%);
+    --accent-color: #D97706;
+    --accent-light: #FEF3C7;
+    --ink: #0E2925;
+    --ink-muted: #4B6358;
+    --ink-light: #7E998E;
+    --ring-glow: rgba(5, 150, 105, 0.25);
+  }
+
+  [data-theme="ocean"] {
+    /* 3. Ocean Breeze & Navy (Modern Coastal Blue) */
+    --studio-canvas: #F0F6FF;
+    --app-bg: #F0F6FF;
+    --paper: #FFFFFF;
+    --sidebar-bg: #0F172A;
+    --sidebar-dark: #020617;
+    --primary-color: #2563EB;
+    --primary-hover: #1D4ED8;
+    --primary-light: #EFF6FF;
+    --primary-border: #DBEAFE;
+    --primary-gradient: linear-gradient(135deg, #2563EB 0%, #3B82F6 100%);
+    --header-gradient: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(8, 145, 178, 0.05) 100%);
+    --accent-color: #0891B2;
+    --accent-light: #ECFEFF;
+    --ink: #0F172A;
+    --ink-muted: #475569;
+    --ink-light: #94A3B8;
+    --ring-glow: rgba(37, 99, 235, 0.25);
+  }
+
+  [data-theme="plum"] {
+    /* 4. Royal Plum & Dusty Rose (Luxury Boutique Pet Salon) */
+    --studio-canvas: #FAF5FF;
+    --app-bg: #FAF5FF;
+    --paper: #FFFFFF;
+    --sidebar-bg: #2E103B;
+    --sidebar-dark: #190521;
+    --primary-color: #9333EA;
+    --primary-hover: #7E22CE;
+    --primary-light: #F3E8FF;
+    --primary-border: #E9D5FF;
+    --primary-gradient: linear-gradient(135deg, #9333EA 0%, #A855F7 100%);
+    --header-gradient: linear-gradient(135deg, rgba(147, 51, 234, 0.08) 0%, rgba(219, 39, 119, 0.05) 100%);
+    --accent-color: #DB2777;
+    --accent-light: #FDF2F8;
+    --ink: #2E103B;
+    --ink-muted: #6B4E75;
+    --ink-light: #A38DAA;
+    --ring-glow: rgba(147, 51, 234, 0.25);
+  }
+
+  [data-theme="coral"] {
+    /* 5. Sunset Coral & Truffle (Artisan Pet Care) */
+    --studio-canvas: #FFF9F5;
+    --app-bg: #FFF9F5;
+    --paper: #FFFFFF;
+    --sidebar-bg: #351C14;
+    --sidebar-dark: #200E08;
+    --primary-color: #EA580C;
+    --primary-hover: #C2410C;
+    --primary-light: #FFF7ED;
+    --primary-border: #FFEDD5;
+    --primary-gradient: linear-gradient(135deg, #EA580C 0%, #FB923C 100%);
+    --header-gradient: linear-gradient(135deg, rgba(234, 88, 12, 0.08) 0%, rgba(202, 138, 4, 0.05) 100%);
+    --accent-color: #CA8A04;
+    --accent-light: #FEFCE8;
+    --ink: #351C14;
+    --ink-muted: #73544B;
+    --ink-light: #A68B83;
+    --ring-glow: rgba(234, 88, 12, 0.25);
+  }
+
+  [data-theme="slate"] {
+    /* 6. Midnight Slate & Champagne Gold (Executive Modern) */
+    --studio-canvas: #F8FAFC;
+    --app-bg: #F8FAFC;
+    --paper: #FFFFFF;
+    --sidebar-bg: #18181B;
+    --sidebar-dark: #09090B;
+    --primary-color: #D97706;
+    --primary-hover: #B45309;
+    --primary-light: #FFFBEB;
+    --primary-border: #E2E8F0;
+    --primary-gradient: linear-gradient(135deg, #D97706 0%, #F59E0B 100%);
+    --header-gradient: linear-gradient(135deg, rgba(217, 119, 6, 0.08) 0%, rgba(79, 70, 229, 0.05) 100%);
+    --accent-color: #4F46E5;
+    --accent-light: #EEF2FF;
+    --ink: #18181B;
+    --ink-muted: #52525B;
+    --ink-light: #A1A1AA;
+    --ring-glow: rgba(217, 119, 6, 0.25);
+  }
+
+  [data-theme="nordic"] {
+    /* 7. Nordic Glacier Teal & Deep Pine */
+    --studio-canvas: #F0FDF9;
+    --app-bg: #F0FDF9;
+    --paper: #FFFFFF;
+    --sidebar-bg: #134E4A;
+    --sidebar-dark: #092B28;
+    --primary-color: #0D9488;
+    --primary-hover: #0F766E;
+    --primary-light: #CCFBF1;
+    --primary-border: #99F6E4;
+    --primary-gradient: linear-gradient(135deg, #0D9488 0%, #14B8A6 100%);
+    --header-gradient: linear-gradient(135deg, rgba(13, 148, 136, 0.08) 0%, rgba(245, 158, 11, 0.05) 100%);
+    --accent-color: #F59E0B;
+    --accent-light: #FEF3C7;
+    --ink: #134E4A;
+    --ink-muted: #4B6E6B;
+    --ink-light: #8BA8A5;
+    --ring-glow: rgba(13, 148, 136, 0.25);
+  }
+
+  [data-theme="lavender"] {
+    /* 8. Lavender Mist & Modern Lilac */
+    --studio-canvas: #FAF8FF;
+    --app-bg: #FAF8FF;
+    --paper: #FFFFFF;
+    --sidebar-bg: #2E1065;
+    --sidebar-dark: #1B073D;
+    --primary-color: #7C3AED;
+    --primary-hover: #6D28D9;
+    --primary-light: #EDE9FE;
+    --primary-border: #DDD6FE;
+    --primary-gradient: linear-gradient(135deg, #7C3AED 0%, #8B5CF6 100%);
+    --header-gradient: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(6, 182, 212, 0.05) 100%);
+    --accent-color: #06B6D4;
+    --accent-light: #ECFEFF;
+    --ink: #2E1065;
+    --ink-muted: #6B4E99;
+    --ink-light: #A793CE;
+    --ring-glow: rgba(124, 58, 237, 0.25);
+  }
+
+  [data-theme="rose"] {
+    /* 9. Cyber Rose & Neon Berry */
+    --studio-canvas: #FFF5F6;
+    --app-bg: #FFF5F6;
+    --paper: #FFFFFF;
+    --sidebar-bg: #4C0519;
+    --sidebar-dark: #29020C;
+    --primary-color: #E11D48;
+    --primary-hover: #BE123C;
+    --primary-light: #FFE4E6;
+    --primary-border: #FECDD3;
+    --primary-gradient: linear-gradient(135deg, #E11D48 0%, #F43F5E 100%);
+    --header-gradient: linear-gradient(135deg, rgba(225, 29, 72, 0.08) 0%, rgba(139, 92, 246, 0.05) 100%);
+    --accent-color: #8B5CF6;
+    --accent-light: #F5F3FF;
+    --ink: #4C0519;
+    --ink-muted: #883B4F;
+    --ink-light: #C0798C;
+    --ring-glow: rgba(225, 29, 72, 0.25);
+  }
+
+  [data-theme="gold"] {
+    /* 10. Imperial Espresso & Royal Amber Gold */
+    --studio-canvas: #FCF9F2;
+    --app-bg: #FCF9F2;
+    --paper: #FFFFFF;
+    --sidebar-bg: #2A1B0E;
+    --sidebar-dark: #170E07;
+    --primary-color: #D97706;
+    --primary-hover: #B45309;
+    --primary-light: #FEF3C7;
+    --primary-border: #FDE68A;
+    --primary-gradient: linear-gradient(135deg, #D97706 0%, #F59E0B 100%);
+    --header-gradient: linear-gradient(135deg, rgba(217, 119, 6, 0.08) 0%, rgba(16, 185, 129, 0.05) 100%);
+    --accent-color: #10B981;
+    --accent-light: #ECFDF5;
+    --ink: #2A1B0E;
+    --ink-muted: #705541;
+    --ink-light: #AC9482;
+    --ring-glow: rgba(217, 119, 6, 0.25);
+  }
+
+  [data-theme="crimson"] {
+    /* 11. Crimson Wine & Velvet Bordeaux */
+    --studio-canvas: #FFF6F6;
+    --app-bg: #FFF6F6;
+    --paper: #FFFFFF;
+    --sidebar-bg: #3B0A0A;
+    --sidebar-dark: #210404;
+    --primary-color: #DC2626;
+    --primary-hover: #B91C1C;
+    --primary-light: #FEE2E2;
+    --primary-border: #FECACA;
+    --primary-gradient: linear-gradient(135deg, #DC2626 0%, #EF4444 100%);
+    --header-gradient: linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(59, 130, 246, 0.05) 100%);
+    --accent-color: #3B82F6;
+    --accent-light: #EFF6FF;
+    --ink: #3B0A0A;
+    --ink-muted: #7E3E3E;
+    --ink-light: #B47F7F;
+    --ring-glow: rgba(220, 38, 38, 0.25);
+  }
+
+  [data-theme="monochrome"] {
+    /* 12. Obsidian Minimalist & Platinum Silver */
+    --studio-canvas: #FAFAFA;
+    --app-bg: #FAFAFA;
+    --paper: #FFFFFF;
+    --sidebar-bg: #09090B;
+    --sidebar-dark: #000000;
+    --primary-color: #18181B;
+    --primary-hover: #27272A;
+    --primary-light: #F4F4F5;
+    --primary-border: #E4E4E7;
+    --primary-gradient: linear-gradient(135deg, #18181B 0%, #3F3F46 100%);
+    --header-gradient: linear-gradient(135deg, rgba(24, 24, 27, 0.06) 0%, rgba(99, 102, 241, 0.04) 100%);
+    --accent-color: #6366F1;
+    --accent-light: #EEF2FF;
+    --ink: #09090B;
+    --ink-muted: #52525B;
+    --ink-light: #A1A1AA;
+    --ring-glow: rgba(24, 24, 27, 0.2);
+  }
+
+
+  body {
+    font-family: "Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--app-bg, #FAF8F5);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.5;
+    transition: background-color 0.3s ease;
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: "Fredoka", "Trebuchet MS", sans-serif;
+  }
+}
+
+/* Custom UI Component Classes */
+.bg-theme-primary {
+  background-color: var(--primary-color, #FF6B00);
+}
+.bg-theme-primary-hover:hover {
+  background-color: var(--primary-hover, #E55C00);
+}
+.bg-theme-light {
+  background-color: var(--primary-light, #FFF0E6);
+}
+.bg-theme-sidebar {
+  background-color: var(--sidebar-bg, #240C0B);
+}
+.text-theme-primary {
+  color: var(--primary-color, #FF6B00);
+}
+.text-theme-ink {
+  color: var(--ink, #240C0B);
+}
+.text-theme-muted {
+  color: var(--ink-muted, #6E5B58);
+}
+.border-theme-primary {
+  border-color: var(--primary-color, #FF6B00);
+}
+.border-theme-subtle {
+  border-color: var(--primary-border, #E6DFD5);
+}
+.theme-gradient-bg {
+  background: var(--primary-gradient);
+}
+.theme-header-bg {
+  background: var(--header-gradient);
+}
+.theme-glow {
+  box-shadow: 0 0 25px var(--ring-glow, rgba(255, 107, 0, 0.25));
+}
+
+.btn-primary {
+  background: var(--primary-gradient, linear-gradient(135deg, #FF6B00 0%, #FF8833 100%));
+  color: #ffffff;
+  box-shadow: 0 4px 14px var(--ring-glow, rgba(255, 107, 0, 0.25));
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-primary:hover {
+  filter: brightness(0.94);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px var(--ring-glow, rgba(255, 107, 0, 0.35));
+}
+
+
+.btn-dark {
+  background-color: var(--sidebar-bg, #240C0B);
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+.btn-dark:hover {
+  opacity: 0.9;
+}
+
+.btn-ghost {
+  background: #ffffff;
+  border: 1px solid #E6DFD5;
+  color: var(--ink, #240C0B);
+  transition: all 0.2s ease;
+}
+.btn-ghost:hover {
+  border-color: #D8D3C4;
+  color: var(--primary-color, #FF6B00);
+}
+
+.card-box {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 6px 16px rgba(0, 0, 0, 0.03);
+  padding: 24px;
+  border: 1px solid #EAE5DE;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #D8D3C4;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A08E8B;
+}
+
+/* Print Styles - Isolate only the printable invoice/document and hide everything else */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 4mm 6mm;
+  }
+
+  :root,
+  [data-theme] {
+    --studio-canvas: #ffffff !important;
+    --app-bg: #ffffff !important;
+    --paper: #ffffff !important;
+  }
+
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html, body, #root, body > div, [data-theme] {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #240C0B !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Completely hide the background application, sidebars, headers, toasts, and controls */
+  #main-app-container,
+  aside,
+  nav,
+  header,
+  footer,
+  .no-print,
+  button,
+  input,
+  select,
+  textarea,
+  .toast-container,
+  [role="dialog"] > button {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Reset modal backdrop & outer containers to pure white */
+  .modal-overlay,
+  .fixed.inset-0 {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    position: static !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .modal-box {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    box-shadow: none !important;
+    border: none !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .modal-box > div,
+  .printable-wrapper {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Display ONLY the active printable document container with clean colorless borders */
+  #printable-invoice-doc,
+  #printable-schedule-doc,
+  #printable-report-doc,
+  .printable-area {
+    display: block !important;
+    visibility: visible !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 4mm 6mm !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #240C0B !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  #printable-invoice-doc *,
+  #printable-schedule-doc *,
+  #printable-report-doc *,
+  .printable-area * {
+    visibility: visible !important;
+  }
+
+  #printable-invoice-doc .flex-row,
+  #printable-schedule-doc .flex-row,
+  #printable-report-doc .flex-row {
+    display: flex !important;
+    flex-direction: row !important;
+  }
+
+  #printable-invoice-doc .flex-1,
+  #printable-schedule-doc .flex-1,
+  #printable-report-doc .flex-1 {
+    flex: 1 1 0% !important;
+  }
+
+  /* Image constraints */
+  #printable-invoice-doc img.clinic-logo-img,
+  #printable-schedule-doc img.clinic-logo-img,
+  #printable-report-doc img.clinic-logo-img,
+  .printable-area img.clinic-logo-img {
+    width: 60px !important;
+    height: 60px !important;
+    max-width: 60px !important;
+    max-height: 60px !important;
+    object-fit: cover !important;
+    border-radius: 12px !important;
+    display: block !important;
+  }
+
+  /* QR code image fill in printable area */
+  #printable-invoice-doc img.qr-code-img,
+  #printable-schedule-doc img.qr-code-img,
+  #printable-report-doc img.qr-code-img,
+  .printable-area img.qr-code-img,
+  img.qr-code-img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    border: none !important;
+    border-radius: 0px !important;
+    object-fit: contain !important;
+    image-rendering: pixelated !important;
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .qr-code-box {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    padding: 2px !important;
+    border: 1px solid #D8D3C4 !important;
+    background: #ffffff !important;
+    border-radius: 8px !important;
+  }
+
+  /* Table styling */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  thead tr {
+    border-top: 2px solid #240C0B !important;
+    border-bottom: 2px solid #240C0B !important;
+  }
+
+  tr, td, th {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}

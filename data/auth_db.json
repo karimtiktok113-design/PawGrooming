@@ -1,0 +1,14 @@
+{
+  "admin": {
+    "id": "adm_01",
+    "name": "Park SuperAdmin",
+    "email": "admin@parkgrooming.com",
+    "password": "admin123",
+    "role": "super_admin",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&q=80",
+    "lastLogin": "2026-08-19"
+  },
+  "profiles": [],
+  "version": "2.0.0",
+  "lastUpdated": "2026-08-19T16:32:00.000Z"
+}
