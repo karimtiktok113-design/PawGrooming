@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
+import { useDashboardSystem } from '../context/DashboardSystemContext';
 import { 
   Plus, 
   Menu, 
@@ -13,7 +14,9 @@ import {
   ChevronDown,
   Dog,
   Scissors,
-  Check
+  Check,
+  Sliders,
+  Sparkles
 } from 'lucide-react';
 import { ClientNotificationDrawer } from './notifications/ClientNotificationDrawer';
 import { ColorTheme } from '../types';
@@ -39,6 +42,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick, isSidebarOpen = fal
   } = useApp();
 
   const { currentProfile, isAdmin, logout, returnToAdmin, unreadNotificationsCount } = useAuth();
+  const { setIsAdminStudioOpen, currentThemeDef, currentLayoutDef } = useDashboardSystem();
   const [notificationDrawerOpen, setNotificationDrawerOpen] = useState(false);
   const [themeDropdownOpen, setThemeDropdownOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
@@ -177,6 +181,18 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick, isSidebarOpen = fal
               aria-label="Toggle mobile search"
             >
               <Search className="w-3.5 h-3.5" />
+            </button>
+
+            {/* SaaS Admin Studio Drawer Trigger (14 Themes & 7 Layouts) */}
+            <button
+              id="btn-header-admin-studio"
+              onClick={() => setIsAdminStudioOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#240C0B] text-white text-xs font-bold hover:bg-[#381514] active:scale-95 transition-all shadow-xs cursor-pointer"
+              title="Open SaaS Admin Studio (14 Themes & 7 Screen Layouts)"
+            >
+              <Sliders className="w-3.5 h-3.5 text-[#FF6B00]" />
+              <span className="hidden sm:inline">Themes & Layouts</span>
+              <span className="sm:hidden">Studio</span>
             </button>
 
             {/* Quick Theme Switcher */}

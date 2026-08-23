@@ -45,6 +45,7 @@ import {
   Power
 } from 'lucide-react';
 import { AdminNotificationsManager } from './AdminNotificationsManager';
+import { AdminThemesManager } from './AdminThemesManager';
 import { ClientPermissionsModal } from './ClientPermissionsModal';
 import { ClientDevicesModal } from './ClientDevicesModal';
 import { ClientPermissions } from '../../types/auth';
@@ -67,7 +68,7 @@ export const AdminDashboard: React.FC = () => {
     toggleEnforceSingleDevice
   } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<'profiles' | 'notifications' | 'plans' | 'logs' | 'settings'>('profiles');
+  const [activeTab, setActiveTab] = useState<'profiles' | 'notifications' | 'themes' | 'plans' | 'logs' | 'settings'>('profiles');
   const [preselectedForPush, setPreselectedForPush] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive' | 'expired'>('all');
@@ -347,6 +348,20 @@ export const AdminDashboard: React.FC = () => {
             >
               <Bell className="w-3.5 h-3.5" />
               <span>Push & Pop-ups ({notifications.length})</span>
+            </button>
+            <button
+              onClick={() => {
+                setPreselectedForPush(null);
+                setActiveTab('themes');
+              }}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                activeTab === 'themes' 
+                  ? 'bg-[#FF6B00] text-white shadow-sm' 
+                  : 'text-[#A08E8B] hover:bg-white/5 hover:text-white'
+              }`}
+            >
+              <Sliders className="w-3.5 h-3.5" />
+              <span>Themes & Layouts (14)</span>
             </button>
             <button
               onClick={() => {
@@ -671,6 +686,11 @@ export const AdminDashboard: React.FC = () => {
             onSendSuccess={showToast} 
             preselectedProfileId={preselectedForPush} 
           />
+        )}
+
+        {/* Tab: SaaS Dashboard Themes & Screen Architecture Engine */}
+        {activeTab === 'themes' && (
+          <AdminThemesManager />
         )}
 
         {/* Tab 2: Subscription Plans Overview */}
