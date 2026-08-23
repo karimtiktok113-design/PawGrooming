@@ -33,6 +33,7 @@ import {
   markNotificationReadInFirestore,
   markNotificationDismissedInFirestore,
   markProfileOfflineInFirestore,
+  sendOfflineBeacon,
   updateProfileHeartbeatInFirestore
 } from '../lib/firebase';
 import { 
@@ -288,18 +289,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // 1. Initial online mark
     updateProfileHeartbeatInFirestore(profileId, sessionId).catch(() => {});
 
-    // 2. Periodic heartbeat every 12 seconds
+    // 2. Periodic heartbeat every 8 seconds while active
     const heartbeatInterval = setInterval(() => {
       if (document.visibilityState !== 'hidden') {
         updateProfileHeartbeatInFirestore(profileId, sessionId).catch(() => {});
       }
-    }, 12000);
+    }, 8000);
 
-    // 3. User interaction activity throttle (at most every 10s)
+    // 3. User interaction activity throttle (at most every 6s)
     let lastActivityPing = Date.now();
     const handleUserActivity = () => {
       const now = Date.now();
-      if (now - lastActivityPing > 10000) {
+      if (now - lastActivityPing > 6000) {
         lastActivityPing = now;
         updateProfileHeartbeatInFirestore(profileId, sessionId).catch(() => {});
       }
@@ -312,17 +313,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         updateProfileHeartbeatInFirestore(profileId, sessionId).catch(() => {});
+      } else if (document.visibilityState === 'hidden') {
+        // When tab is hidden/minimized, send beacon
+        sendOfflineBeacon(profileId, sessionId);
       }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // 5. Browser/Tab close or navigate away: immediately mark offline in Firestore
+    // 5. Browser/Tab close or navigate away: immediately send beacon and mark offline
     const handleBeforeUnload = () => {
+      sendOfflineBeacon(profileId, sessionId);
       markProfileOfflineInFirestore(profileId, sessionId).catch(() => {});
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     window.addEventListener('pagehide', handleBeforeUnload);
+    window.addEventListener('unload', handleBeforeUnload);
 
     return () => {
       clearInterval(heartbeatInterval);
@@ -331,6 +337,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleBeforeUnload);
       window.removeEventListener('pagehide', handleBeforeUnload);
+      window.removeEventListener('unload', handleBeforeUnload);
+      sendOfflineBeacon(profileId, sessionId);
       markProfileOfflineInFirestore(profileId, sessionId).catch(() => {});
     };
   }, [session?.userType, session?.profile?.profileId, session?.sessionId]);
@@ -1061,37 +1069,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
    * Mark notification as read
    */
   const markNotificationAsRead = async (notificationId: string): Promise<void> => {
-    if (!currentClientProfileId) return;
+    const effectiveProfileId = currentClientProfileId || session?.profile?.profileId || (session?.userType === 'admin' ? 'admin' : 'local_client');
     setNotifications(prev => prev.map(n => {
       if (n.id === notificationId) {
         const readBy = Array.isArray(n.readBy) ? n.readBy : [];
-        if (!readBy.includes(currentClientProfileId)) {
-          return { ...n, readBy: [...readBy, currentClientProfileId] };
+        if (!readBy.includes(effectiveProfileId)) {
+          return { ...n, readBy: [...readBy, effectiveProfileId] };
         }
       }
       return n;
     }));
-    await markNotificationReadInFirestore(notificationId, currentClientProfileId);
+    if (effectiveProfileId) {
+      await markNotificationReadInFirestore(notificationId, effectiveProfileId).catch(() => {});
+    }
   };
 
   /**
    * Dismiss a popup modal notification
    */
   const dismissPopupNotification = async (notificationId: string): Promise<void> => {
-    if (!currentClientProfileId) return;
+    const effectiveProfileId = currentClientProfileId || session?.profile?.profileId || (session?.userType === 'admin' ? 'admin' : 'local_client');
     setNotifications(prev => prev.map(n => {
       if (n.id === notificationId) {
         const dismissedBy = Array.isArray(n.dismissedBy) ? n.dismissedBy : [];
         const readBy = Array.isArray(n.readBy) ? n.readBy : [];
         return {
           ...n,
-          dismissedBy: dismissedBy.includes(currentClientProfileId) ? dismissedBy : [...dismissedBy, currentClientProfileId],
-          readBy: readBy.includes(currentClientProfileId) ? readBy : [...readBy, currentClientProfileId]
+          dismissedBy: dismissedBy.includes(effectiveProfileId) ? dismissedBy : [...dismissedBy, effectiveProfileId],
+          readBy: readBy.includes(effectiveProfileId) ? readBy : [...readBy, effectiveProfileId]
         };
       }
       return n;
     }));
-    await markNotificationDismissedInFirestore(notificationId, currentClientProfileId);
+    if (effectiveProfileId) {
+      await markNotificationDismissedInFirestore(notificationId, effectiveProfileId).catch(() => {});
+    }
   };
 
   return (

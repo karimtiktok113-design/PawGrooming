@@ -34,26 +34,41 @@ export const ClientNotificationSheet: React.FC = () => {
 
   const current: AdminNotification = activeDrawers[0];
 
-  const handleDismiss = async () => {
+  const handleDismiss = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     await dismissPopupNotification(current.id);
   };
 
-  const handleAction = async () => {
+  const handleAction = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (current.actionUrl) {
-      const isExternal = current.actionUrl.startsWith('http://') || 
-                         current.actionUrl.startsWith('https://') || 
+      const url = current.actionUrl.trim();
+      const isExternal = url.startsWith('http://') || 
+                         url.startsWith('https://') || 
+                         url.startsWith('//') ||
+                         url.startsWith('mailto:') ||
+                         url.startsWith('tel:') ||
                          current.actionTarget === '_blank';
 
       if (isExternal) {
-        window.open(current.actionUrl, '_blank', 'noopener,noreferrer');
+        window.open(url, '_blank', 'noopener,noreferrer');
       } else {
+        const cleanTarget = url.replace(/^\//, '').toLowerCase();
         const validViews = ['dashboard', 'calendar', 'invoices', 'clients', 'services', 'alerts', 'loyalty', 'staff', 'revenue', 'business', 'gallery', 'settings'];
-        if (validViews.includes(current.actionUrl)) {
-          setView(current.actionUrl as any);
+        if (validViews.includes(cleanTarget)) {
+          setView(cleanTarget as any);
+        } else {
+          window.open(`https://${url}`, '_blank', 'noopener,noreferrer');
         }
       }
     }
-    await handleDismiss();
+    await handleDismiss(e);
   };
 
   const getPriorityStyle = (priority: NotificationPriority) => {
@@ -114,15 +129,20 @@ export const ClientNotificationSheet: React.FC = () => {
 
           <div className="flex items-center gap-1.5">
             <button
-              onClick={() => setCollapsed(prev => !prev)}
-              className="p-1 rounded-lg text-[#7A6865] hover:text-[#240C0B] hover:bg-black/5"
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setCollapsed(prev => !prev);
+              }}
+              className="p-1 rounded-lg text-[#7A6865] hover:text-[#240C0B] hover:bg-black/5 cursor-pointer"
               title={collapsed ? "Expand" : "Collapse"}
             >
               <ChevronUp className={`w-4 h-4 transition-transform ${collapsed ? '' : 'rotate-180'}`} />
             </button>
             <button
-              onClick={handleDismiss}
-              className="p-1 rounded-lg text-[#7A6865] hover:text-red-600 hover:bg-red-50"
+              type="button"
+              onClick={(e) => handleDismiss(e)}
+              className="p-1 rounded-lg text-[#7A6865] hover:text-red-600 hover:bg-red-50 cursor-pointer"
               title="Dismiss notification"
             >
               <X className="w-4 h-4" />
@@ -155,7 +175,8 @@ export const ClientNotificationSheet: React.FC = () => {
               <div className="pt-2 flex items-center gap-2 flex-wrap">
                 {current.actionLabel && (
                   <button
-                    onClick={handleAction}
+                    type="button"
+                    onClick={(e) => handleAction(e)}
                     className={`px-4 py-1.5 text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all ${style.btn}`}
                   >
                     <span>{current.actionLabel}</span>
@@ -163,7 +184,8 @@ export const ClientNotificationSheet: React.FC = () => {
                   </button>
                 )}
                 <button
-                  onClick={handleDismiss}
+                  type="button"
+                  onClick={(e) => handleDismiss(e)}
                   className="px-3 py-1.5 text-xs font-bold text-[#7A6865] hover:text-[#240C0B] hover:bg-[#FAF8F5] rounded-xl border border-[#E6DFD5] transition-all cursor-pointer"
                 >
                   Dismiss

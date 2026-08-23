@@ -28,29 +28,42 @@ export const ClientNotificationPopup: React.FC = () => {
   const currentPopup: AdminNotification = activePopupsForCurrentProfile[0];
 
   const handleDismiss = async (e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     setDismissingId(currentPopup.id);
     await dismissPopupNotification(currentPopup.id);
     setDismissingId(null);
   };
 
   const handleActionClick = async (e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (currentPopup.actionUrl) {
-      const isExternal = currentPopup.actionUrl.startsWith('http://') || 
-                         currentPopup.actionUrl.startsWith('https://') || 
+      const url = currentPopup.actionUrl.trim();
+      const isExternal = url.startsWith('http://') || 
+                         url.startsWith('https://') || 
+                         url.startsWith('//') ||
+                         url.startsWith('mailto:') ||
+                         url.startsWith('tel:') ||
                          currentPopup.actionTarget === '_blank';
 
       if (isExternal) {
-        window.open(currentPopup.actionUrl, '_blank', 'noopener,noreferrer');
+        window.open(url, '_blank', 'noopener,noreferrer');
       } else {
+        const cleanTarget = url.replace(/^\//, '').toLowerCase();
         const validViews = ['dashboard', 'calendar', 'invoices', 'clients', 'services', 'alerts', 'loyalty', 'staff', 'revenue', 'business', 'gallery', 'settings'];
-        if (validViews.includes(currentPopup.actionUrl)) {
-          setView(currentPopup.actionUrl as any);
+        if (validViews.includes(cleanTarget)) {
+          setView(cleanTarget as any);
+        } else {
+          window.open(`https://${url}`, '_blank', 'noopener,noreferrer');
         }
       }
     }
-    await handleDismiss();
+    await handleDismiss(e);
   };
 
   const getPriorityTheme = (priority: NotificationPriority) => {

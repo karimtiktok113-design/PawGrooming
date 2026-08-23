@@ -34,27 +34,42 @@ export const ClientNotificationFloatingWidget: React.FC = () => {
 
   const current: AdminNotification = activeFloating[0];
 
-  const handleDismiss = async () => {
+  const handleDismiss = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     await dismissPopupNotification(current.id);
     setIsOpen(false);
   };
 
-  const handleAction = async () => {
+  const handleAction = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (current.actionUrl) {
-      const isExternal = current.actionUrl.startsWith('http://') || 
-                         current.actionUrl.startsWith('https://') || 
+      const url = current.actionUrl.trim();
+      const isExternal = url.startsWith('http://') || 
+                         url.startsWith('https://') || 
+                         url.startsWith('//') ||
+                         url.startsWith('mailto:') ||
+                         url.startsWith('tel:') ||
                          current.actionTarget === '_blank';
 
       if (isExternal) {
-        window.open(current.actionUrl, '_blank', 'noopener,noreferrer');
+        window.open(url, '_blank', 'noopener,noreferrer');
       } else {
+        const cleanTarget = url.replace(/^\//, '').toLowerCase();
         const validViews = ['dashboard', 'calendar', 'invoices', 'clients', 'services', 'alerts', 'loyalty', 'staff', 'revenue', 'business', 'gallery', 'settings'];
-        if (validViews.includes(current.actionUrl)) {
-          setView(current.actionUrl as any);
+        if (validViews.includes(cleanTarget)) {
+          setView(cleanTarget as any);
+        } else {
+          window.open(`https://${url}`, '_blank', 'noopener,noreferrer');
         }
       }
     }
-    await handleDismiss();
+    await handleDismiss(e);
   };
 
   return (
@@ -67,8 +82,12 @@ export const ClientNotificationFloatingWidget: React.FC = () => {
               <Sparkles className="w-3 h-3" /> Live Studio Highlight
             </span>
             <button
-              onClick={() => setIsOpen(false)}
-              className="p-1 rounded-full text-[#7A6865] hover:text-[#240C0B] hover:bg-[#FAF8F5]"
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsOpen(false);
+              }}
+              className="p-1 rounded-full text-[#7A6865] hover:text-[#240C0B] hover:bg-[#FAF8F5] cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -96,7 +115,8 @@ export const ClientNotificationFloatingWidget: React.FC = () => {
 
           <div className="pt-2 border-t border-[#E6DFD5] flex items-center justify-between gap-2">
             <button
-              onClick={handleDismiss}
+              type="button"
+              onClick={(e) => handleDismiss(e)}
               className="text-xs font-bold text-[#7A6865] hover:text-red-600 cursor-pointer"
             >
               Don't show again
@@ -104,7 +124,8 @@ export const ClientNotificationFloatingWidget: React.FC = () => {
 
             {current.actionLabel ? (
               <button
-                onClick={handleAction}
+                type="button"
+                onClick={(e) => handleAction(e)}
                 className="btn-primary px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
               >
                 <span>{current.actionLabel}</span>
@@ -112,8 +133,12 @@ export const ClientNotificationFloatingWidget: React.FC = () => {
               </button>
             ) : (
               <button
-                onClick={() => setIsOpen(false)}
-                className="px-3.5 py-1.5 bg-[#FAF8F5] border border-[#E6DFD5] hover:bg-white text-xs font-bold text-[#240C0B] rounded-xl"
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(false);
+                }}
+                className="px-3.5 py-1.5 bg-[#FAF8F5] border border-[#E6DFD5] hover:bg-white text-xs font-bold text-[#240C0B] rounded-xl cursor-pointer"
               >
                 Got It
               </button>
@@ -124,7 +149,11 @@ export const ClientNotificationFloatingWidget: React.FC = () => {
 
       {/* Floating Action Trigger Button */}
       <button
-        onClick={() => setIsOpen(prev => !prev)}
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsOpen(prev => !prev);
+        }}
         className="relative group flex items-center gap-2 p-3.5 bg-theme-primary hover:filter hover:brightness-110 text-white rounded-full shadow-xl theme-glow active:scale-95 transition-all cursor-pointer"
         title={current.title}
       >

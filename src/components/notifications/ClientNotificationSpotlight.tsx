@@ -21,26 +21,41 @@ export const ClientNotificationSpotlight: React.FC = () => {
 
   const current: AdminNotification = activeSpotlights[0];
 
-  const handleDismiss = async () => {
+  const handleDismiss = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     await dismissPopupNotification(current.id);
   };
 
-  const handleAction = async () => {
+  const handleAction = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (current.actionUrl) {
-      const isExternal = current.actionUrl.startsWith('http://') || 
-                         current.actionUrl.startsWith('https://') || 
+      const url = current.actionUrl.trim();
+      const isExternal = url.startsWith('http://') || 
+                         url.startsWith('https://') || 
+                         url.startsWith('//') ||
+                         url.startsWith('mailto:') ||
+                         url.startsWith('tel:') ||
                          current.actionTarget === '_blank';
 
       if (isExternal) {
-        window.open(current.actionUrl, '_blank', 'noopener,noreferrer');
+        window.open(url, '_blank', 'noopener,noreferrer');
       } else {
+        const cleanTarget = url.replace(/^\//, '').toLowerCase();
         const validViews = ['dashboard', 'calendar', 'invoices', 'clients', 'services', 'alerts', 'loyalty', 'staff', 'revenue', 'business', 'gallery', 'settings'];
-        if (validViews.includes(current.actionUrl)) {
-          setView(current.actionUrl as any);
+        if (validViews.includes(cleanTarget)) {
+          setView(cleanTarget as any);
+        } else {
+          window.open(`https://${url}`, '_blank', 'noopener,noreferrer');
         }
       }
     }
-    await handleDismiss();
+    await handleDismiss(e);
   };
 
   return (

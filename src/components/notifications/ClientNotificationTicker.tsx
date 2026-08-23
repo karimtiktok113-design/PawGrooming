@@ -21,26 +21,41 @@ export const ClientNotificationTicker: React.FC = () => {
 
   const current: AdminNotification = activeTickers[0];
 
-  const handleDismiss = async () => {
+  const handleDismiss = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     await dismissPopupNotification(current.id);
   };
 
-  const handleAction = async () => {
+  const handleAction = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (current.actionUrl) {
-      const isExternal = current.actionUrl.startsWith('http://') || 
-                         current.actionUrl.startsWith('https://') || 
+      const url = current.actionUrl.trim();
+      const isExternal = url.startsWith('http://') || 
+                         url.startsWith('https://') || 
+                         url.startsWith('//') ||
+                         url.startsWith('mailto:') ||
+                         url.startsWith('tel:') ||
                          current.actionTarget === '_blank';
 
       if (isExternal) {
-        window.open(current.actionUrl, '_blank', 'noopener,noreferrer');
+        window.open(url, '_blank', 'noopener,noreferrer');
       } else {
+        const cleanTarget = url.replace(/^\//, '').toLowerCase();
         const validViews = ['dashboard', 'calendar', 'invoices', 'clients', 'services', 'alerts', 'loyalty', 'staff', 'revenue', 'business', 'gallery', 'settings'];
-        if (validViews.includes(current.actionUrl)) {
-          setView(current.actionUrl as any);
+        if (validViews.includes(cleanTarget)) {
+          setView(cleanTarget as any);
+        } else {
+          window.open(`https://${url}`, '_blank', 'noopener,noreferrer');
         }
       }
     }
-    await handleDismiss();
+    await handleDismiss(e);
   };
 
   return (
@@ -59,7 +74,8 @@ export const ClientNotificationTicker: React.FC = () => {
       <div className="flex items-center gap-2 shrink-0">
         {current.actionLabel && (
           <button
-            onClick={handleAction}
+            type="button"
+            onClick={(e) => handleAction(e)}
             className="px-3 py-1 bg-white/10 hover:bg-white/20 text-white rounded-lg text-[11px] font-bold border border-white/20 flex items-center gap-1 cursor-pointer transition-all active:scale-95"
           >
             <span>{current.actionLabel}</span>
@@ -68,8 +84,9 @@ export const ClientNotificationTicker: React.FC = () => {
         )}
 
         <button
-          onClick={handleDismiss}
-          className="p-1 rounded-lg text-white/60 hover:text-white hover:bg-white/10"
+          type="button"
+          onClick={(e) => handleDismiss(e)}
+          className="p-1 rounded-lg text-white/60 hover:text-white hover:bg-white/10 cursor-pointer"
           title="Dismiss ticker"
         >
           <X className="w-3.5 h-3.5" />

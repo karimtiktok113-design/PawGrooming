@@ -55,26 +55,39 @@ export const ClientNotificationNewFormats: React.FC = () => {
   const fcmNotifs = clientNotifications.filter(n => n.type === 'system_tray_fcm' && isNotDismissed(n));
 
   const handleActionClick = async (notif: AdminNotification, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     await markNotificationAsRead(notif.id);
     if (notif.actionUrl) {
-      const isExternal = notif.actionUrl.startsWith('http://') || 
-                         notif.actionUrl.startsWith('https://') || 
+      const url = notif.actionUrl.trim();
+      const isExternal = url.startsWith('http://') || 
+                         url.startsWith('https://') || 
+                         url.startsWith('//') ||
+                         url.startsWith('mailto:') ||
+                         url.startsWith('tel:') ||
                          notif.actionTarget === '_blank';
       if (isExternal) {
-        window.open(notif.actionUrl, '_blank', 'noopener,noreferrer');
+        window.open(url, '_blank', 'noopener,noreferrer');
       } else {
+        const cleanTarget = url.replace(/^\//, '').toLowerCase();
         const validViews = ['dashboard', 'calendar', 'invoices', 'clients', 'services', 'alerts', 'loyalty', 'staff', 'revenue', 'business', 'gallery', 'settings'];
-        if (validViews.includes(notif.actionUrl)) {
-          setView(notif.actionUrl as any);
+        if (validViews.includes(cleanTarget)) {
+          setView(cleanTarget as any);
+        } else {
+          window.open(`https://${url}`, '_blank', 'noopener,noreferrer');
         }
       }
     }
-    await dismissPopupNotification(notif.id);
+    await handleDismiss(notif.id, e);
   };
 
   const handleDismiss = async (notifId: string, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (isPlayingAudio === notifId) {
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
@@ -459,6 +472,82 @@ export const ClientNotificationNewFormats: React.FC = () => {
               </button>
             )}
           </div>
+        </div>
+      ))}
+
+      {/* 9. MICROSOFT TEAMS / MATRIX ENTERPRISE CARD */}
+      {teamsNotifs.slice(0, 1).map((notif) => (
+        <div 
+          key={notif.id}
+          className="fixed top-24 right-4 sm:right-6 z-45 max-w-sm w-full bg-[#201F1F] text-white rounded-2xl p-4 shadow-2xl border-l-4 border-l-[#5B5FC7] border border-slate-700 animate-slideInRight pointer-events-auto"
+        >
+          <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-700">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-md bg-[#5B5FC7] flex items-center justify-center font-black text-[10px] text-white">
+                T
+              </div>
+              <span className="text-xs font-bold text-[#E5F0FD]">Teams Enterprise Notice</span>
+            </div>
+            <button 
+              type="button" 
+              onClick={(e) => handleDismiss(notif.id, e)} 
+              className="p-1 text-slate-400 hover:text-white rounded-lg cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <p className="text-xs font-bold text-[#82B8F6] mb-1">{notif.title}</p>
+          <p className="text-[11px] text-slate-300 leading-relaxed whitespace-pre-line">{notif.message}</p>
+          {notif.actionLabel && (
+            <div className="mt-3 flex justify-end">
+              <button
+                type="button"
+                onClick={(e) => handleActionClick(notif, e)}
+                className="px-3 py-1.5 rounded-xl bg-[#5B5FC7] hover:bg-[#4F52B2] text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer active:scale-95"
+              >
+                <span>{notif.actionLabel}</span>
+                <ArrowRight className="w-3 h-3" />
+              </button>
+            </div>
+          )}
+        </div>
+      ))}
+
+      {/* 10. SYSTEM TRAY / FCM PUSH ALERT */}
+      {fcmNotifs.slice(0, 1).map((notif) => (
+        <div 
+          key={notif.id}
+          className="fixed bottom-6 right-6 z-45 max-w-sm w-full bg-[#082854] text-[#E5F0FD] rounded-2xl p-4 shadow-2xl border border-[#82B8F6]/40 animate-slideUp pointer-events-auto"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-[#138AEE]/20 text-[#138AEE]">
+                <Bell className="w-4 h-4" />
+              </div>
+              <span className="text-xs font-bold text-[#82B8F6]">System Tray Push</span>
+            </div>
+            <button 
+              type="button" 
+              onClick={(e) => handleDismiss(notif.id, e)} 
+              className="p-1 text-[#82B8F6] hover:text-white rounded-lg cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <p className="text-xs font-bold text-white mb-1">{notif.title}</p>
+          <p className="text-[11px] text-[#E5F0FD]/80 leading-relaxed">{notif.message}</p>
+          {notif.actionLabel && (
+            <div className="mt-3 flex justify-end">
+              <button
+                type="button"
+                onClick={(e) => handleActionClick(notif, e)}
+                className="px-3 py-1.5 rounded-xl bg-[#138AEE] hover:bg-[#0C4EA4] text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-md"
+              >
+                <span>{notif.actionLabel}</span>
+                <ArrowRight className="w-3 h-3" />
+              </button>
+            </div>
+          )}
         </div>
       ))}
     </>

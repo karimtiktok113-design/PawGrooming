@@ -30,26 +30,41 @@ export const ClientNotificationToastStack: React.FC = () => {
 
   if (activeToasts.length === 0) return null;
 
-  const handleDismiss = async (id: string) => {
+  const handleDismiss = async (id: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     await dismissPopupNotification(id);
   };
 
-  const handleAction = async (toast: AdminNotification) => {
+  const handleAction = async (toast: AdminNotification, e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (toast.actionUrl) {
-      const isExternal = toast.actionUrl.startsWith('http://') || 
-                         toast.actionUrl.startsWith('https://') || 
+      const url = toast.actionUrl.trim();
+      const isExternal = url.startsWith('http://') || 
+                         url.startsWith('https://') || 
+                         url.startsWith('//') ||
+                         url.startsWith('mailto:') ||
+                         url.startsWith('tel:') ||
                          toast.actionTarget === '_blank';
 
       if (isExternal) {
-        window.open(toast.actionUrl, '_blank', 'noopener,noreferrer');
+        window.open(url, '_blank', 'noopener,noreferrer');
       } else {
+        const cleanTarget = url.replace(/^\//, '').toLowerCase();
         const validViews = ['dashboard', 'calendar', 'invoices', 'clients', 'services', 'alerts', 'loyalty', 'staff', 'revenue', 'business', 'gallery', 'settings'];
-        if (validViews.includes(toast.actionUrl)) {
-          setView(toast.actionUrl as any);
+        if (validViews.includes(cleanTarget)) {
+          setView(cleanTarget as any);
+        } else {
+          window.open(`https://${url}`, '_blank', 'noopener,noreferrer');
         }
       }
     }
-    await handleDismiss(toast.id);
+    await handleDismiss(toast.id, e);
   };
 
   const getPriorityStyle = (priority: NotificationPriority) => {
@@ -115,7 +130,8 @@ export const ClientNotificationToastStack: React.FC = () => {
               </div>
 
               <button
-                onClick={() => handleDismiss(toast.id)}
+                type="button"
+                onClick={(e) => handleDismiss(toast.id, e)}
                 className="p-1 rounded-lg text-[#7A6865] hover:text-[#240C0B] hover:bg-[#FAF8F5] cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
@@ -134,7 +150,8 @@ export const ClientNotificationToastStack: React.FC = () => {
             {toast.actionLabel && (
               <div className="pt-1 flex items-center justify-end gap-2">
                 <button
-                  onClick={() => handleAction(toast)}
+                  type="button"
+                  onClick={(e) => handleAction(toast, e)}
                   className={`px-3 py-1 text-[11px] font-bold rounded-lg shadow-2xs flex items-center gap-1 cursor-pointer active:scale-95 transition-all ${style.btn}`}
                 >
                   <span>{toast.actionLabel}</span>

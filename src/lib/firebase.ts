@@ -174,38 +174,67 @@ export async function saveProfileToFirestore(profile: ClientProfile): Promise<vo
 }
 
 /**
+ * Directly mark a client profile as offline in Firestore & Server via Beacon/Fetch
+ */
+export function sendOfflineBeacon(profileId: string, sessionId?: string): void {
+  try {
+    const payload = JSON.stringify({ profileId, sessionId });
+    // 1. Try navigator.sendBeacon
+    if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+      const blob = new Blob([payload], { type: 'application/json' });
+      navigator.sendBeacon('/api/presence/offline', blob);
+    } else if (typeof fetch !== 'undefined') {
+      // 2. Fallback to fetch with keepalive
+      fetch('/api/presence/offline', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload,
+        keepalive: true
+      }).catch(() => {});
+    }
+  } catch (err) {
+    console.warn('Failed to send offline beacon:', err);
+  }
+}
+
+/**
  * Directly mark a client profile as offline in Firestore
  */
 export async function markProfileOfflineInFirestore(profileId: string, sessionId?: string): Promise<void> {
+  // Fire beacon/keepalive first
+  sendOfflineBeacon(profileId, sessionId);
+
   try {
     const ref = doc(db, PROFILES_COLLECTION, profileId);
     const snap = await getDoc(ref);
-    if (!snap.exists()) return;
-    
-    const existing = snap.data() as ClientProfile;
     const now = new Date().toISOString();
-    let updatedSessions = Array.isArray(existing.activeSessions) ? [...existing.activeSessions] : [];
     
-    if (sessionId) {
-      updatedSessions = updatedSessions.map(s => 
-        s.sessionId === sessionId ? { ...s, status: 'inactive' as const, lastActiveAt: now } : s
-      );
+    if (snap.exists()) {
+      const existing = snap.data() as ClientProfile;
+      let updatedSessions = Array.isArray(existing.activeSessions) ? [...existing.activeSessions] : [];
+      
+      if (sessionId) {
+        updatedSessions = updatedSessions.map(s => 
+          s.sessionId === sessionId ? { ...s, status: 'inactive' as const, lastActiveAt: now } : s
+        );
+      } else {
+        updatedSessions = updatedSessions.map(s => ({ ...s, status: 'inactive' as const, lastActiveAt: now }));
+      }
+
+      const hasAnyOtherActive = updatedSessions.some(s => s.status === 'active');
+
+      const updatePayload = sanitizeForFirestore({
+        isCurrentlyLoggedIn: hasAnyOtherActive,
+        lastActiveAt: now,
+        activeSessions: updatedSessions
+      });
+
+      await setDoc(ref, updatePayload, { merge: true });
     } else {
-      updatedSessions = updatedSessions.map(s => ({ ...s, status: 'inactive' as const, lastActiveAt: now }));
+      await setDoc(ref, { isCurrentlyLoggedIn: false, lastActiveAt: now }, { merge: true });
     }
-
-    const hasAnyOtherActive = updatedSessions.some(s => s.status === 'active');
-
-    const updatePayload = sanitizeForFirestore({
-      isCurrentlyLoggedIn: hasAnyOtherActive,
-      lastActiveAt: now,
-      activeSessions: updatedSessions
-    });
-
-    await setDoc(ref, updatePayload, { merge: true });
-    console.log(`Marked profile ${profileId} as offline in Firestore.`);
   } catch (err) {
-    console.warn(`Failed to mark profile ${profileId} offline:`, err);
+    console.warn(`Failed to mark profile ${profileId} offline in Firestore:`, err);
   }
 }
 

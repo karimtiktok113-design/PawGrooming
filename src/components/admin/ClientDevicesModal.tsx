@@ -218,12 +218,12 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-fadeIn">
-      <div className="bg-slate-900 text-white rounded-3xl border border-slate-700/80 shadow-2xl max-w-3xl w-full p-6 space-y-5 max-h-[92vh] flex flex-col">
+      <div className="bg-[#082854] text-[#E5F0FD] rounded-3xl border border-[#82B8F6]/30 shadow-2xl max-w-3xl w-full p-6 space-y-5 max-h-[92vh] flex flex-col">
         
         {/* Modal Header */}
-        <div className="flex items-start justify-between pb-4 border-b border-slate-800 shrink-0">
+        <div className="flex items-start justify-between pb-4 border-b border-[#82B8F6]/20 shrink-0">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-[#138AEE]/20 border border-[#138AEE]/40 text-[#82B8F6] flex items-center justify-center shrink-0">
               <Shield className="w-6 h-6" />
             </div>
             <div>
@@ -232,17 +232,17 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
                   Device Logins & Session Security
                 </h3>
                 {isProfileOnlineNow ? (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-[#138AEE]/20 text-[#82B8F6] border border-[#138AEE]/30">
+                    <span className="w-2 h-2 rounded-full bg-[#138AEE] animate-pulse" />
                     LIVE ONLINE
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400 border border-slate-700">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#061836] text-[#82B8F6]/60 border border-[#82B8F6]/20">
                     OFFLINE
                   </span>
                 )}
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-[#82B8F6] mt-0.5">
                 Client Profile: <strong className="text-white">{freshProfile.businessName}</strong> ({freshProfile.profileId}) • {freshProfile.ownerName}
               </p>
             </div>
@@ -250,17 +250,19 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
 
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="p-2 rounded-xl bg-white/5 hover:bg-[#0C4EA4] text-[#82B8F6] hover:text-white transition-colors cursor-pointer"
               title="Refresh device states from Cloud Firestore"
             >
-              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-indigo-400' : ''}`} />
+              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-[#138AEE]' : ''}`} />
             </button>
 
             <button
+              type="button"
               onClick={onClose}
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="p-2 rounded-xl bg-white/5 hover:bg-[#0C4EA4] text-[#82B8F6] hover:text-white transition-colors cursor-pointer"
               title="Close modal"
             >
               <X className="w-5 h-5" />
@@ -270,35 +272,35 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
 
         {/* Quick Stats Strip */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 shrink-0">
-          <div className="p-3 rounded-2xl bg-slate-800/60 border border-slate-700/60">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Active Sessions</span>
+          <div className="p-3 rounded-2xl bg-[#061836] border border-[#82B8F6]/20">
+            <span className="text-[10px] font-bold text-[#82B8F6] uppercase tracking-wider block">Active Sessions</span>
             <div className="flex items-baseline gap-1.5 mt-0.5">
-              <span className="text-xl font-display font-black text-emerald-400">{activeSessionsCount}</span>
-              <span className="text-xs text-slate-500">online</span>
+              <span className="text-xl font-display font-black text-[#82B8F6]">{activeSessionsCount}</span>
+              <span className="text-xs text-[#82B8F6]/60">online</span>
             </div>
           </div>
 
-          <div className="p-3 rounded-2xl bg-slate-800/60 border border-slate-700/60">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Recorded</span>
+          <div className="p-3 rounded-2xl bg-[#061836] border border-[#82B8F6]/20">
+            <span className="text-[10px] font-bold text-[#82B8F6] uppercase tracking-wider block">Total Recorded</span>
             <div className="flex items-baseline gap-1.5 mt-0.5">
               <span className="text-xl font-display font-black text-white">{sessions.length}</span>
-              <span className="text-xs text-slate-500">devices</span>
+              <span className="text-xs text-[#82B8F6]/60">devices</span>
             </div>
           </div>
 
-          <div className="p-3 rounded-2xl bg-slate-800/60 border border-slate-700/60">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Banned Devices</span>
+          <div className="p-3 rounded-2xl bg-[#061836] border border-[#82B8F6]/20">
+            <span className="text-[10px] font-bold text-[#82B8F6] uppercase tracking-wider block">Banned Devices</span>
             <div className="flex items-baseline gap-1.5 mt-0.5">
               <span className="text-xl font-display font-black text-red-400">{bannedList.length}</span>
-              <span className="text-xs text-slate-500">blacklisted</span>
+              <span className="text-xs text-[#82B8F6]/60">blacklisted</span>
             </div>
           </div>
 
-          <div className="p-3 rounded-2xl bg-slate-800/60 border border-slate-700/60">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Single Device Lock</span>
+          <div className="p-3 rounded-2xl bg-[#061836] border border-[#82B8F6]/20">
+            <span className="text-[10px] font-bold text-[#82B8F6] uppercase tracking-wider block">Single Device Lock</span>
             <div className="mt-0.5">
               <span className={`inline-flex items-center gap-1 text-xs font-bold ${
-                freshProfile.enforceSingleDeviceLogin ? 'text-amber-400' : 'text-slate-400'
+                freshProfile.enforceSingleDeviceLogin ? 'text-[#82B8F6]' : 'text-[#82B8F6]/60'
               }`}>
                 {freshProfile.enforceSingleDeviceLogin ? '● ENFORCED' : '○ Allowed'}
               </span>
@@ -307,14 +309,14 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center gap-2 border-b border-slate-800 pb-2 shrink-0">
+        <div className="flex items-center gap-2 border-b border-[#82B8F6]/20 pb-2 shrink-0">
           <button
             type="button"
             onClick={() => setActiveTab('sessions')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
               activeTab === 'sessions'
-                ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/30'
-                : 'bg-slate-800/70 text-slate-400 hover:text-white hover:bg-slate-800'
+                ? 'bg-[#138AEE] text-white shadow-lg shadow-[#138AEE]/30'
+                : 'bg-[#061836] text-[#82B8F6] hover:text-white hover:bg-[#0C4EA4]'
             }`}
           >
             <Laptop className="w-4 h-4" />
@@ -327,7 +329,7 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
               activeTab === 'banned'
                 ? 'bg-red-600 text-white shadow-lg shadow-red-600/30'
-                : 'bg-slate-800/70 text-slate-400 hover:text-white hover:bg-slate-800'
+                : 'bg-[#061836] text-[#82B8F6] hover:text-white hover:bg-[#0C4EA4]'
             }`}
           >
             <Ban className="w-4 h-4" />
@@ -339,8 +341,8 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
             onClick={() => setActiveTab('security')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
               activeTab === 'security'
-                ? 'bg-amber-600 text-white shadow-lg shadow-amber-600/30'
-                : 'bg-slate-800/70 text-slate-400 hover:text-white hover:bg-slate-800'
+                ? 'bg-[#0C4EA4] text-white shadow-lg shadow-[#0C4EA4]/30 border border-[#82B8F6]/40'
+                : 'bg-[#061836] text-[#82B8F6] hover:text-white hover:bg-[#0C4EA4]'
             }`}
           >
             <ShieldCheck className="w-4 h-4" />
@@ -352,7 +354,7 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
         {activeTab === 'sessions' && (
           <div className="flex-1 overflow-y-auto space-y-3 pr-1">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">
+              <h4 className="text-xs font-black uppercase tracking-wider text-[#82B8F6]">
                 Active & Recorded Sessions
               </h4>
               {activeSessionsCount > 0 && (
@@ -369,9 +371,9 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
             </div>
 
             {sessions.length === 0 ? (
-              <div className="p-8 text-center bg-slate-800/40 rounded-2xl border border-slate-800">
-                <Laptop className="w-10 h-10 text-slate-600 mx-auto mb-2" />
-                <p className="text-xs text-slate-400">
+              <div className="p-8 text-center bg-[#061836] rounded-2xl border border-[#82B8F6]/20">
+                <Laptop className="w-10 h-10 text-[#82B8F6]/40 mx-auto mb-2" />
+                <p className="text-xs text-[#82B8F6]">
                   No device login sessions recorded yet. Device metadata will be registered automatically upon client sign-in.
                 </p>
               </div>
@@ -387,20 +389,20 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
                       key={sess.sessionId}
                       className={`p-4 rounded-2xl border transition-all ${
                         isActive 
-                          ? 'bg-slate-800/90 border-slate-700 hover:border-indigo-500/40 shadow-sm' 
+                          ? 'bg-[#061836] border-[#82B8F6]/40 hover:border-[#138AEE] shadow-sm' 
                           : isBanned 
                             ? 'bg-red-950/20 border-red-800/40' 
-                            : 'bg-slate-800/30 border-slate-800/60 opacity-75'
+                            : 'bg-[#061836]/60 border-[#82B8F6]/10 opacity-75'
                       }`}
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div className="flex items-start gap-3 min-w-0">
                           <div className={`p-2.5 rounded-xl border shrink-0 ${
                             isActive 
-                              ? 'bg-indigo-500/20 border-indigo-500/30 text-indigo-400' 
+                              ? 'bg-[#138AEE]/20 border-[#138AEE]/40 text-[#82B8F6]' 
                               : isBanned 
                                 ? 'bg-red-500/20 border-red-500/30 text-red-400'
-                                : 'bg-slate-800 border-slate-700 text-slate-500'
+                                : 'bg-[#082854] border-[#82B8F6]/20 text-[#82B8F6]/60'
                           }`}>
                             {getDeviceIcon(sess.deviceType)}
                           </div>
@@ -412,14 +414,14 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
                               </h5>
 
                               {isThisBrowser && (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-black bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-black bg-[#138AEE]/20 text-[#82B8F6] border border-[#138AEE]/30">
                                   This Browser
                                 </span>
                               )}
 
                               {isActive && (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black bg-[#138AEE]/20 text-[#82B8F6] border border-[#138AEE]/30">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-[#138AEE] animate-pulse" />
                                   ACTIVE NOW
                                 </span>
                               )}
@@ -430,30 +432,30 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
                                 </span>
                               )}
                               {sess.status === 'terminated' && !isBanned && (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-800 text-slate-400 border border-slate-700">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#082854] text-[#82B8F6]/60 border border-[#82B8F6]/20">
                                   Session Ended
                                 </span>
                               )}
                             </div>
 
-                            <div className="flex items-center gap-3 text-[11px] text-slate-400 mt-1 flex-wrap">
+                            <div className="flex items-center gap-3 text-[11px] text-[#82B8F6] mt-1 flex-wrap">
                               <span className="flex items-center gap-1">
-                                <Globe className="w-3 h-3 text-slate-500" />
+                                <Globe className="w-3 h-3 text-[#82B8F6]/60" />
                                 {sess.browser} • {sess.os}
                               </span>
                               {sess.location && (
                                 <span className="flex items-center gap-1">
-                                  <MapPin className="w-3 h-3 text-slate-500" />
+                                  <MapPin className="w-3 h-3 text-[#82B8F6]/60" />
                                   {sess.location}
                                 </span>
                               )}
                               <span className="flex items-center gap-1">
-                                <Clock className="w-3 h-3 text-slate-500" />
+                                <Clock className="w-3 h-3 text-[#82B8F6]/60" />
                                 Login: {new Date(sess.loginAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                               </span>
                             </div>
 
-                            <div className="text-[10px] font-mono text-slate-500 mt-1 truncate">
+                            <div className="text-[10px] font-mono text-[#82B8F6]/50 mt-1 truncate">
                               ID: {sess.deviceId}
                             </div>
                           </div>
@@ -466,7 +468,7 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
                               type="button"
                               onClick={() => handleTerminateSession(sess.sessionId, sess.deviceName)}
                               disabled={isProcessing}
-                              className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold border border-slate-700 transition-colors cursor-pointer"
+                              className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-[#0C4EA4] text-[#82B8F6] hover:text-white text-xs font-bold border border-[#82B8F6]/20 transition-colors cursor-pointer"
                               title="End active session on this device"
                             >
                               <LogOut className="w-3.5 h-3.5 inline mr-1" />
@@ -509,7 +511,7 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
         {activeTab === 'banned' && (
           <div className="flex-1 overflow-y-auto space-y-4 pr-1">
             {/* Manual Ban Input Form */}
-            <form onSubmit={handleManualAddBan} className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/80 space-y-3">
+            <form onSubmit={handleManualAddBan} className="p-4 rounded-2xl bg-[#061836] border border-[#82B8F6]/20 space-y-3">
               <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-red-400">
                 <PlusCircle className="w-4 h-4" />
                 <span>Ban Device ID Manually</span>
@@ -521,21 +523,21 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
                   onChange={(e) => setManualBanId(e.target.value)}
                   placeholder="Device ID (e.g., dev_...)"
                   required
-                  className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 font-mono outline-none focus:border-red-500"
+                  className="bg-[#082854] border border-[#82B8F6]/30 rounded-xl px-3 py-2 text-xs text-white placeholder-[#82B8F6]/40 font-mono outline-none focus:border-[#138AEE]"
                 />
                 <input
                   type="text"
                   value={manualBanDeviceName}
                   onChange={(e) => setManualBanDeviceName(e.target.value)}
                   placeholder="Device Name (e.g. Unknown iPhone)"
-                  className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-red-500"
+                  className="bg-[#082854] border border-[#82B8F6]/30 rounded-xl px-3 py-2 text-xs text-white placeholder-[#82B8F6]/40 outline-none focus:border-[#138AEE]"
                 />
                 <input
                   type="text"
                   value={manualBanReason}
                   onChange={(e) => setManualBanReason(e.target.value)}
                   placeholder="Ban Reason (Optional)"
-                  className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-red-500"
+                  className="bg-[#082854] border border-[#82B8F6]/30 rounded-xl px-3 py-2 text-xs text-white placeholder-[#82B8F6]/40 outline-none focus:border-[#138AEE]"
                 />
               </div>
               <div className="flex justify-end">
@@ -552,14 +554,14 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
 
             {/* Banned Devices List */}
             <div className="space-y-2.5">
-              <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">
+              <h4 className="text-xs font-black uppercase tracking-wider text-[#82B8F6]">
                 Blacklisted Device Credentials ({bannedList.length})
               </h4>
 
               {bannedList.length === 0 ? (
-                <div className="p-8 text-center bg-slate-800/40 rounded-2xl border border-slate-800">
+                <div className="p-8 text-center bg-[#061836] rounded-2xl border border-[#82B8F6]/20">
                   <ShieldCheck className="w-10 h-10 text-emerald-500/60 mx-auto mb-2" />
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-[#82B8F6]">
                     No devices are currently banned for this client profile.
                   </p>
                 </div>
@@ -585,7 +587,7 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
                         <div className="text-[11px] text-red-300/80 mt-1">
                           Reason: <span className="font-semibold text-white">{record?.reason || 'Restricted by salon administrator'}</span>
                         </div>
-                        <div className="text-[10px] font-mono text-slate-400 mt-0.5">
+                        <div className="text-[10px] font-mono text-[#82B8F6]/60 mt-0.5">
                           ID: {devId} • Banned: {record?.bannedAt ? new Date(record.bannedAt).toLocaleDateString() : 'Active'}
                         </div>
                       </div>
@@ -613,12 +615,12 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
             {/* Single Device Strict Mode Card */}
             <div className={`p-5 rounded-2xl border transition-all ${
               freshProfile.enforceSingleDeviceLogin 
-                ? 'bg-amber-500/10 border-amber-500/40 text-amber-200' 
-                : 'bg-slate-800/60 border-slate-700/60 text-slate-300'
+                ? 'bg-[#138AEE]/10 border-[#138AEE]/40 text-white' 
+                : 'bg-[#061836] border-[#82B8F6]/20 text-[#82B8F6]'
             }`}>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-5 h-5 text-amber-400" />
+                  <ShieldCheck className="w-5 h-5 text-[#82B8F6]" />
                   <span className="text-sm font-bold text-white">
                     Single-Device Strict Login Policy
                   </span>
@@ -630,13 +632,13 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
                   className="cursor-pointer hover:opacity-80 transition-opacity"
                 >
                   {freshProfile.enforceSingleDeviceLogin ? (
-                    <ToggleRight className="w-9 h-9 text-amber-400" />
+                    <ToggleRight className="w-9 h-9 text-[#138AEE]" />
                   ) : (
-                    <ToggleLeft className="w-9 h-9 text-slate-500" />
+                    <ToggleLeft className="w-9 h-9 text-[#82B8F6]/40" />
                   )}
                 </button>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-[#82B8F6]/80 leading-relaxed">
                 When enabled, logging into this client profile on any new phone, tablet, or browser will automatically invalidate and log out all other active sessions worldwide.
               </p>
             </div>
@@ -649,7 +651,7 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
                   Emergency Global Remote Sign-Out
                 </span>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-[#82B8F6]/80 leading-relaxed">
                 Instantly revoke all session credentials and forcibly sign out {freshProfile.businessName} on every device currently online.
               </p>
               <button
@@ -664,9 +666,9 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
             </div>
 
             {/* Security Explanation Info Box */}
-            <div className="p-4 rounded-2xl bg-slate-800/40 border border-slate-700/60 flex items-start gap-3">
-              <Info className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
-              <div className="text-xs text-slate-400 space-y-1">
+            <div className="p-4 rounded-2xl bg-[#061836] border border-[#82B8F6]/20 flex items-start gap-3">
+              <Info className="w-5 h-5 text-[#82B8F6] shrink-0 mt-0.5" />
+              <div className="text-xs text-[#82B8F6] space-y-1">
                 <p className="font-bold text-white">How Device Security Works:</p>
                 <p>• Every device generates a cryptographically consistent fingerprint ID stored with its user-agent, operating system, and geographic timestamp.</p>
                 <p>• Banning a device prevents both active sessions and future login attempts with a clear denial notice.</p>
@@ -677,14 +679,15 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
         )}
 
         {/* Modal Footer */}
-        <div className="pt-4 border-t border-slate-800 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-2 text-xs text-slate-400">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+        <div className="pt-4 border-t border-[#82B8F6]/20 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2 text-xs text-[#82B8F6]">
+            <ShieldCheck className="w-4 h-4 text-[#82B8F6]" />
             <span>Universal Cloud Firestore Device Authorization</span>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-colors cursor-pointer"
+            className="px-5 py-2.5 rounded-xl bg-[#0C4EA4] hover:bg-[#138AEE] text-white text-xs font-bold transition-colors cursor-pointer"
           >
             Done & Close
           </button>
@@ -695,24 +698,24 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
       {/* Ban Reason Confirmation Dialog */}
       {banPrompt.isOpen && (
         <div className="fixed inset-0 z-60 bg-black/90 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-red-500/50 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 animate-scaleUp">
+          <div className="bg-[#082854] border border-red-500/50 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 animate-scaleUp">
             <div className="flex items-center gap-3 text-red-400">
               <div className="p-3 rounded-2xl bg-red-500/20 border border-red-500/30">
                 <Ban className="w-6 h-6" />
               </div>
               <div>
                 <h4 className="font-bold text-white text-base">Ban Device Credential</h4>
-                <p className="text-xs text-slate-400">Restricts access and logs out this device</p>
+                <p className="text-xs text-[#82B8F6]/80">Restricts access and logs out this device</p>
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700 text-xs space-y-1">
-              <p className="text-slate-300">Device: <strong className="text-white">{banPrompt.deviceName}</strong></p>
-              <p className="text-slate-400 font-mono text-[10px] truncate">ID: {banPrompt.deviceId}</p>
+            <div className="p-3 rounded-xl bg-[#061836] border border-[#82B8F6]/20 text-xs space-y-1">
+              <p className="text-[#82B8F6]">Device: <strong className="text-white">{banPrompt.deviceName}</strong></p>
+              <p className="text-[#82B8F6]/60 font-mono text-[10px] truncate">ID: {banPrompt.deviceId}</p>
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-slate-300">
+              <label className="block text-xs font-bold text-[#82B8F6]">
                 Reason for Ban (will be displayed to client):
               </label>
               <input
@@ -720,7 +723,7 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
                 value={banPrompt.reason}
                 onChange={(e) => setBanPrompt(prev => ({ ...prev, reason: e.target.value }))}
                 placeholder="e.g. Unauthorized device, Suspicious login, Lost phone"
-                className="w-full bg-slate-800 border border-slate-700 focus:border-red-500 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none"
+                className="w-full bg-[#061836] border border-[#82B8F6]/30 focus:border-[#138AEE] rounded-xl px-3.5 py-2.5 text-xs text-white outline-none"
               />
             </div>
 
@@ -728,7 +731,7 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
               <button
                 type="button"
                 onClick={() => setBanPrompt(prev => ({ ...prev, isOpen: false }))}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#061836] hover:bg-[#0C4EA4] text-[#82B8F6] hover:text-white text-xs font-bold cursor-pointer"
               >
                 Cancel
               </button>
