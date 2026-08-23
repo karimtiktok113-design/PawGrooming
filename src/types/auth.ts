@@ -289,7 +289,7 @@ export interface AdminNotification {
  * Check if a client profile is currently online based on session status and recent heartbeat activity.
  * A client is considered online if:
  * 1. isCurrentlyLoggedIn is true
- * 2. lastActiveAt is within the last 6 seconds (fresh 2-second heartbeat with 3-interval grace window)
+ * 2. lastActiveAt is within the last 40 seconds (fresh heartbeat)
  */
 export function isClientProfileOnline(profile?: ClientProfile | null): boolean {
   if (!profile || !profile.isCurrentlyLoggedIn) return false;
@@ -297,7 +297,7 @@ export function isClientProfileOnline(profile?: ClientProfile | null): boolean {
   const lastActiveMs = new Date(profile.lastActiveAt).getTime();
   if (isNaN(lastActiveMs)) return false;
   const diffMs = Date.now() - lastActiveMs;
-  // Consider online if heartbeat was active within the last 6 seconds
-  return diffMs >= 0 && diffMs < 6000;
+  // Consider online if heartbeat was active within the last 40 seconds
+  return diffMs >= 0 && diffMs < 40000;
 }
 
