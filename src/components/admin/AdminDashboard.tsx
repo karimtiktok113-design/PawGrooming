@@ -68,7 +68,8 @@ export const AdminDashboard: React.FC = () => {
   } = useAuth();
 
   const [activeTab, setActiveTab] = useState<'profiles' | 'notifications' | 'plans' | 'logs' | 'settings'>('profiles');
-  const [preselectedForPush, setPreselectedForPush] = useState<string | null>(null);
+  const [preselectedForPush, setPreselectedForPush] = useState<string | string[] | null>(null);
+  const [selectedClientIds, setSelectedClientIds] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive' | 'expired'>('all');
   const [planFilter, setPlanFilter] = useState<'all' | SubscriptionPlan>('all');
@@ -82,6 +83,22 @@ export const AdminDashboard: React.FC = () => {
       setIsSyncing(false);
       showToast('Database synchronized across all devices worldwide.');
     }, 400);
+  };
+
+  const toggleSelectClient = (profileId: string) => {
+    setSelectedClientIds(prev => 
+      prev.includes(profileId) ? prev.filter(id => id !== profileId) : [...prev, profileId]
+    );
+  };
+
+  const handleClearSelectedClients = () => {
+    setSelectedClientIds([]);
+  };
+
+  const handleSendNotificationToSelected = () => {
+    if (selectedClientIds.length === 0) return;
+    setPreselectedForPush(selectedClientIds);
+    setActiveTab('notifications');
   };
 
   // Modal states
@@ -416,6 +433,44 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
+        {/* Batch Selection Banner & Actions */}
+        {selectedClientIds.length > 0 && activeTab === 'profiles' && (
+          <div className="mb-4 p-3 bg-gradient-to-r from-[#FF6B00]/20 via-[#FF6B00]/10 to-[#1C0908] rounded-2xl border border-[#FF6B00]/40 flex flex-wrap items-center justify-between gap-3 shadow-lg animate-in fade-in duration-200">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-[#FF6B00] text-white flex items-center justify-center font-bold text-sm shadow-md">
+                {selectedClientIds.length}
+              </div>
+              <div>
+                <p className="text-xs font-bold text-white">
+                  {selectedClientIds.length} {selectedClientIds.length === 1 ? 'Client Studio Selected' : 'Client Studios Selected'}
+                </p>
+                <p className="text-[10px] text-[#A08E8B]">
+                  Batch actions available for selected client profiles
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleSendNotificationToSelected}
+                className="px-3.5 py-1.5 rounded-xl bg-[#FF6B00] hover:bg-[#E55C00] text-white text-xs font-bold shadow-md flex items-center gap-1.5 transition-all cursor-pointer"
+              >
+                <Bell className="w-3.5 h-3.5" />
+                <span>Send Notification to {selectedClientIds.length} {selectedClientIds.length === 1 ? 'Client' : 'Clients'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleClearSelectedClients}
+                className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/10 transition-all cursor-pointer"
+              >
+                Deselect All
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Tab 1: Client Profiles Table */}
         {activeTab === 'profiles' && (
           <div className="bg-[#1C0908] rounded-3xl border border-white/10 overflow-hidden shadow-xl">
@@ -423,6 +478,23 @@ export const AdminDashboard: React.FC = () => {
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="border-b border-white/10 bg-white/[0.02] text-[#A08E8B] font-bold uppercase tracking-wider text-[10px]">
+                    <th className="py-3.5 px-3 w-10 text-center">
+                      <input 
+                        type="checkbox"
+                        checked={filteredProfiles.length > 0 && filteredProfiles.every(p => selectedClientIds.includes(p.profileId))}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            const allFilteredIds = filteredProfiles.map(p => p.profileId);
+                            setSelectedClientIds(prev => Array.from(new Set([...prev, ...allFilteredIds])));
+                          } else {
+                            const filteredIdSet = new Set(filteredProfiles.map(p => p.profileId));
+                            setSelectedClientIds(prev => prev.filter(id => !filteredIdSet.has(id)));
+                          }
+                        }}
+                        className="w-3.5 h-3.5 accent-[#FF6B00] rounded cursor-pointer"
+                        title="Select/Deselect all visible clients"
+                      />
+                    </th>
                     <th className="py-3.5 px-4">Profile ID</th>
                     <th className="py-3.5 px-4">Business & Owner</th>
                     <th className="py-3.5 px-4">Live Status & Devices</th>
@@ -436,7 +508,7 @@ export const AdminDashboard: React.FC = () => {
                 <tbody className="divide-y divide-white/5 text-white">
                   {filteredProfiles.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="py-12 text-center text-[#7A6865]">
+                      <td colSpan={9} className="py-12 text-center text-[#7A6865]">
                         <Store className="w-10 h-10 mx-auto text-[#7A6865]/40 mb-2" />
                         <p className="font-bold text-sm">No client profiles found</p>
                         <p className="text-xs text-[#7A6865] mt-1">Try adjusting your filters or create a new client account.</p>
@@ -450,9 +522,26 @@ export const AdminDashboard: React.FC = () => {
                       const deviceCount = activeSessions.length || (p.isCurrentlyLoggedIn ? 1 : 0);
                       const isSingleDeviceEnforced = !!p.enforceSingleDeviceLogin;
                       const bannedCount = (p.bannedDevices || []).length;
+                      const isSelected = selectedClientIds.includes(p.profileId);
 
                       return (
-                        <tr key={p.profileId} className="hover:bg-white/[0.02] transition-colors">
+                        <tr 
+                          key={p.profileId} 
+                          className={`transition-colors ${
+                            isSelected ? 'bg-[#FF6B00]/10' : 'hover:bg-white/[0.02]'
+                          }`}
+                        >
+                          {/* Selection Checkbox */}
+                          <td className="py-3.5 px-3 text-center">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => toggleSelectClient(p.profileId)}
+                              className="w-3.5 h-3.5 accent-[#FF6B00] rounded cursor-pointer"
+                              title={`Select ${p.businessName}`}
+                            />
+                          </td>
+
                           {/* Profile ID */}
                           <td className="py-3.5 px-4 font-mono font-bold text-[#FF6B00]">
                             <div className="flex items-center gap-1.5">

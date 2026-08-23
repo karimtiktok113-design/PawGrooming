@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { 
   AdminNotification, 
   NotificationType, 
   NotificationPriority, 
-  ClientProfile 
+  ClientProfile,
+  isClientProfileOnline
 } from '../../types/auth';
 import { 
   READY_MADE_NOTIFICATION_TEMPLATES, 
@@ -46,12 +47,17 @@ import {
   Bookmark,
   Radio,
   Share2,
-  Copy
+  Copy,
+  CheckSquare,
+  Square,
+  CheckCheck,
+  UserCheck,
+  Target
 } from 'lucide-react';
 
 export const AdminNotificationsManager: React.FC<{
   onSendSuccess?: (msg: string) => void;
-  preselectedProfileId?: string | null;
+  preselectedProfileId?: string | string[] | null;
 }> = ({ onSendSuccess, preselectedProfileId }) => {
   const { 
     authDatabase, 
@@ -68,7 +74,7 @@ export const AdminNotificationsManager: React.FC<{
   const [templateBrowserOpen, setTemplateBrowserOpen] = useState(false);
   const [previewNotification, setPreviewNotification] = useState<AdminNotification | NotificationTemplate | null>(null);
   
-  // Filters
+  // Filters for Broadcasts
   const [filterType, setFilterType] = useState<string>('all');
   const [filterTarget, setFilterTarget] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -78,7 +84,10 @@ export const AdminNotificationsManager: React.FC<{
 
   // Form State for creating notification
   const [targetType, setTargetType] = useState<'all' | 'specific'>('all');
-  const [targetProfileId, setTargetProfileId] = useState<string>('');
+  const [selectedProfileIds, setSelectedProfileIds] = useState<string[]>([]);
+  const [clientPickerSearch, setClientPickerSearch] = useState('');
+  const [clientPickerFilter, setClientPickerFilter] = useState<'all' | 'active' | 'online' | 'Starter' | 'Pro' | 'Premium' | 'Enterprise'>('all');
+
   const [type, setType] = useState<NotificationType>('popup');
   const [priority, setPriority] = useState<NotificationPriority>('info');
   const [title, setTitle] = useState('');
@@ -90,14 +99,63 @@ export const AdminNotificationsManager: React.FC<{
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
 
-  // Handle incoming preselected profile
+  // Handle incoming preselected profile(s)
   useEffect(() => {
     if (preselectedProfileId) {
       setTargetType('specific');
-      setTargetProfileId(preselectedProfileId);
+      if (Array.isArray(preselectedProfileId)) {
+        setSelectedProfileIds(preselectedProfileId);
+      } else {
+        setSelectedProfileIds([preselectedProfileId]);
+      }
       setCreateModalOpen(true);
     }
   }, [preselectedProfileId]);
+
+  // Filtered clients for multi-select picker
+  const filteredClientsForPicker = useMemo(() => {
+    return authDatabase.profiles.filter(p => {
+      const matchSearch = 
+        p.businessName.toLowerCase().includes(clientPickerSearch.toLowerCase()) ||
+        p.ownerName.toLowerCase().includes(clientPickerSearch.toLowerCase()) ||
+        p.profileId.toLowerCase().includes(clientPickerSearch.toLowerCase()) ||
+        p.email.toLowerCase().includes(clientPickerSearch.toLowerCase());
+
+      let matchFilter = true;
+      if (clientPickerFilter === 'active') matchFilter = p.status === 'active';
+      else if (clientPickerFilter === 'online') matchFilter = isClientProfileOnline(p);
+      else if (['Starter', 'Pro', 'Premium', 'Enterprise'].includes(clientPickerFilter)) {
+        matchFilter = p.plan === clientPickerFilter;
+      }
+
+      return matchSearch && matchFilter;
+    });
+  }, [authDatabase.profiles, clientPickerSearch, clientPickerFilter]);
+
+  const toggleSelectProfile = (profileId: string) => {
+    setSelectedProfileIds(prev => 
+      prev.includes(profileId) ? prev.filter(id => id !== profileId) : [...prev, profileId]
+    );
+  };
+
+  const handleSelectAllFiltered = () => {
+    const ids = filteredClientsForPicker.map(p => p.profileId);
+    setSelectedProfileIds(prev => Array.from(new Set([...prev, ...ids])));
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedProfileIds([]);
+  };
+
+  const handleSelectActiveOnly = () => {
+    const activeIds = authDatabase.profiles.filter(p => p.status === 'active').map(p => p.profileId);
+    setSelectedProfileIds(activeIds);
+  };
+
+  const handleSelectOnlineOnly = () => {
+    const onlineIds = authDatabase.profiles.filter(p => isClientProfileOnline(p)).map(p => p.profileId);
+    setSelectedProfileIds(onlineIds);
+  };
 
   // Preset Image Options for rapid selection
   const imagePresets = [
@@ -127,23 +185,31 @@ export const AdminNotificationsManager: React.FC<{
     
     if (!keepTarget) {
       setTargetType('all');
-      setTargetProfileId('');
+      setSelectedProfileIds([]);
     }
   };
 
   // 1-Click Instant Broadcast directly from template card
-  const handleQuickBroadcastTemplate = async (tmpl: NotificationTemplate, forProfileId?: string) => {
+  const handleQuickBroadcastTemplate = async (tmpl: NotificationTemplate, targetProfiles?: string[]) => {
     try {
-      const isSpecific = !!forProfileId;
+      const hasSpecific = targetProfiles && targetProfiles.length > 0;
       let targetBusinessName = 'All Client Studios (Global)';
-      if (isSpecific) {
-        const found = authDatabase.profiles.find(p => p.profileId === forProfileId);
-        targetBusinessName = found ? `${found.businessName} (${found.profileId})` : forProfileId;
+      if (hasSpecific) {
+        if (targetProfiles.length === 1) {
+          const found = authDatabase.profiles.find(p => p.profileId === targetProfiles[0]);
+          targetBusinessName = found ? `${found.businessName} (${found.profileId})` : targetProfiles[0];
+        } else {
+          const names = authDatabase.profiles
+            .filter(p => targetProfiles.includes(p.profileId))
+            .map(p => p.businessName);
+          targetBusinessName = `${targetProfiles.length} Specific Clients (${names.slice(0, 2).join(', ')}${targetProfiles.length > 2 ? ` +${targetProfiles.length - 2} more` : ''})`;
+        }
       }
 
       await createAdminNotification({
-        targetType: isSpecific ? 'specific' : 'all',
-        targetProfileId: isSpecific ? forProfileId : 'all',
+        targetType: hasSpecific ? 'specific' : 'all',
+        targetProfileId: hasSpecific ? targetProfiles[0] : 'all',
+        targetProfileIds: hasSpecific ? targetProfiles : undefined,
         targetBusinessName,
         type: tmpl.type,
         priority: tmpl.priority,
@@ -168,7 +234,7 @@ export const AdminNotificationsManager: React.FC<{
     }
   };
 
-  const handleOpenCreateModal = (specificProfileId?: string, initialTemplate?: NotificationTemplate) => {
+  const handleOpenCreateModal = (specificProfileIds?: string[] | string, initialTemplate?: NotificationTemplate) => {
     if (initialTemplate) {
       applyTemplate(initialTemplate, true);
     } else {
@@ -183,15 +249,15 @@ export const AdminNotificationsManager: React.FC<{
       setPriority('info');
     }
 
-    if (specificProfileId) {
+    if (specificProfileIds) {
       setTargetType('specific');
-      setTargetProfileId(specificProfileId);
+      setSelectedProfileIds(Array.isArray(specificProfileIds) ? specificProfileIds : [specificProfileIds]);
     } else if (preselectedProfileId) {
       setTargetType('specific');
-      setTargetProfileId(preselectedProfileId);
+      setSelectedProfileIds(Array.isArray(preselectedProfileId) ? preselectedProfileId : [preselectedProfileId]);
     } else {
       setTargetType('all');
-      setTargetProfileId('');
+      setSelectedProfileIds([]);
     }
     
     setCreateModalOpen(true);
@@ -204,22 +270,30 @@ export const AdminNotificationsManager: React.FC<{
       return;
     }
 
-    if (targetType === 'specific' && !targetProfileId) {
-      alert('Please select a specific client profile.');
+    if (targetType === 'specific' && selectedProfileIds.length === 0) {
+      alert('Please select at least one specific client profile to receive this notification.');
       return;
     }
 
     setIsSubmitting(true);
     try {
-      let targetBusinessName = 'All Client Studios';
+      let targetBusinessName = 'All Client Studios (Global)';
       if (targetType === 'specific') {
-        const found = authDatabase.profiles.find(p => p.profileId === targetProfileId);
-        targetBusinessName = found ? `${found.businessName} (${found.profileId})` : targetProfileId;
+        if (selectedProfileIds.length === 1) {
+          const found = authDatabase.profiles.find(p => p.profileId === selectedProfileIds[0]);
+          targetBusinessName = found ? `${found.businessName} (${found.profileId})` : selectedProfileIds[0];
+        } else {
+          const selectedNames = authDatabase.profiles
+            .filter(p => selectedProfileIds.includes(p.profileId))
+            .map(p => p.businessName);
+          targetBusinessName = `${selectedProfileIds.length} Selected Clients (${selectedNames.slice(0, 2).join(', ')}${selectedProfileIds.length > 2 ? ` +${selectedProfileIds.length - 2} more` : ''})`;
+        }
       }
 
       await createAdminNotification({
         targetType,
-        targetProfileId: targetType === 'specific' ? targetProfileId : 'all',
+        targetProfileId: targetType === 'specific' ? selectedProfileIds[0] : 'all',
+        targetProfileIds: targetType === 'specific' ? selectedProfileIds : undefined,
         targetBusinessName,
         type,
         priority,
@@ -234,7 +308,7 @@ export const AdminNotificationsManager: React.FC<{
 
       setCreateModalOpen(false);
       if (onSendSuccess) {
-        onSendSuccess(`Notification successfully broadcasted to ${targetBusinessName}!`);
+        onSendSuccess(`Notification broadcasted to ${targetBusinessName}!`);
       }
     } catch (err) {
       console.error('Failed to create notification:', err);
@@ -264,10 +338,22 @@ export const AdminNotificationsManager: React.FC<{
     const matchSearch = 
       n.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       n.message.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (n.targetBusinessName && n.targetBusinessName.toLowerCase().includes(searchTerm.toLowerCase()));
+      (n.targetBusinessName && n.targetBusinessName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (n.targetProfileId && n.targetProfileId.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (n.targetProfileIds && n.targetProfileIds.some(id => id.toLowerCase().includes(searchTerm.toLowerCase())));
 
     const matchType = filterType === 'all' || n.type === filterType;
-    const matchTarget = filterTarget === 'all' || n.targetType === filterTarget;
+    
+    let matchTarget = true;
+    if (filterTarget === 'global') {
+      matchTarget = n.targetType === 'all';
+    } else if (filterTarget === 'specific') {
+      matchTarget = n.targetType === 'specific';
+    } else if (filterTarget === 'multi_specific') {
+      matchTarget = n.targetType === 'specific' && !!n.targetProfileIds && n.targetProfileIds.length > 1;
+    } else if (filterTarget === 'single_specific') {
+      matchTarget = n.targetType === 'specific' && (!n.targetProfileIds || n.targetProfileIds.length <= 1);
+    }
 
     return matchSearch && matchType && matchTarget;
   });
@@ -636,8 +722,10 @@ export const AdminNotificationsManager: React.FC<{
                 className="px-3 py-2 text-xs bg-white/5 border border-white/10 rounded-xl text-white outline-none cursor-pointer focus:border-[#FF6B00]"
               >
                 <option value="all" className="bg-[#1C0908]">All Targets</option>
-                <option value="all" className="bg-[#1C0908]">Global Broadcasts</option>
-                <option value="specific" className="bg-[#1C0908]">Specific Clients</option>
+                <option value="global" className="bg-[#1C0908]">Global Broadcasts (All Clients)</option>
+                <option value="specific" className="bg-[#1C0908]">All Targeted (Specific Clients)</option>
+                <option value="multi_specific" className="bg-[#1C0908]">🎯 Multiple Specific Clients</option>
+                <option value="single_specific" className="bg-[#1C0908]">👤 Single Client Targeted</option>
               </select>
             </div>
           </div>
@@ -683,11 +771,19 @@ export const AdminNotificationsManager: React.FC<{
                       {getPriorityBadge(notif.priority)}
                       {getTypeBadge(notif.type)}
 
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] font-bold bg-white/10 text-white">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-[10px] font-bold bg-white/10 text-white">
                         {notif.targetType === 'all' ? (
                           <>
                             <Users className="w-3 h-3 text-[#2E8A81]" />
                             <span>All Clients (Global Broadcast)</span>
+                          </>
+                        ) : notif.targetProfileIds && notif.targetProfileIds.length > 1 ? (
+                          <>
+                            <Target className="w-3 h-3 text-[#FF6B00]" />
+                            <span>Targeted: <strong className="text-[#FF6B00]">{notif.targetProfileIds.length} Selected Clients</strong></span>
+                            <span className="text-[9px] text-[#A08E8B] bg-black/40 px-1.5 py-0.2 rounded">
+                              {notif.targetProfileIds.slice(0, 3).join(', ')}{notif.targetProfileIds.length > 3 ? '...' : ''}
+                            </span>
                           </>
                         ) : (
                           <>
@@ -856,50 +952,277 @@ export const AdminNotificationsManager: React.FC<{
 
               {/* Target Audience */}
               <div>
-                <label className="text-[11px] font-bold text-[#A08E8B] uppercase tracking-wider block mb-1.5">
-                  Target Recipient
-                </label>
-                <div className="grid grid-cols-2 gap-2 mb-2">
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-[11px] font-bold text-[#A08E8B] uppercase tracking-wider block">
+                    Target Recipient Audience *
+                  </label>
+                  {targetType === 'specific' && (
+                    <span className="text-[11px] font-bold text-[#FF6B00]">
+                      {selectedProfileIds.length} of {authDatabase.profiles.length} Clients Selected
+                    </span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 mb-3">
                   <button
                     type="button"
-                    onClick={() => setTargetType('all')}
-                    className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border transition-all cursor-pointer ${
+                    onClick={() => {
+                      setTargetType('all');
+                      setSelectedProfileIds([]);
+                    }}
+                    className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border transition-all cursor-pointer ${
                       targetType === 'all' 
-                        ? 'bg-[#FF6B00] text-white border-[#FF6B00]' 
-                        : 'bg-white/5 text-[#A08E8B] border-white/10 hover:text-white'
+                        ? 'bg-[#FF6B00] text-white border-[#FF6B00] shadow-md shadow-[#FF6B00]/20' 
+                        : 'bg-white/5 text-[#A08E8B] border-white/10 hover:text-white hover:bg-white/10'
                     }`}
                   >
-                    <Users className="w-3.5 h-3.5" />
-                    <span>All Clients (Broadcast)</span>
+                    <Users className="w-4 h-4" />
+                    <span>All Clients (Global Broadcast)</span>
                   </button>
                   <button
                     type="button"
-                    onClick={() => setTargetType('specific')}
-                    className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border transition-all cursor-pointer ${
+                    onClick={() => {
+                      setTargetType('specific');
+                      if (selectedProfileIds.length === 0 && authDatabase.profiles.length > 0) {
+                        setSelectedProfileIds([authDatabase.profiles[0].profileId]);
+                      }
+                    }}
+                    className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border transition-all cursor-pointer ${
                       targetType === 'specific' 
-                        ? 'bg-[#FF6B00] text-white border-[#FF6B00]' 
-                        : 'bg-white/5 text-[#A08E8B] border-white/10 hover:text-white'
+                        ? 'bg-[#FF6B00] text-white border-[#FF6B00] shadow-md shadow-[#FF6B00]/20' 
+                        : 'bg-white/5 text-[#A08E8B] border-white/10 hover:text-white hover:bg-white/10'
                     }`}
                   >
-                    <User className="w-3.5 h-3.5" />
-                    <span>Specific Client Profile</span>
+                    <Target className="w-4 h-4" />
+                    <span>Select Specific Clients (Multiple)</span>
                   </button>
                 </div>
 
                 {targetType === 'specific' && (
-                  <select
-                    value={targetProfileId}
-                    onChange={(e) => setTargetProfileId(e.target.value)}
-                    required
-                    className="w-full px-3 py-2 text-xs bg-white/5 border border-[#FF6B00]/40 rounded-xl text-white outline-none focus:border-[#FF6B00]"
-                  >
-                    <option value="" className="bg-[#1C0908]">-- Select Client Profile --</option>
-                    {authDatabase.profiles.map(p => (
-                      <option key={p.profileId} value={p.profileId} className="bg-[#1C0908]">
-                        {p.businessName} ({p.profileId}) - {p.ownerName} [{p.status.toUpperCase()}]
-                      </option>
-                    ))}
-                  </select>
+                  <div className="p-3.5 bg-white/5 rounded-2xl border border-[#FF6B00]/30 space-y-3">
+                    {/* Header & Quick Action Buttons */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-white/10">
+                      <div className="flex items-center gap-2">
+                        <UserCheck className="w-4 h-4 text-[#FF6B00]" />
+                        <span className="text-xs font-bold text-white">
+                          Select Client Profiles ({selectedProfileIds.length} chosen)
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <button
+                          type="button"
+                          onClick={handleSelectAllFiltered}
+                          className="px-2 py-1 rounded-lg text-[10px] font-bold bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer flex items-center gap-1"
+                          title="Select all clients currently shown in filtered list"
+                        >
+                          <CheckSquare className="w-3 h-3 text-[#4ECDC4]" />
+                          <span>Select Filtered ({filteredClientsForPicker.length})</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={handleSelectActiveOnly}
+                          className="px-2 py-1 rounded-lg text-[10px] font-bold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 transition-colors cursor-pointer flex items-center gap-1"
+                          title="Select only active client accounts"
+                        >
+                          <CheckCheck className="w-3 h-3 text-emerald-400" />
+                          <span>Select Active ({authDatabase.profiles.filter(p => p.status === 'active').length})</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={handleSelectOnlineOnly}
+                          className="px-2 py-1 rounded-lg text-[10px] font-bold bg-blue-500/15 hover:bg-blue-500/25 text-blue-300 transition-colors cursor-pointer flex items-center gap-1"
+                          title="Select only clients currently active/online"
+                        >
+                          <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+                          <span>Online Only ({authDatabase.profiles.filter(p => isClientProfileOnline(p)).length})</span>
+                        </button>
+
+                        {selectedProfileIds.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={handleDeselectAll}
+                            className="px-2 py-1 rounded-lg text-[10px] font-bold bg-red-500/15 hover:bg-red-500/25 text-red-300 transition-colors cursor-pointer flex items-center gap-1"
+                          >
+                            <X className="w-3 h-3" />
+                            <span>Clear Selection</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Search & Filter pills */}
+                    <div className="space-y-2">
+                      <div className="relative">
+                        <Search className="w-3.5 h-3.5 text-[#A08E8B] absolute left-3 top-1/2 -translate-y-1/2" />
+                        <input
+                          type="text"
+                          placeholder="Search clients by studio name, owner, profile ID, or email..."
+                          value={clientPickerSearch}
+                          onChange={(e) => setClientPickerSearch(e.target.value)}
+                          className="w-full pl-8.5 pr-8 py-1.5 text-xs bg-white/5 border border-white/10 rounded-xl text-white placeholder-[#7A6865] focus:border-[#FF6B00] outline-none"
+                        />
+                        {clientPickerSearch && (
+                          <button
+                            type="button"
+                            onClick={() => setClientPickerSearch('')}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#A08E8B] hover:text-white cursor-pointer"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Quick filter pills */}
+                      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-[10px]">
+                        {[
+                          { id: 'all', label: `All (${authDatabase.profiles.length})` },
+                          { id: 'active', label: `Active (${authDatabase.profiles.filter(p => p.status === 'active').length})` },
+                          { id: 'online', label: `Online Now (${authDatabase.profiles.filter(p => isClientProfileOnline(p)).length})` },
+                          { id: 'Starter', label: `Starter (${authDatabase.profiles.filter(p => p.plan === 'Starter').length})` },
+                          { id: 'Pro', label: `Pro (${authDatabase.profiles.filter(p => p.plan === 'Pro').length})` },
+                          { id: 'Premium', label: `Premium (${authDatabase.profiles.filter(p => p.plan === 'Premium').length})` },
+                          { id: 'Enterprise', label: `Enterprise (${authDatabase.profiles.filter(p => p.plan === 'Enterprise').length})` },
+                        ].map((filterTab) => (
+                          <button
+                            key={filterTab.id}
+                            type="button"
+                            onClick={() => setClientPickerFilter(filterTab.id as any)}
+                            className={`px-2.5 py-1 rounded-lg font-bold shrink-0 transition-all cursor-pointer ${
+                              clientPickerFilter === filterTab.id
+                                ? 'bg-[#FF6B00] text-white'
+                                : 'bg-white/5 text-[#A08E8B] hover:text-white hover:bg-white/10'
+                            }`}
+                          >
+                            {filterTab.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Selected Client Chips Preview Tray */}
+                    {selectedProfileIds.length > 0 && (
+                      <div className="p-2 bg-black/30 rounded-xl border border-white/5 space-y-1.5">
+                        <div className="flex items-center justify-between text-[10px] text-[#A08E8B]">
+                          <span>Active Recipients ({selectedProfileIds.length}):</span>
+                          <button
+                            type="button"
+                            onClick={handleDeselectAll}
+                            className="text-red-400 hover:underline cursor-pointer"
+                          >
+                            Remove All
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
+                          {selectedProfileIds.map((id) => {
+                            const client = authDatabase.profiles.find(p => p.profileId === id);
+                            return (
+                              <span
+                                key={id}
+                                className="inline-flex items-center gap-1 pl-2 pr-1.5 py-0.5 rounded-lg text-[10px] font-bold bg-[#FF6B00]/20 text-[#FFA052] border border-[#FF6B00]/30"
+                              >
+                                <span>{client?.businessName || id}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => toggleSelectProfile(id)}
+                                  className="hover:bg-[#FF6B00]/40 rounded p-0.5 transition-colors cursor-pointer text-white"
+                                  title="Remove client from broadcast"
+                                >
+                                  <X className="w-2.5 h-2.5" />
+                                </button>
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Checkbox List */}
+                    <div className="max-h-52 overflow-y-auto space-y-1.5 pr-1 divide-y divide-white/5">
+                      {filteredClientsForPicker.length === 0 ? (
+                        <div className="p-6 text-center text-xs text-[#A08E8B]">
+                          No client profiles match your search criteria.
+                        </div>
+                      ) : (
+                        filteredClientsForPicker.map((p) => {
+                          const isSelected = selectedProfileIds.includes(p.profileId);
+                          const isOnline = isClientProfileOnline(p);
+
+                          return (
+                            <div
+                              key={p.profileId}
+                              onClick={() => toggleSelectProfile(p.profileId)}
+                              className={`p-2.5 rounded-xl border transition-all flex items-center justify-between gap-3 cursor-pointer select-none ${
+                                isSelected
+                                  ? 'bg-[#FF6B00]/15 border-[#FF6B00] shadow-sm'
+                                  : 'bg-white/5 border-transparent hover:border-white/10 hover:bg-white/10'
+                              }`}
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors shrink-0 ${
+                                  isSelected 
+                                    ? 'bg-[#FF6B00] border-[#FF6B00] text-white' 
+                                    : 'border-white/30 bg-black/30 text-transparent'
+                                }`}>
+                                  <Check className="w-3 h-3 stroke-[3]" />
+                                </div>
+
+                                <div className="min-w-0">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <span className={`text-xs font-bold truncate ${isSelected ? 'text-white' : 'text-[#FAF8F5]'}`}>
+                                      {p.businessName}
+                                    </span>
+                                    <span className="text-[10px] text-[#A08E8B] font-mono bg-black/40 px-1.5 py-0.2 rounded">
+                                      {p.profileId}
+                                    </span>
+                                    {isOnline && (
+                                      <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded-full border border-emerald-500/20">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                        <span>Online</span>
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-2 text-[10px] text-[#A08E8B] truncate mt-0.5">
+                                    <span>{p.ownerName}</span>
+                                    <span>•</span>
+                                    <span className="truncate">{p.email}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-1.5 shrink-0">
+                                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded uppercase ${
+                                  p.plan === 'Enterprise' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' :
+                                  p.plan === 'Premium' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
+                                  p.plan === 'Pro' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
+                                  'bg-gray-500/20 text-gray-300 border border-gray-500/30'
+                                }`}>
+                                  {p.plan}
+                                </span>
+
+                                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase ${
+                                  p.status === 'active' 
+                                    ? 'bg-emerald-500/20 text-emerald-300' 
+                                    : 'bg-red-500/20 text-red-300'
+                                }`}>
+                                  {p.status}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+
+                    {selectedProfileIds.length === 0 && (
+                      <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4 shrink-0" />
+                        <span>Please select at least one client profile from the list above.</span>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
 

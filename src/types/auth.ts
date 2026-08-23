@@ -257,7 +257,8 @@ export type NotificationPriority = 'info' | 'warning' | 'urgent' | 'promotion' |
 export interface AdminNotification {
   id: string;
   targetType: 'all' | 'specific';
-  targetProfileId?: string; // profileId or 'all'
+  targetProfileId?: string; // profileId or 'all' (primary target or fallback)
+  targetProfileIds?: string[]; // Array of selected profileIds when targeting multiple specific clients
   targetBusinessName?: string;
   type: NotificationType;
   priority: NotificationPriority;

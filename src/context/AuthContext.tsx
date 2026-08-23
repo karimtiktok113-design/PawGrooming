@@ -976,7 +976,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return notifications.filter(n => {
       if (!n.isActive) return false;
       if (n.targetType === 'all') return true;
-      return n.targetProfileId === currentClientProfileId;
+      if (n.targetType === 'specific') {
+        if (n.targetProfileId === currentClientProfileId) return true;
+        if (Array.isArray(n.targetProfileIds) && n.targetProfileIds.includes(currentClientProfileId)) return true;
+      }
+      return false;
     });
   }, [notifications, currentClientProfileId]);
 

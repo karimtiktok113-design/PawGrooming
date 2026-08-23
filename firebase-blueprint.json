@@ -78,6 +78,34 @@
         "lastLogin": { "type": "string" }
       },
       "required": ["id", "name", "email", "password", "role"]
+    },
+    "AdminNotification": {
+      "title": "Admin Notification",
+      "description": "Broadcast notifications and targeted alerts sent to client profiles.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "targetType": { "type": "string", "enum": ["all", "specific"] },
+        "targetProfileId": { "type": "string" },
+        "targetProfileIds": { "type": "array", "items": { "type": "string" } },
+        "targetBusinessName": { "type": "string" },
+        "type": { "type": "string" },
+        "priority": { "type": "string", "enum": ["info", "warning", "urgent", "promotion", "update"] },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "actionLabel": { "type": "string" },
+        "actionUrl": { "type": "string" },
+        "actionTarget": { "type": "string", "enum": ["_blank", "_self"] },
+        "createdAt": { "type": "string" },
+        "expiresAt": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "readBy": { "type": "array", "items": { "type": "string" } },
+        "dismissedBy": { "type": "array", "items": { "type": "string" } },
+        "isActive": { "type": "boolean" },
+        "metadata": { "type": "object" }
+      },
+      "required": ["id", "targetType", "type", "priority", "title", "message", "createdAt", "isActive"]
     }
   },
   "firestore": {
@@ -88,6 +116,10 @@
     "/admin_config/{adminId}": {
       "schema": "AdminConfig",
       "description": "Admin configuration and security credentials"
+    },
+    "/admin_broadcasts/{notifId}": {
+      "schema": "AdminNotification",
+      "description": "Collection of broadcast and targeted admin push notifications"
     }
   }
 }
