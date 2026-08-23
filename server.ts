@@ -414,73 +414,7 @@ app.delete('/api/auth/profiles/:profileId', (req, res) => {
   res.json({ success: true, database: updatedDb });
 });
 
-// 9. Presence endpoints (for navigator.sendBeacon & keepalive on browser close)
-app.post('/api/presence/offline', (req, res) => {
-  try {
-    const { profileId, sessionId } = req.body || {};
-    if (profileId) {
-      currentDb = readServerAuthDb();
-      const updatedProfiles = currentDb.profiles.map((p: any) => {
-        if (p.profileId === profileId) {
-          const now = new Date().toISOString();
-          let updatedSessions = Array.isArray(p.activeSessions) ? [...p.activeSessions] : [];
-          if (sessionId) {
-            updatedSessions = updatedSessions.map((s: any) =>
-              s.sessionId === sessionId ? { ...s, status: 'inactive', lastActiveAt: now } : s
-            );
-          } else {
-            updatedSessions = updatedSessions.map((s: any) => ({ ...s, status: 'inactive', lastActiveAt: now }));
-          }
-          const hasAnyOtherActive = updatedSessions.some((s: any) => s.status === 'active');
-          return {
-            ...p,
-            isCurrentlyLoggedIn: hasAnyOtherActive,
-            lastActiveAt: now,
-            activeSessions: updatedSessions
-          };
-        }
-        return p;
-      });
-      writeServerAuthDb({ ...currentDb, profiles: updatedProfiles, lastUpdated: new Date().toISOString() });
-    }
-    res.json({ success: true });
-  } catch (err: any) {
-    res.status(500).json({ error: err?.message });
-  }
-});
-
-app.post('/api/presence/heartbeat', (req, res) => {
-  try {
-    const { profileId, sessionId } = req.body || {};
-    if (profileId) {
-      currentDb = readServerAuthDb();
-      const updatedProfiles = currentDb.profiles.map((p: any) => {
-        if (p.profileId === profileId) {
-          const now = new Date().toISOString();
-          let updatedSessions = Array.isArray(p.activeSessions) ? [...p.activeSessions] : [];
-          if (sessionId) {
-            updatedSessions = updatedSessions.map((s: any) =>
-              s.sessionId === sessionId ? { ...s, status: 'active', lastActiveAt: now } : s
-            );
-          }
-          return {
-            ...p,
-            isCurrentlyLoggedIn: true,
-            lastActiveAt: now,
-            activeSessions: updatedSessions
-          };
-        }
-        return p;
-      });
-      writeServerAuthDb({ ...currentDb, profiles: updatedProfiles, lastUpdated: new Date().toISOString() });
-    }
-    res.json({ success: true });
-  } catch (err: any) {
-    res.status(500).json({ error: err?.message });
-  }
-});
-
-// 10. Reset database
+// 9. Reset database
 app.post('/api/auth/reset', (req, res) => {
   const updatedDb = {
     ...DEFAULT_AUTH_DB,

@@ -6,7 +6,6 @@ import { ClientNotificationFloatingWidget } from './ClientNotificationFloatingWi
 import { ClientNotificationToastStack } from './ClientNotificationToastStack';
 import { ClientNotificationTicker } from './ClientNotificationTicker';
 import { ClientNotificationTakeover } from './ClientNotificationTakeover';
-import { ClientNotificationSpotlight } from './ClientNotificationSpotlight';
 import { ClientNotificationNewFormats } from './ClientNotificationNewFormats';
 import { RemoteLogoutNoticeModal } from './RemoteLogoutNoticeModal';
 import { useAuth } from '../../context/AuthContext';
@@ -22,28 +21,25 @@ export const ClientNotificationRenderer: React.FC = () => {
       {/* 2. Top Announcement Banners */}
       <ClientNotificationBanner />
 
-      {/* 3. In-App Spotlight Card Banner */}
-      <ClientNotificationSpotlight />
-
-      {/* 4. Center Pop-up Modal */}
+      {/* 3. Center Pop-up Modal */}
       <ClientNotificationPopup />
 
-      {/* 5. Slide-Up Bottom Action Sheet / Drawer */}
+      {/* 4. Slide-Up Bottom Action Sheet / Drawer */}
       <ClientNotificationSheet />
 
-      {/* 6. Floating Bottom-Right Action Widget */}
+      {/* 5. Floating Bottom-Right Action Widget */}
       <ClientNotificationFloatingWidget />
 
-      {/* 7. Corner Interactive Toast Stack */}
+      {/* 6. Corner Interactive Toast Stack */}
       <ClientNotificationToastStack />
 
-      {/* 8. Fullscreen Immersive Announcement Takeover */}
+      {/* 7. Fullscreen Immersive Announcement Takeover */}
       <ClientNotificationTakeover />
 
-      {/* 9. 10+ Delivery Formats (WhatsApp, Dock, Voice TTS, SMS, Telegram, Discord, Slack, Teams, FCM, Digest) */}
+      {/* 8. 10+ New Delivery Formats (WhatsApp, Floating Dock, Voice Audio, SMS, Digest) */}
       <ClientNotificationNewFormats />
 
-      {/* 10. Remote Logout Alert Modal */}
+      {/* 9. Remote Logout Alert Modal */}
       <RemoteLogoutNoticeModal
         isOpen={remoteLogoutNotice.isOpen}
         reason={remoteLogoutNotice.reason}

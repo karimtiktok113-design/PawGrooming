@@ -22,41 +22,22 @@ export const ClientNotificationBanner: React.FC = () => {
     return null;
   }
 
-  const handleAction = async (banner: any, e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    if (banner.actionUrl) {
-      const url = banner.actionUrl.trim();
-      const isExternal = url.startsWith('http://') || 
-                         url.startsWith('https://') || 
-                         url.startsWith('//') ||
-                         url.startsWith('mailto:') ||
-                         url.startsWith('tel:') ||
-                         banner.actionTarget === '_blank';
+  const handleAction = (banner: any) => {
+    if (!banner.actionUrl) return;
 
-      if (isExternal) {
-        window.open(url, '_blank', 'noopener,noreferrer');
-      } else {
-        const cleanTarget = url.replace(/^\//, '').toLowerCase();
-        const validViews = ['dashboard', 'calendar', 'invoices', 'clients', 'services', 'alerts', 'loyalty', 'staff', 'revenue', 'business', 'gallery', 'settings'];
-        if (validViews.includes(cleanTarget)) {
-          setView(cleanTarget as any);
-        } else {
-          window.open(`https://${url}`, '_blank', 'noopener,noreferrer');
-        }
+    // Check if external link or explicit _blank target
+    const isExternal = banner.actionUrl.startsWith('http://') || 
+                       banner.actionUrl.startsWith('https://') || 
+                       banner.actionTarget === '_blank';
+
+    if (isExternal) {
+      window.open(banner.actionUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      const validViews = ['dashboard', 'calendar', 'invoices', 'clients', 'services', 'alerts', 'loyalty', 'staff', 'revenue', 'business', 'gallery', 'settings'];
+      if (validViews.includes(banner.actionUrl)) {
+        setView(banner.actionUrl as any);
       }
     }
-    await dismissPopupNotification(banner.id);
-  };
-
-  const handleDismiss = async (bannerId: string, e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    await dismissPopupNotification(bannerId);
   };
 
   const getBannerStyling = (priority: NotificationPriority) => {
@@ -153,7 +134,7 @@ export const ClientNotificationBanner: React.FC = () => {
               {banner.actionLabel && banner.actionUrl && (
                 <button
                   type="button"
-                  onClick={(e) => handleAction(banner, e)}
+                  onClick={() => handleAction(banner)}
                   className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all active:scale-95 cursor-pointer ${style.btn}`}
                   title={isExternal ? `Opens ${banner.actionUrl} in a new tab` : 'Navigate to screen'}
                 >
@@ -168,7 +149,7 @@ export const ClientNotificationBanner: React.FC = () => {
 
               <button
                 type="button"
-                onClick={(e) => handleDismiss(banner.id, e)}
+                onClick={() => dismissPopupNotification(banner.id)}
                 className="p-1.5 rounded-xl bg-white/5 hover:bg-white/20 text-white/70 hover:text-white transition-colors cursor-pointer"
                 title="Dismiss announcement"
               >

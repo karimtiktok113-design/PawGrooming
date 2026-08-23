@@ -21,41 +21,26 @@ export const ClientNotificationTakeover: React.FC = () => {
 
   const current: AdminNotification = activeTakeovers[0];
 
-  const handleDismiss = async (e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
+  const handleDismiss = async () => {
     await dismissPopupNotification(current.id);
   };
 
-  const handleAction = async (e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
+  const handleAction = async () => {
     if (current.actionUrl) {
-      const url = current.actionUrl.trim();
-      const isExternal = url.startsWith('http://') || 
-                         url.startsWith('https://') || 
-                         url.startsWith('//') ||
-                         url.startsWith('mailto:') ||
-                         url.startsWith('tel:') ||
+      const isExternal = current.actionUrl.startsWith('http://') || 
+                         current.actionUrl.startsWith('https://') || 
                          current.actionTarget === '_blank';
 
       if (isExternal) {
-        window.open(url, '_blank', 'noopener,noreferrer');
+        window.open(current.actionUrl, '_blank', 'noopener,noreferrer');
       } else {
-        const cleanTarget = url.replace(/^\//, '').toLowerCase();
         const validViews = ['dashboard', 'calendar', 'invoices', 'clients', 'services', 'alerts', 'loyalty', 'staff', 'revenue', 'business', 'gallery', 'settings'];
-        if (validViews.includes(cleanTarget)) {
-          setView(cleanTarget as any);
-        } else {
-          window.open(`https://${url}`, '_blank', 'noopener,noreferrer');
+        if (validViews.includes(current.actionUrl)) {
+          setView(current.actionUrl as any);
         }
       }
     }
-    await handleDismiss(e);
+    await handleDismiss();
   };
 
   return (
@@ -63,9 +48,8 @@ export const ClientNotificationTakeover: React.FC = () => {
       <div className="bg-[#FAF8F5] text-[#240C0B] rounded-3xl border border-white/20 shadow-2xl max-w-2xl w-full p-6 sm:p-8 space-y-5 animate-scaleUp relative overflow-hidden my-auto">
         <div className="absolute top-4 right-4">
           <button
-            type="button"
-            onClick={(e) => handleDismiss(e)}
-            className="p-2 rounded-full bg-[#E6DFD5] hover:bg-[#D8D3C4] text-[#240C0B] transition-colors cursor-pointer"
+            onClick={handleDismiss}
+            className="p-2 rounded-full bg-[#E6DFD5] hover:bg-[#D8D3C4] text-[#240C0B] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -100,9 +84,8 @@ export const ClientNotificationTakeover: React.FC = () => {
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
           {current.actionLabel && (
             <button
-              type="button"
-              onClick={(e) => handleAction(e)}
-              className="btn-primary w-full sm:w-auto px-8 py-3 rounded-full text-sm font-bold flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
+              onClick={handleAction}
+              className="btn-primary w-full sm:w-auto px-8 py-3 rounded-full text-sm font-bold flex items-center justify-center gap-2 active:scale-95 transition-all"
             >
               <span>{current.actionLabel}</span>
               <ArrowRight className="w-4 h-4" />
@@ -110,9 +93,8 @@ export const ClientNotificationTakeover: React.FC = () => {
           )}
 
           <button
-            type="button"
-            onClick={(e) => handleDismiss(e)}
-            className="w-full sm:w-auto px-6 py-3 rounded-full border border-[#E6DFD5] bg-white hover:bg-[#FAF8F5] text-[#7A6865] hover:text-[#240C0B] text-sm font-bold transition-all cursor-pointer"
+            onClick={handleDismiss}
+            className="w-full sm:w-auto px-6 py-3 rounded-full border border-[#E6DFD5] bg-white hover:bg-[#FAF8F5] text-[#7A6865] hover:text-[#240C0B] text-sm font-bold transition-all"
           >
             Continue to Studio
           </button>

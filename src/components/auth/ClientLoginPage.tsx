@@ -73,35 +73,34 @@ export const ClientLoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full relative flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-[#E5F0FD] overflow-hidden selection:bg-[#138AEE] selection:text-white">
-      {/* Background 4-Color Ambient Lighting & Blobs */}
-      <div className="absolute top-[-15%] left-[-10%] w-[550px] h-[550px] rounded-full bg-[#138AEE]/15 blur-[130px] pointer-events-none" />
-      <div className="absolute bottom-[-15%] right-[-10%] w-[550px] h-[550px] rounded-full bg-[#82B8F6]/25 blur-[130px] pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-[#0C4EA4]/10 blur-[160px] pointer-events-none" />
+    <div className="min-h-screen w-full relative flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-[#FAF8F5] overflow-hidden selection:bg-[#FF6B00] selection:text-white">
+      {/* Background Soft Warm Lighting & Ambient Blobs */}
+      <div className="absolute top-[-15%] left-[-10%] w-[550px] h-[550px] rounded-full bg-[#FF6B00]/10 blur-[130px] pointer-events-none" />
+      <div className="absolute bottom-[-15%] right-[-10%] w-[550px] h-[550px] rounded-full bg-[#2E8A81]/10 blur-[130px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-[#FF6B00]/5 blur-[160px] pointer-events-none" />
 
       {/* Decorative Dot Matrix Grid */}
       <div 
-        className="absolute inset-0 opacity-[0.06] pointer-events-none" 
+        className="absolute inset-0 opacity-[0.035] pointer-events-none" 
         style={{ 
-          backgroundImage: `radial-gradient(circle at 1px 1px, #0C4EA4 1.2px, transparent 0)`,
+          backgroundImage: `radial-gradient(circle at 1px 1px, #240C0B 1.2px, transparent 0)`,
           backgroundSize: '28px 28px' 
         }} 
       />
 
-      {/* Main SaaS Auth Frame (Split Layout styled with 4-Color Palette) */}
-      <div className="relative z-10 w-full max-w-5xl rounded-[32px] sm:rounded-[36px] border border-[#82B8F6]/40 bg-[#082854] text-[#E5F0FD] shadow-[0_24px_70px_rgba(12,78,164,0.28)] overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
+      {/* Main SaaS Auth Frame (Split Layout Synchronized with Park Grooming Aesthetic) */}
+      <div className="relative z-10 w-full max-w-5xl rounded-[32px] sm:rounded-[36px] border border-[#E6DFD5] bg-[#240C0B] text-white shadow-[0_24px_70px_rgba(36,12,11,0.18)] overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
         
         {/* Left Col: Brand Identity, Official Paw Logo & Studio Features (5 cols) */}
-        <div className="lg:col-span-5 bg-gradient-to-b from-[#0C4EA4] via-[#082D62] to-[#061F42] p-8 sm:p-10 flex flex-col justify-between relative border-b lg:border-b-0 lg:border-r border-[#82B8F6]/20 overflow-hidden">
+        <div className="lg:col-span-5 bg-gradient-to-b from-[#2B100F] via-[#240C0B] to-[#1C0908] p-8 sm:p-10 flex flex-col justify-between relative border-b lg:border-b-0 lg:border-r border-white/10 overflow-hidden">
           {/* Subtle Ambient Glow */}
-          <div className="absolute -top-12 -left-12 w-44 h-44 bg-[#138AEE]/30 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-4 right-4 w-36 h-36 bg-[#82B8F6]/20 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -top-12 -left-12 w-44 h-44 bg-[#FF6B00]/20 rounded-full blur-3xl pointer-events-none" />
 
           {/* Synchronized Brand Header */}
           <div className="space-y-6 relative z-10">
             <div className="flex items-center gap-3">
-              {/* Official Park Grooming Paw Logo with Vibrant Cerulean Background */}
-              <div className="w-11 h-11 rounded-2xl bg-[#138AEE] border border-[#82B8F6]/40 flex items-center justify-center shadow-lg shadow-[#138AEE]/40 transform hover:scale-105 transition-transform shrink-0">
+              {/* Official Park Grooming Paw Logo */}
+              <div className="w-11 h-11 rounded-2xl bg-[#FF6B00] flex items-center justify-center shadow-lg shadow-[#FF6B00]/30 transform hover:scale-105 transition-transform shrink-0">
                 <svg className="w-6 h-6 fill-white" viewBox="0 0 32 32">
                   <ellipse cx="16" cy="20" rx="6" ry="5" />
                   <circle cx="9.5" cy="13" r="2.6" />
@@ -113,7 +112,7 @@ export const ClientLoginPage: React.FC = () => {
                 <h1 className="font-display font-black text-xl text-white tracking-wide uppercase leading-tight">
                   PAW GROOMING
                 </h1>
-                <span className="text-[10px] font-bold text-[#82B8F6] tracking-widest uppercase block mt-0.5">
+                <span className="text-[10px] font-bold text-[#A08E8B] tracking-widest uppercase block mt-0.5">
                   Dog Grooming Studio
                 </span>
               </div>
@@ -121,34 +120,34 @@ export const ClientLoginPage: React.FC = () => {
 
             {/* Value Proposition */}
             <div className="space-y-3 pt-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#138AEE]/20 border border-[#82B8F6]/40 text-xs text-[#E5F0FD] font-semibold">
-                <Sparkles className="w-3.5 h-3.5 text-[#82B8F6]" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs text-white font-semibold">
+                <Sparkles className="w-3.5 h-3.5 text-[#FF6B00]" />
                 <span>Client & Studio Portal</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-display font-extrabold text-white leading-snug">
                 Manage your grooming salon anywhere in the world.
               </h2>
-              <p className="text-xs text-[#E5F0FD]/80 leading-relaxed">
+              <p className="text-xs text-[#C5B7B4] leading-relaxed">
                 Real-time appointment calendar, digital A4 & QR invoices, pet health records, groomer schedules, and automated customer loyalty rewards.
               </p>
             </div>
 
             {/* Feature Highlights */}
             <div className="space-y-2.5 pt-2">
-              <div className="flex items-center gap-2.5 text-xs text-[#E5F0FD]/95">
-                <div className="w-5 h-5 rounded-full bg-[#138AEE]/30 border border-[#82B8F6] flex items-center justify-center text-[#82B8F6] shrink-0">
+              <div className="flex items-center gap-2.5 text-xs text-white/90">
+                <div className="w-5 h-5 rounded-full bg-[#2E8A81]/30 border border-[#2E8A81] flex items-center justify-center text-[#2E8A81] shrink-0">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                 </div>
                 <span>Worldwide Cross-Device Cloud Sync</span>
               </div>
-              <div className="flex items-center gap-2.5 text-xs text-[#E5F0FD]/95">
-                <div className="w-5 h-5 rounded-full bg-[#138AEE]/30 border border-[#138AEE] flex items-center justify-center text-[#138AEE] shrink-0">
-                  <Receipt className="w-3.5 h-3.5 text-[#E5F0FD]" />
+              <div className="flex items-center gap-2.5 text-xs text-white/90">
+                <div className="w-5 h-5 rounded-full bg-[#FF6B00]/30 border border-[#FF6B00] flex items-center justify-center text-[#FF6B00] shrink-0">
+                  <Receipt className="w-3.5 h-3.5" />
                 </div>
                 <span>Instant Invoices with WhatsApp & QR Sharing</span>
               </div>
-              <div className="flex items-center gap-2.5 text-xs text-[#E5F0FD]/95">
-                <div className="w-5 h-5 rounded-full bg-[#0C4EA4]/60 border border-[#82B8F6] flex items-center justify-center text-[#82B8F6] shrink-0">
+              <div className="flex items-center gap-2.5 text-xs text-white/90">
+                <div className="w-5 h-5 rounded-full bg-[#8B6D9C]/30 border border-[#8B6D9C] flex items-center justify-center text-[#8B6D9C] shrink-0">
                   <Calendar className="w-3.5 h-3.5" />
                 </div>
                 <span>Smart Multi-Groomer Appointments</span>
@@ -158,45 +157,45 @@ export const ClientLoginPage: React.FC = () => {
 
           {/* Bottom Security Badge */}
           <div className="pt-8 relative z-10">
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-[#061F42]/80 border border-[#82B8F6]/30 backdrop-blur-md">
+            <div className="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
               <div className="flex items-center gap-2.5">
-                <ShieldCheck className="w-5 h-5 text-[#82B8F6]" />
+                <ShieldCheck className="w-5 h-5 text-[#2E8A81]" />
                 <div className="text-left">
                   <p className="text-[11px] font-bold text-white leading-tight">Universal Cloud Database</p>
-                  <p className="text-[10px] text-[#82B8F6]">Access from any mobile, tablet, or browser</p>
+                  <p className="text-[10px] text-[#A08E8B]">Access from any mobile, tablet, or browser</p>
                 </div>
               </div>
-              <span className="text-[10px] font-mono text-[#E5F0FD] bg-[#138AEE]/30 border border-[#82B8F6]/40 px-2 py-1 rounded-md font-bold">Online</span>
+              <span className="text-[10px] font-mono text-[#2E8A81] bg-[#2E8A81]/15 px-2 py-1 rounded-md font-bold">Online</span>
             </div>
           </div>
         </div>
 
         {/* Right Col: Interactive SaaS Login Form (7 cols) */}
-        <div className="lg:col-span-7 p-8 sm:p-12 lg:p-14 flex flex-col justify-between bg-[#082854]/90 backdrop-blur-sm">
+        <div className="lg:col-span-7 p-8 sm:p-12 lg:p-14 flex flex-col justify-between bg-white/[0.02]">
           <div className="max-w-md w-full mx-auto space-y-7">
             
             {/* Header Form Title */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#138AEE] bg-[#138AEE]/15 px-2.5 py-0.5 rounded-full border border-[#82B8F6]/30">
+                <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#FF6B00]">
                   Client Login
                 </span>
-                <span className="text-xs text-[#82B8F6] flex items-center gap-1">
-                  <Store className="w-3.5 h-3.5 text-[#138AEE]" /> Studio Dashboard
+                <span className="text-xs text-[#A08E8B] flex items-center gap-1">
+                  <Store className="w-3.5 h-3.5" /> Studio Dashboard
                 </span>
               </div>
               <h3 className="font-display font-black text-2xl sm:text-3xl text-white tracking-tight">
                 Sign In to Paw Grooming
               </h3>
-              <p className="text-xs text-[#82B8F6] mt-1">
+              <p className="text-xs text-[#A08E8B] mt-1">
                 Enter your registered business email and password to access your dashboard.
               </p>
             </div>
 
             {/* Error Banner */}
             {errorMessage && (
-              <div className={`p-3.5 rounded-2xl bg-[#FEF2F2]/10 border border-red-400/40 text-red-200 text-xs flex items-start gap-2.5 ${isShake ? 'animate-shake' : ''}`}>
-                <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+              <div className={`p-3.5 rounded-2xl bg-[#FEF2F2]/10 border border-[#C9503A]/40 text-[#FFA494] text-xs flex items-start gap-2.5 ${isShake ? 'animate-shake' : ''}`}>
+                <AlertCircle className="w-4 h-4 text-[#C9503A] shrink-0 mt-0.5" />
                 <div className="flex-1 font-medium">{errorMessage}</div>
               </div>
             )}
@@ -205,11 +204,11 @@ export const ClientLoginPage: React.FC = () => {
             <form onSubmit={handleLogin} className="space-y-4">
               {/* Email Input */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#E5F0FD]">
+                <label className="block text-xs font-bold text-[#E6DFD5]">
                   Business Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-[#82B8F6] absolute left-4 top-1/2 -translate-y-1/2" />
+                  <Mail className="w-4 h-4 text-[#A08E8B] absolute left-4 top-1/2 -translate-y-1/2" />
                   <input
                     type="email"
                     value={email}
@@ -219,7 +218,7 @@ export const ClientLoginPage: React.FC = () => {
                     }}
                     placeholder="name@groomingstudio.com"
                     required
-                    className="w-full bg-[#061F42]/80 border border-[#82B8F6]/30 focus:border-[#138AEE] focus:ring-2 focus:ring-[#138AEE]/40 rounded-2xl pl-11 pr-4 py-3.5 text-sm text-[#E5F0FD] placeholder-[#82B8F6]/50 outline-none transition-all"
+                    className="w-full bg-white/5 border border-white/15 focus:border-[#FF6B00] focus:ring-2 focus:ring-[#FF6B00]/30 rounded-2xl pl-11 pr-4 py-3.5 text-sm text-white placeholder-[#7A6865] outline-none transition-all"
                   />
                 </div>
               </div>
@@ -227,15 +226,15 @@ export const ClientLoginPage: React.FC = () => {
               {/* Password Input */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-bold text-[#E5F0FD]">
+                  <label className="block text-xs font-bold text-[#E6DFD5]">
                     Account Password
                   </label>
-                  <span className="text-[11px] text-[#82B8F6] cursor-default">
+                  <span className="text-[11px] text-[#A08E8B] cursor-default">
                     Case-sensitive
                   </span>
                 </div>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-[#82B8F6] absolute left-4 top-1/2 -translate-y-1/2" />
+                  <Lock className="w-4 h-4 text-[#A08E8B] absolute left-4 top-1/2 -translate-y-1/2" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
@@ -245,12 +244,12 @@ export const ClientLoginPage: React.FC = () => {
                     }}
                     placeholder="Enter your password"
                     required
-                    className="w-full bg-[#061F42]/80 border border-[#82B8F6]/30 focus:border-[#138AEE] focus:ring-2 focus:ring-[#138AEE]/40 rounded-2xl pl-11 pr-11 py-3.5 text-sm text-[#E5F0FD] placeholder-[#82B8F6]/50 outline-none transition-all font-mono"
+                    className="w-full bg-white/5 border border-white/15 focus:border-[#FF6B00] focus:ring-2 focus:ring-[#FF6B00]/30 rounded-2xl pl-11 pr-11 py-3.5 text-sm text-white placeholder-[#7A6865] outline-none transition-all font-mono"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#82B8F6] hover:text-white transition-colors cursor-pointer"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#A08E8B] hover:text-white transition-colors cursor-pointer"
                     title={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -265,9 +264,9 @@ export const ClientLoginPage: React.FC = () => {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 rounded-md accent-[#138AEE] cursor-pointer"
+                    className="w-4 h-4 rounded-md accent-[#FF6B00] cursor-pointer"
                   />
-                  <span className="text-xs text-[#82B8F6] group-hover:text-white transition-colors">
+                  <span className="text-xs text-[#C5B7B4] group-hover:text-white transition-colors">
                     Keep me signed in on this device
                   </span>
                 </label>
@@ -277,7 +276,7 @@ export const ClientLoginPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-4 px-6 rounded-2xl bg-[#138AEE] hover:bg-[#0C75D0] text-white font-display font-bold text-sm tracking-wide shadow-lg shadow-[#138AEE]/30 hover:shadow-xl hover:shadow-[#138AEE]/40 border border-[#82B8F6]/40 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 disabled:opacity-70 disabled:cursor-not-allowed group mt-4"
+                className="w-full py-4 px-6 rounded-2xl bg-[#FF6B00] hover:bg-[#E55C00] text-white font-display font-bold text-sm tracking-wide shadow-lg shadow-[#FF6B00]/25 hover:shadow-xl hover:shadow-[#FF6B00]/35 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 disabled:opacity-70 disabled:cursor-not-allowed group mt-4"
               >
                 {isLoading ? (
                   <div className="flex items-center gap-2">
@@ -295,18 +294,18 @@ export const ClientLoginPage: React.FC = () => {
           </div>
 
           {/* Footer Admin Switcher Gateway */}
-          <div className="pt-6 mt-6 border-t border-[#82B8F6]/20 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#82B8F6]">
+          <div className="pt-6 mt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#A08E8B]">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#138AEE] animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-[#2E8A81] animate-pulse" />
               <span>Paw Grooming Multi-Tenant Cloud</span>
             </div>
 
             <button
               type="button"
               onClick={() => setAuthView('admin_login')}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0C4EA4]/50 hover:bg-[#0C4EA4] border border-[#82B8F6]/30 text-white font-bold text-xs transition-all cursor-pointer shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-white font-bold text-xs transition-all cursor-pointer"
             >
-              <KeyRound className="w-3.5 h-3.5 text-[#82B8F6]" />
+              <KeyRound className="w-3.5 h-3.5 text-[#FF6B00]" />
               <span>Admin Management Portal</span>
             </button>
           </div>

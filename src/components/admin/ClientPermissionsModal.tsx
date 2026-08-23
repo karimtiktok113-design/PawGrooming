@@ -308,11 +308,11 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-[#082854] text-[#E5F0FD] rounded-3xl border border-[#82B8F6]/30 shadow-2xl max-w-4xl w-full p-6 space-y-5 animate-fadeIn my-6 max-h-[94vh] flex flex-col">
+      <div className="bg-[#1C0908] text-white rounded-3xl border border-white/20 shadow-2xl max-w-4xl w-full p-6 space-y-5 animate-fadeIn my-6 max-h-[94vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#82B8F6]/20 shrink-0">
+        <div className="flex items-center justify-between pb-3 border-b border-white/10 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-[#138AEE] text-white shadow-md shadow-[#138AEE]/30">
+            <div className="p-2.5 rounded-2xl bg-[#FF6B00] text-white shadow-md shadow-[#FF6B00]/30">
               <Sliders className="w-5 h-5" />
             </div>
             <div>
@@ -321,30 +321,29 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
                   Client Granular Access & Screen Section Controls
                 </h3>
                 {permissions.isTrialMode && (
-                  <span className="px-2 py-0.5 rounded-full bg-[#138AEE]/20 text-[#82B8F6] text-[10px] font-black uppercase border border-[#138AEE]/40">
+                  <span className="px-2 py-0.5 rounded-full bg-[#FF6B00]/20 text-[#FF8833] text-[10px] font-black uppercase border border-[#FF6B00]/40">
                     Trial Mode Active
                   </span>
                 )}
               </div>
-              <p className="text-xs text-[#82B8F6]">
+              <p className="text-xs text-[#A08E8B]">
                 Configure screens, sections, and feature permissions for <strong className="text-white">{profile.businessName}</strong> ({profile.profileId})
               </p>
             </div>
           </div>
           <button
-            type="button"
             onClick={onClose}
-            className="p-2 rounded-xl bg-white/5 hover:bg-[#0C4EA4] text-[#82B8F6] hover:text-white transition-colors cursor-pointer"
+            className="p-2 rounded-xl bg-white/5 hover:bg-white/15 text-[#A08E8B] hover:text-white transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Ready-made Presets Selector */}
-        <div className="bg-[#061836] p-3 rounded-2xl border border-[#82B8F6]/20 shrink-0">
+        <div className="bg-white/5 p-3 rounded-2xl border border-white/10 shrink-0">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-bold text-[#82B8F6] uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#138AEE]" />
+            <span className="text-[11px] font-bold text-[#A08E8B] uppercase tracking-wider flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-[#FF6B00]" />
               <span>Quick Permission Presets (Demo / Trial / Tier)</span>
             </span>
           </div>
@@ -355,12 +354,12 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
                 key={preset.id}
                 type="button"
                 onClick={() => handleApplyPreset(preset)}
-                className="p-2 text-left bg-[#082854] hover:bg-[#0C4EA4] hover:border-[#82B8F6]/50 border border-[#82B8F6]/20 rounded-xl transition-all cursor-pointer group"
+                className="p-2 text-left bg-white/5 hover:bg-[#FF6B00]/20 hover:border-[#FF6B00]/40 border border-white/5 rounded-xl transition-all cursor-pointer group"
               >
-                <p className="text-xs font-bold text-white group-hover:text-[#82B8F6] truncate">
+                <p className="text-xs font-bold text-white group-hover:text-[#FF6B00] truncate">
                   {preset.name}
                 </p>
-                <p className="text-[10px] text-[#82B8F6]/80 truncate">
+                <p className="text-[10px] text-[#A08E8B] truncate">
                   {preset.description}
                 </p>
               </button>
@@ -369,14 +368,14 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center gap-2 border-b border-[#82B8F6]/20 pb-2 shrink-0 overflow-x-auto">
+        <div className="flex items-center gap-2 border-b border-white/10 pb-2 shrink-0 overflow-x-auto">
           <button
             type="button"
             onClick={() => setActiveTab('screens')}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
               activeTab === 'screens' 
-                ? 'bg-[#138AEE] text-white shadow-md' 
-                : 'text-[#82B8F6] hover:bg-[#0C4EA4] hover:text-white'
+                ? 'bg-[#FF6B00] text-white shadow-md' 
+                : 'text-[#A08E8B] hover:bg-white/5 hover:text-white'
             }`}
           >
             <Shield className="w-3.5 h-3.5" />
@@ -388,14 +387,14 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
             onClick={() => setActiveTab('sections')}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
               activeTab === 'sections' 
-                ? 'bg-[#138AEE] text-white shadow-md' 
-                : 'text-[#82B8F6] hover:bg-[#0C4EA4] hover:text-white'
+                ? 'bg-[#FF6B00] text-white shadow-md' 
+                : 'text-[#A08E8B] hover:bg-white/5 hover:text-white'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
             <span className="flex items-center gap-1">
               <span>2. Screen Sections</span>
-              <span className="px-1.5 py-0.2 rounded-full bg-[#138AEE]/20 text-[#82B8F6] text-[10px] font-black border border-[#138AEE]/30">
+              <span className="px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-black">
                 {enabledSectionsCount}/{totalSectionsCount}
               </span>
             </span>
@@ -406,8 +405,8 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
             onClick={() => setActiveTab('features')}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
               activeTab === 'features' 
-                ? 'bg-[#138AEE] text-white shadow-md' 
-                : 'text-[#82B8F6] hover:bg-[#0C4EA4] hover:text-white'
+                ? 'bg-[#FF6B00] text-white shadow-md' 
+                : 'text-[#A08E8B] hover:bg-white/5 hover:text-white'
             }`}
           >
             <Sliders className="w-3.5 h-3.5" />
@@ -419,8 +418,8 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
             onClick={() => setActiveTab('trial')}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
               activeTab === 'trial' 
-                ? 'bg-[#138AEE] text-white shadow-md' 
-                : 'text-[#82B8F6] hover:bg-[#0C4EA4] hover:text-white'
+                ? 'bg-[#FF6B00] text-white shadow-md' 
+                : 'text-[#A08E8B] hover:bg-white/5 hover:text-white'
             }`}
           >
             <Clock className="w-3.5 h-3.5" />
@@ -434,14 +433,14 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
           {activeTab === 'screens' && (
             <div className="space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
-                <span className="text-xs text-[#82B8F6]">
+                <span className="text-xs text-[#A08E8B]">
                   Toggle on/off individual website screens. When a screen is disabled, it shows the locked upgrade barrier.
                 </span>
                 <div className="flex items-center gap-2 shrink-0">
                   <button
                     type="button"
                     onClick={() => handleToggleAllScreens(true)}
-                    className="text-[11px] text-[#82B8F6] hover:text-white hover:underline font-bold cursor-pointer"
+                    className="text-[11px] text-[#4ECDC4] hover:underline font-bold"
                   >
                     Enable All Screens
                   </button>
@@ -449,7 +448,7 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
                   <button
                     type="button"
                     onClick={() => handleToggleAllScreens(false)}
-                    className="text-[11px] text-red-400 hover:underline font-bold cursor-pointer"
+                    className="text-[11px] text-[#C9503A] hover:underline font-bold"
                   >
                     Disable All
                   </button>
@@ -465,31 +464,31 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
                       onClick={() => handleToggleScreen(item.key)}
                       className={`p-3 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 select-none ${
                         isAllowed 
-                          ? 'bg-[#061836] border-[#82B8F6]/30 hover:border-[#138AEE]' 
-                          : 'bg-[#061836]/60 border-[#82B8F6]/10 opacity-60 hover:opacity-80'
+                          ? 'bg-white/5 border-white/10 hover:border-[#2E8A81]/50' 
+                          : 'bg-[#140606] border-white/5 opacity-60 hover:opacity-80'
                       }`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <div className={`p-2 rounded-xl shrink-0 ${
-                          isAllowed ? 'bg-[#138AEE]/20 text-[#82B8F6]' : 'bg-white/5 text-[#82B8F6]/40'
+                          isAllowed ? 'bg-[#2E8A81]/20 text-[#4ECDC4]' : 'bg-white/5 text-[#7A6865]'
                         }`}>
                           {item.icon}
                         </div>
                         <div className="min-w-0">
-                          <p className={`text-xs font-bold truncate ${isAllowed ? 'text-white' : 'text-[#82B8F6]/50 line-through'}`}>
+                          <p className={`text-xs font-bold truncate ${isAllowed ? 'text-white' : 'text-[#7A6865] line-through'}`}>
                             {item.label}
                           </p>
-                          <p className="text-[10px] text-[#82B8F6]/80 truncate">
+                          <p className="text-[10px] text-[#A08E8B] truncate">
                             {item.desc}
                           </p>
                         </div>
                       </div>
 
                       <div className={`w-10 h-6 rounded-full p-1 transition-colors flex items-center shrink-0 ${
-                        isAllowed ? 'bg-[#138AEE] justify-end' : 'bg-white/10 justify-start'
+                        isAllowed ? 'bg-[#2E8A81] justify-end' : 'bg-white/10 justify-start'
                       }`}>
                         <div className="w-4 h-4 rounded-full bg-white shadow-sm flex items-center justify-center text-[8px]">
-                          {isAllowed ? <Check className="w-2.5 h-2.5 text-[#138AEE]" /> : <Lock className="w-2.5 h-2.5 text-[#0C4EA4]" />}
+                          {isAllowed ? <Check className="w-2.5 h-2.5 text-[#2E8A81]" /> : <Lock className="w-2.5 h-2.5 text-[#7A6865]" />}
                         </div>
                       </div>
                     </div>
@@ -506,11 +505,11 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
                 <div>
                   <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
                     <span>Granular Section-by-Section Customizer</span>
-                    <span className="text-[11px] text-[#82B8F6] font-normal">
+                    <span className="text-[11px] text-[#FF8833] font-normal">
                       (Enable or hide specific UI components on any screen)
                     </span>
                   </h4>
-                  <p className="text-[11px] text-[#82B8F6]/80">
+                  <p className="text-[11px] text-[#A08E8B]">
                     Select a screen below to customize each widget, table, KPI block, or button.
                   </p>
                 </div>
@@ -518,7 +517,7 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
                   <button
                     type="button"
                     onClick={() => handleToggleAllSectionsEverywhere(true)}
-                    className="text-[11px] text-[#82B8F6] hover:text-white hover:underline font-bold cursor-pointer"
+                    className="text-[11px] text-emerald-400 hover:underline font-bold"
                   >
                     Enable All Everywhere
                   </button>
@@ -526,7 +525,7 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
                   <button
                     type="button"
                     onClick={() => handleToggleAllSectionsEverywhere(false)}
-                    className="text-[11px] text-red-400 hover:underline font-bold cursor-pointer"
+                    className="text-[11px] text-rose-400 hover:underline font-bold"
                   >
                     Disable All Everywhere
                   </button>
@@ -534,7 +533,7 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
               </div>
 
               {/* Screen Pills Horizontal Selector */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-[#82B8F6]/20">
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-white/10">
                 {ALL_SCREENS.map(sc => {
                   const isScreenActive = currentScreens[sc.id] !== false;
                   const isSelected = selectedScreenForSections === sc.id;
@@ -549,8 +548,8 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
                       onClick={() => setSelectedScreenForSections(sc.id)}
                       className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
                         isSelected
-                          ? 'bg-[#138AEE] text-white shadow-md'
-                          : 'bg-[#061836] text-[#82B8F6] hover:text-white hover:bg-[#0C4EA4]'
+                          ? 'bg-[#FF6B00] text-white shadow-md'
+                          : 'bg-white/5 text-[#A08E8B] hover:text-white hover:bg-white/10'
                       }`}
                     >
                       <span className={!isScreenActive ? 'line-through opacity-60' : ''}>{sc.label.split('&')[0].trim()}</span>
@@ -565,14 +564,14 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
               </div>
 
               {/* Active Screen Sections Controls */}
-              <div className="bg-[#061836] p-4 rounded-2xl border border-[#82B8F6]/20 space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-[#82B8F6]/20">
+              <div className="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-white/10">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-black text-white font-display">
                       {ALL_SCREENS.find(s => s.id === selectedScreenForSections)?.label}
                     </span>
                     {!isSelectedScreenEnabled && (
-                      <span className="px-2 py-0.5 rounded-md bg-red-500/20 text-red-300 text-[10px] font-bold border border-red-500/30 flex items-center gap-1">
+                      <span className="px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 text-[10px] font-bold border border-rose-500/30 flex items-center gap-1">
                         <Lock className="w-3 h-3" /> Screen is Disabled
                       </span>
                     )}
@@ -580,26 +579,26 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
 
                   <div className="flex items-center gap-2">
                     <div className="relative">
-                      <Search className="w-3.5 h-3.5 text-[#82B8F6] absolute left-2.5 top-1/2 -translate-y-1/2" />
+                      <Search className="w-3.5 h-3.5 text-[#A08E8B] absolute left-2.5 top-1/2 -translate-y-1/2" />
                       <input
                         type="text"
                         placeholder="Search sections..."
                         value={sectionSearch}
                         onChange={(e) => setSectionSearch(e.target.value)}
-                        className="pl-8 pr-3 py-1 text-xs bg-[#082854] border border-[#82B8F6]/30 rounded-lg text-white placeholder-[#82B8F6]/50 outline-none focus:border-[#138AEE]"
+                        className="pl-8 pr-3 py-1 text-xs bg-black/40 border border-white/10 rounded-lg text-white placeholder-[#7A6865] outline-none focus:border-[#FF6B00]"
                       />
                     </div>
                     <button
                       type="button"
                       onClick={() => handleToggleAllSectionsForScreen(selectedScreenForSections, true)}
-                      className="px-2.5 py-1 rounded-lg bg-[#138AEE]/20 text-[#82B8F6] hover:bg-[#138AEE]/40 text-[11px] font-bold transition-colors cursor-pointer border border-[#138AEE]/30"
+                      className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 text-[11px] font-bold transition-colors cursor-pointer"
                     >
                       Enable Screen Sections
                     </button>
                     <button
                       type="button"
                       onClick={() => handleToggleAllSectionsForScreen(selectedScreenForSections, false)}
-                      className="px-2.5 py-1 rounded-lg bg-red-500/20 text-red-300 hover:bg-red-500/30 text-[11px] font-bold transition-colors cursor-pointer border border-red-500/30"
+                      className="px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 text-[11px] font-bold transition-colors cursor-pointer"
                     >
                       Hide All
                     </button>
@@ -609,6 +608,7 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
                 {/* Sections List for Selected Screen */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                   {selectedScreenSectionList.map((sec) => {
+                    const isAllowed = selectedScreenSectionsMap[sec.id] !== false && isSelectedScreenEnabled;
                     const isIndividuallyAllowed = selectedScreenSectionsMap[sec.id] !== false;
 
                     return (
@@ -617,32 +617,32 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
                         onClick={() => handleToggleSection(selectedScreenForSections, sec.id)}
                         className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-3 select-none ${
                           isIndividuallyAllowed
-                            ? 'bg-[#082854] border-[#82B8F6]/30 hover:border-[#138AEE]'
-                            : 'bg-[#082854]/40 border-[#82B8F6]/10 opacity-50 hover:opacity-75'
+                            ? 'bg-white/5 border-white/10 hover:border-[#FF6B00]/40'
+                            : 'bg-black/40 border-white/5 opacity-50 hover:opacity-75'
                         }`}
                       >
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <p className={`text-xs font-bold truncate ${isIndividuallyAllowed ? 'text-white' : 'text-[#82B8F6]/40 line-through'}`}>
+                            <p className={`text-xs font-bold truncate ${isIndividuallyAllowed ? 'text-white' : 'text-[#7A6865] line-through'}`}>
                               {sec.label}
                             </p>
                             <span className="text-[9px] px-1.5 py-0.2 rounded bg-white/10 text-white/60 font-mono">
                               #{sec.id}
                             </span>
                           </div>
-                          <p className="text-[10px] text-[#82B8F6]/80 leading-relaxed line-clamp-2 mt-0.5">
+                          <p className="text-[10px] text-[#A08E8B] leading-relaxed line-clamp-2 mt-0.5">
                             {sec.description}
                           </p>
                         </div>
 
                         <div className={`w-9 h-5 rounded-full p-0.5 transition-colors flex items-center shrink-0 ${
-                          isIndividuallyAllowed ? 'bg-[#138AEE] justify-end' : 'bg-white/10 justify-start'
+                          isIndividuallyAllowed ? 'bg-[#FF6B00] justify-end' : 'bg-white/10 justify-start'
                         }`}>
                           <div className="w-4 h-4 rounded-full bg-white shadow-sm flex items-center justify-center text-[7px]">
                             {isIndividuallyAllowed ? (
-                              <Check className="w-2.5 h-2.5 text-[#138AEE]" />
+                              <Check className="w-2.5 h-2.5 text-[#FF6B00]" />
                             ) : (
-                              <EyeOff className="w-2.5 h-2.5 text-[#0C4EA4]" />
+                              <EyeOff className="w-2.5 h-2.5 text-[#7A6865]" />
                             )}
                           </div>
                         </div>
@@ -658,14 +658,14 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
           {activeTab === 'features' && (
             <div className="space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
-                <span className="text-xs text-[#82B8F6]">
+                <span className="text-xs text-[#A08E8B]">
                   Control specific interactive capabilities like PDF export, reports, WhatsApp notifications, or staff payroll.
                 </span>
                 <div className="flex items-center gap-2 shrink-0">
                   <button
                     type="button"
                     onClick={() => handleToggleAllFeatures(true)}
-                    className="text-[11px] text-[#82B8F6] hover:text-white hover:underline font-bold cursor-pointer"
+                    className="text-[11px] text-[#4ECDC4] hover:underline font-bold"
                   >
                     Enable All Features
                   </button>
@@ -673,7 +673,7 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
                   <button
                     type="button"
                     onClick={() => handleToggleAllFeatures(false)}
-                    className="text-[11px] text-red-400 hover:underline font-bold cursor-pointer"
+                    className="text-[11px] text-[#C9503A] hover:underline font-bold"
                   >
                     Disable All
                   </button>
@@ -689,31 +689,31 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
                       onClick={() => handleToggleFeature(item.key)}
                       className={`p-3 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 select-none ${
                         isAllowed 
-                          ? 'bg-[#061836] border-[#82B8F6]/30 hover:border-[#138AEE]' 
-                          : 'bg-[#061836]/60 border-[#82B8F6]/10 opacity-60 hover:opacity-80'
+                          ? 'bg-white/5 border-white/10 hover:border-[#FF6B00]/50' 
+                          : 'bg-[#140606] border-white/5 opacity-60 hover:opacity-80'
                       }`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <div className={`p-2 rounded-xl shrink-0 ${
-                          isAllowed ? 'bg-[#138AEE]/20 text-[#82B8F6]' : 'bg-white/5 text-[#82B8F6]/40'
+                          isAllowed ? 'bg-[#FF6B00]/20 text-[#FF8833]' : 'bg-white/5 text-[#7A6865]'
                         }`}>
                           {item.icon}
                         </div>
                         <div className="min-w-0">
-                          <p className={`text-xs font-bold truncate ${isAllowed ? 'text-white' : 'text-[#82B8F6]/40 line-through'}`}>
+                          <p className={`text-xs font-bold truncate ${isAllowed ? 'text-white' : 'text-[#7A6865] line-through'}`}>
                             {item.label}
                           </p>
-                          <p className="text-[10px] text-[#82B8F6]/80 truncate">
+                          <p className="text-[10px] text-[#A08E8B] truncate">
                             {item.desc}
                           </p>
                         </div>
                       </div>
 
                       <div className={`w-10 h-6 rounded-full p-1 transition-colors flex items-center shrink-0 ${
-                        isAllowed ? 'bg-[#138AEE] justify-end' : 'bg-white/10 justify-start'
+                        isAllowed ? 'bg-[#FF6B00] justify-end' : 'bg-white/10 justify-start'
                       }`}>
                         <div className="w-4 h-4 rounded-full bg-white shadow-sm flex items-center justify-center text-[8px]">
-                          {isAllowed ? <Check className="w-2.5 h-2.5 text-[#138AEE]" /> : <Lock className="w-2.5 h-2.5 text-[#0C4EA4]" />}
+                          {isAllowed ? <Check className="w-2.5 h-2.5 text-[#FF6B00]" /> : <Lock className="w-2.5 h-2.5 text-[#7A6865]" />}
                         </div>
                       </div>
                     </div>
@@ -725,11 +725,11 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
 
           {/* TAB 4: TRIAL SETTINGS */}
           {activeTab === 'trial' && (
-            <div className="space-y-4 p-4 bg-[#061836] rounded-2xl border border-[#82B8F6]/20">
+            <div className="space-y-4 p-4 bg-white/5 rounded-2xl border border-white/10">
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-sm font-bold text-white">Trial / Demo Mode Status</h4>
-                  <p className="text-xs text-[#82B8F6]">
+                  <p className="text-xs text-[#A08E8B]">
                     Flag this client account as a live Trial or Demo. Shows Trial badges and upgrade notices on locked views.
                   </p>
                 </div>
@@ -738,8 +738,8 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
                   onClick={() => setPermissions(prev => ({ ...prev, isTrialMode: !prev.isTrialMode }))}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     permissions.isTrialMode 
-                      ? 'bg-[#138AEE] text-white shadow-md' 
-                      : 'bg-white/10 text-[#82B8F6] hover:text-white'
+                      ? 'bg-[#FF6B00] text-white shadow-md' 
+                      : 'bg-white/10 text-[#A08E8B] hover:text-white'
                   }`}
                 >
                   {permissions.isTrialMode ? '● Trial Mode ON' : 'Trial Mode OFF'}
@@ -747,9 +747,9 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
               </div>
 
               {permissions.isTrialMode && (
-                <div className="space-y-3 pt-3 border-t border-[#82B8F6]/20">
+                <div className="space-y-3 pt-3 border-t border-white/10">
                   <div>
-                    <label className="text-[11px] font-bold text-[#82B8F6] uppercase tracking-wider block mb-1">
+                    <label className="text-[11px] font-bold text-[#A08E8B] uppercase tracking-wider block mb-1">
                       Trial Tier Name
                     </label>
                     <input
@@ -757,12 +757,12 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
                       placeholder="e.g. 14-Day Free Trial, Web Demo, Front-Desk Evaluation"
                       value={permissions.trialTierName || ''}
                       onChange={(e) => setPermissions(prev => ({ ...prev, trialTierName: e.target.value }))}
-                      className="w-full px-3 py-2 text-xs bg-[#082854] border border-[#82B8F6]/30 rounded-xl text-white placeholder-[#82B8F6]/50 focus:border-[#138AEE] outline-none"
+                      className="w-full px-3 py-2 text-xs bg-white/5 border border-white/10 rounded-xl text-white placeholder-[#7A6865] focus:border-[#FF6B00] outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-bold text-[#82B8F6] uppercase tracking-wider block mb-1">
+                    <label className="text-[11px] font-bold text-[#A08E8B] uppercase tracking-wider block mb-1">
                       Custom Upgrade Lock Notice
                     </label>
                     <textarea
@@ -770,7 +770,7 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
                       placeholder="e.g. This screen is locked in the 14-day web trial. Contact sales@parkgrooming.com to unlock full access."
                       value={permissions.trialMessage || ''}
                       onChange={(e) => setPermissions(prev => ({ ...prev, trialMessage: e.target.value }))}
-                      className="w-full px-3 py-2 text-xs bg-[#082854] border border-[#82B8F6]/30 rounded-xl text-white placeholder-[#82B8F6]/50 focus:border-[#138AEE] outline-none"
+                      className="w-full px-3 py-2 text-xs bg-white/5 border border-white/10 rounded-xl text-white placeholder-[#7A6865] focus:border-[#FF6B00] outline-none"
                     />
                   </div>
                 </div>
@@ -780,9 +780,9 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
         </div>
 
         {/* Footer Buttons */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-[#82B8F6]/20 shrink-0">
-          <div className="flex items-center gap-2 text-xs text-[#82B8F6]">
-            <Info className="w-4 h-4 text-[#82B8F6] shrink-0" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-white/10 shrink-0">
+          <div className="flex items-center gap-2 text-xs text-[#A08E8B]">
+            <Info className="w-4 h-4 text-[#4ECDC4] shrink-0" />
             <span>Granular section permissions save & sync immediately across client devices.</span>
           </div>
 
@@ -790,7 +790,7 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-xs font-bold text-[#82B8F6] hover:text-white bg-white/5 hover:bg-[#0C4EA4] cursor-pointer"
+              className="px-4 py-2 rounded-xl text-xs font-bold text-[#A08E8B] hover:text-white bg-white/5 hover:bg-white/10 cursor-pointer"
             >
               Cancel
             </button>
@@ -798,7 +798,7 @@ export const ClientPermissionsModal: React.FC<ClientPermissionsModalProps> = ({
               type="button"
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black bg-[#138AEE] hover:bg-[#0C75D0] text-white shadow-lg shadow-[#138AEE]/30 active:scale-95 transition-all cursor-pointer border border-[#82B8F6]/30"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black bg-[#FF6B00] hover:bg-[#E55C00] text-white shadow-lg shadow-[#FF6B00]/30 active:scale-95 transition-all cursor-pointer"
             >
               <Check className="w-4 h-4" />
               <span>{isSaving ? 'Saving Permissions...' : 'Save & Enforce Permissions'}</span>
