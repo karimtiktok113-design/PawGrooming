@@ -2,350 +2,11 @@
 
 @layer base {
   :root,
-  [data-theme="luxury"] {
-    /* 1. Luxury Velvet Emerald & Champagne Gold */
-    --studio-canvas: #0A1C16;
-    --app-bg: #0A1C16;
-    --paper: #112920;
-    --card-bg: #112920;
-    --sidebar-bg: #06120E;
-    --sidebar-dark: #030A08;
-    --primary-color: #D4AF37;
-    --primary-hover: #C59F2A;
-    --primary-light: rgba(212, 175, 55, 0.15);
-    --primary-border: #234E3E;
-    --primary-gradient: linear-gradient(135deg, #D4AF37 0%, #F3E5AB 50%, #B89726 100%);
-    --header-gradient: linear-gradient(135deg, rgba(212, 175, 55, 0.12) 0%, rgba(17, 41, 32, 0.8) 100%);
-    --accent-color: #F3E5AB;
-    --accent-light: rgba(243, 229, 171, 0.12);
-    --ink: #F8FAFC;
-    --ink-muted: #94A3B8;
-    --ink-light: #64748B;
-    --ring-glow: rgba(212, 175, 55, 0.35);
-    --card-border: 1px solid rgba(212, 175, 55, 0.25);
-    --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    --surface-blur: blur(12px);
-  }
-
-  [data-theme="minimal"] {
-    /* 2. Minimal Clean Swiss SaaS & Porcelain */
-    --studio-canvas: #F8FAFC;
-    --app-bg: #F8FAFC;
-    --paper: #FFFFFF;
-    --card-bg: #FFFFFF;
-    --sidebar-bg: #0F172A;
-    --sidebar-dark: #020617;
-    --primary-color: #0F172A;
-    --primary-hover: #1E293B;
-    --primary-light: #F1F5F9;
-    --primary-border: #E2E8F0;
-    --primary-gradient: linear-gradient(135deg, #0F172A 0%, #334155 100%);
-    --header-gradient: linear-gradient(135deg, rgba(15, 23, 42, 0.04) 0%, rgba(241, 245, 249, 0.5) 100%);
-    --accent-color: #475569;
-    --accent-light: #F8FAFC;
-    --ink: #0F172A;
-    --ink-muted: #64748B;
-    --ink-light: #94A3B8;
-    --ring-glow: rgba(15, 23, 42, 0.15);
-    --card-border: 1px solid #E2E8F0;
-    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 4px 12px rgba(0, 0, 0, 0.02);
-  }
-
-  [data-theme="dark-modern"] {
-    /* 3. Dark Modern Cyber Midnight & Indigo */
-    --studio-canvas: #090D16;
-    --app-bg: #090D16;
-    --paper: #111827;
-    --card-bg: #111827;
-    --sidebar-bg: #060911;
-    --sidebar-dark: #030509;
-    --primary-color: #6366F1;
-    --primary-hover: #4F46E5;
-    --primary-light: rgba(99, 102, 241, 0.15);
-    --primary-border: #1F2937;
-    --primary-gradient: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
-    --header-gradient: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%);
-    --accent-color: #06B6D4;
-    --accent-light: rgba(6, 182, 212, 0.15);
-    --ink: #F9FAFB;
-    --ink-muted: #9CA3AF;
-    --ink-light: #6B7280;
-    --ring-glow: rgba(99, 102, 241, 0.35);
-    --card-border: 1px solid rgba(255, 255, 255, 0.08);
-    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  }
-
-  [data-theme="glassmorphism"] {
-    /* 4. Glassmorphism & Aurora Pastel Glow */
-    --studio-canvas: #ECE8FA;
-    --app-bg: #ECE8FA;
-    --paper: rgba(255, 255, 255, 0.72);
-    --card-bg: rgba(255, 255, 255, 0.72);
-    --sidebar-bg: rgba(30, 27, 75, 0.9);
-    --sidebar-dark: #131038;
-    --primary-color: #7C3AED;
-    --primary-hover: #6D28D9;
-    --primary-light: rgba(124, 58, 237, 0.12);
-    --primary-border: rgba(255, 255, 255, 0.8);
-    --primary-gradient: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
-    --header-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(243, 232, 255, 0.6) 100%);
-    --accent-color: #EC4899;
-    --accent-light: rgba(236, 72, 153, 0.12);
-    --ink: #1E1B4B;
-    --ink-muted: #5B5589;
-    --ink-light: #908AA0;
-    --ring-glow: rgba(124, 58, 237, 0.3);
-    --card-border: 1px solid rgba(255, 255, 255, 0.65);
-    --card-shadow: 0 8px 32px 0 rgba(112, 60, 180, 0.12);
-    --surface-blur: blur(16px);
-  }
-
-  [data-theme="pet-soft"] {
-    /* 5. Pet-Care Friendly Soft Linen & Sage */
-    --studio-canvas: #FAF7F2;
-    --app-bg: #FAF7F2;
-    --paper: #FFFFFF;
-    --card-bg: #FFFFFF;
-    --sidebar-bg: #2B2523;
-    --sidebar-dark: #191514;
-    --primary-color: #D97706;
-    --primary-hover: #B45309;
-    --primary-light: #FEF3C7;
-    --primary-border: #E8E1D5;
-    --primary-gradient: linear-gradient(135deg, #D97706 0%, #F59E0B 100%);
-    --header-gradient: linear-gradient(135deg, rgba(217, 119, 6, 0.08) 0%, rgba(5, 150, 105, 0.05) 100%);
-    --accent-color: #059669;
-    --accent-light: #ECFDF5;
-    --ink: #2B2523;
-    --ink-muted: #736762;
-    --ink-light: #A89B95;
-    --ring-glow: rgba(217, 119, 6, 0.25);
-    --card-border: 1px solid #E8E1D5;
-    --card-shadow: 0 2px 8px rgba(43, 37, 35, 0.04);
-  }
-
-  [data-theme="black-gold"] {
-    /* 6. Obsidian Noir & Royal 24K Gold */
-    --studio-canvas: #0A0A0B;
-    --app-bg: #0A0A0B;
-    --paper: #141416;
-    --card-bg: #141416;
-    --sidebar-bg: #000000;
-    --sidebar-dark: #000000;
-    --primary-color: #EAB308;
-    --primary-hover: #CA8A04;
-    --primary-light: rgba(234, 179, 8, 0.15);
-    --primary-border: #27272A;
-    --primary-gradient: linear-gradient(135deg, #EAB308 0%, #FDE047 50%, #CA8A04 100%);
-    --header-gradient: linear-gradient(135deg, rgba(234, 179, 8, 0.1) 0%, rgba(20, 20, 22, 0.8) 100%);
-    --accent-color: #F59E0B;
-    --accent-light: rgba(245, 158, 11, 0.15);
-    --ink: #FAFAFA;
-    --ink-muted: #A1A1AA;
-    --ink-light: #71717A;
-    --ring-glow: rgba(234, 179, 8, 0.35);
-    --card-border: 1px solid rgba(234, 179, 8, 0.2);
-    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-  }
-
-  [data-theme="business"] {
-    /* 7. Corporate Navy & Precision Steel */
-    --studio-canvas: #F1F5F9;
-    --app-bg: #F1F5F9;
-    --paper: #FFFFFF;
-    --card-bg: #FFFFFF;
-    --sidebar-bg: #0F172A;
-    --sidebar-dark: #020617;
-    --primary-color: #2563EB;
-    --primary-hover: #1D4ED8;
-    --primary-light: #EFF6FF;
-    --primary-border: #CBD5E1;
-    --primary-gradient: linear-gradient(135deg, #2563EB 0%, #3B82F6 100%);
-    --header-gradient: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(15, 23, 42, 0.03) 100%);
-    --accent-color: #0284C7;
-    --accent-light: #E0F2FE;
-    --ink: #0F172A;
-    --ink-muted: #475569;
-    --ink-light: #94A3B8;
-    --ring-glow: rgba(37, 99, 235, 0.25);
-    --card-border: 1px solid #CBD5E1;
-    --card-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
-  }
-
-  [data-theme="ai-saas"] {
-    /* 8. Modern AI Studio & Hyper Purple */
-    --studio-canvas: #0B0F19;
-    --app-bg: #0B0F19;
-    --paper: #131B2E;
-    --card-bg: #131B2E;
-    --sidebar-bg: #070A11;
-    --sidebar-dark: #04060B;
-    --primary-color: #8B5CF6;
-    --primary-hover: #7C3AED;
-    --primary-light: rgba(139, 92, 246, 0.15);
-    --primary-border: #1E293B;
-    --primary-gradient: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #06B6D4 100%);
-    --header-gradient: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.08) 100%);
-    --accent-color: #14B8A6;
-    --accent-light: rgba(20, 184, 166, 0.15);
-    --ink: #F8FAFC;
-    --ink-muted: #94A3B8;
-    --ink-light: #64748B;
-    --ring-glow: rgba(139, 92, 246, 0.35);
-    --card-border: 1px solid rgba(139, 92, 246, 0.25);
-    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
-  }
-
-  [data-theme="nordic"] {
-    /* 9. Nordic Forest Spruce & Terracotta */
-    --studio-canvas: #F4F7F5;
-    --app-bg: #F4F7F5;
-    --paper: #FFFFFF;
-    --card-bg: #FFFFFF;
-    --sidebar-bg: #134E4A;
-    --sidebar-dark: #092B28;
-    --primary-color: #0D9488;
-    --primary-hover: #0F766E;
-    --primary-light: #CCFBF1;
-    --primary-border: #D1E7DD;
-    --primary-gradient: linear-gradient(135deg, #0D9488 0%, #14B8A6 100%);
-    --header-gradient: linear-gradient(135deg, rgba(13, 148, 136, 0.08) 0%, rgba(234, 88, 12, 0.05) 100%);
-    --accent-color: #EA580C;
-    --accent-light: #FFEDD5;
-    --ink: #134E4A;
-    --ink-muted: #4B6E6B;
-    --ink-light: #8BA8A5;
-    --ring-glow: rgba(13, 148, 136, 0.25);
-    --card-border: 1px solid #D1E7DD;
-    --card-shadow: 0 2px 8px rgba(19, 78, 74, 0.05);
-  }
-
-  [data-theme="sunset"] {
-    /* 10. Sunset Coral & Warm Amber */
-    --studio-canvas: #FFFBF7;
-    --app-bg: #FFFBF7;
-    --paper: #FFFFFF;
-    --card-bg: #FFFFFF;
-    --sidebar-bg: #36150F;
-    --sidebar-dark: #220B07;
-    --primary-color: #FF6B00;
-    --primary-hover: #EA580C;
-    --primary-light: #FFF0E6;
-    --primary-border: #FED7AA;
-    --primary-gradient: linear-gradient(135deg, #FF6B00 0%, #FF8833 100%);
-    --header-gradient: linear-gradient(135deg, rgba(255, 107, 0, 0.08) 0%, rgba(225, 29, 72, 0.05) 100%);
-    --accent-color: #E11D48;
-    --accent-light: #FFE4E6;
-    --ink: #36150F;
-    --ink-muted: #78534C;
-    --ink-light: #B0928B;
-    --ring-glow: rgba(255, 107, 0, 0.25);
-    --card-border: 1px solid #FED7AA;
-    --card-shadow: 0 2px 10px rgba(255, 107, 0, 0.05);
-  }
-
-  [data-theme="terminal"] {
-    /* 11. Executive High-Density Terminal */
-    --studio-canvas: #0F172A;
-    --app-bg: #0F172A;
-    --paper: #1E293B;
-    --card-bg: #1E293B;
-    --sidebar-bg: #020617;
-    --sidebar-dark: #000000;
-    --primary-color: #F59E0B;
-    --primary-hover: #D97706;
-    --primary-light: rgba(245, 158, 11, 0.15);
-    --primary-border: #334155;
-    --primary-gradient: linear-gradient(135deg, #F59E0B 0%, #10B981 100%);
-    --header-gradient: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(30, 41, 59, 0.8) 100%);
-    --accent-color: #10B981;
-    --accent-light: rgba(16, 185, 129, 0.15);
-    --ink: #E2E8F0;
-    --ink-muted: #94A3B8;
-    --ink-light: #64748B;
-    --ring-glow: rgba(245, 158, 11, 0.3);
-    --card-border: 1px solid #334155;
-    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  }
-
-  [data-theme="neobrutalist"] {
-    /* 12. Neo-Brutalist Pop Studio */
-    --studio-canvas: #FFFDF5;
-    --app-bg: #FFFDF5;
-    --paper: #FFFFFF;
-    --card-bg: #FFFFFF;
-    --sidebar-bg: #000000;
-    --sidebar-dark: #000000;
-    --primary-color: #A855F7;
-    --primary-hover: #9333EA;
-    --primary-light: #F3E8FF;
-    --primary-border: #000000;
-    --primary-gradient: linear-gradient(135deg, #A855F7 0%, #C084FC 100%);
-    --header-gradient: linear-gradient(135deg, #FEF08A 0%, #FDE047 100%);
-    --accent-color: #EAB308;
-    --accent-light: #FEF9C3;
-    --ink: #000000;
-    --ink-muted: #374151;
-    --ink-light: #6B7280;
-    --ring-glow: rgba(0, 0, 0, 0.3);
-    --card-border: 2.5px solid #000000;
-    --card-shadow: 4px 4px 0px #000000;
-  }
-
-  [data-theme="lavender"] {
-    /* 13. Lavender Mist & Radiant Violet */
-    --studio-canvas: #FAF8FF;
-    --app-bg: #FAF8FF;
-    --paper: #FFFFFF;
-    --card-bg: #FFFFFF;
-    --sidebar-bg: #2E1065;
-    --sidebar-dark: #1B073D;
-    --primary-color: #7C3AED;
-    --primary-hover: #6D28D9;
-    --primary-light: #EDE9FE;
-    --primary-border: #DDD6FE;
-    --primary-gradient: linear-gradient(135deg, #7C3AED 0%, #8B5CF6 100%);
-    --header-gradient: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(6, 182, 212, 0.05) 100%);
-    --accent-color: #06B6D4;
-    --accent-light: #ECFEFF;
-    --ink: #2E1065;
-    --ink-muted: #6B4E99;
-    --ink-light: #A793CE;
-    --ring-glow: rgba(124, 58, 237, 0.25);
-    --card-border: 1px solid #DDD6FE;
-    --card-shadow: 0 2px 8px rgba(124, 58, 237, 0.05);
-  }
-
-  [data-theme="crimson"] {
-    /* 14. Crimson Velvet & Bordeaux Wine */
-    --studio-canvas: #FFF6F6;
-    --app-bg: #FFF6F6;
-    --paper: #FFFFFF;
-    --card-bg: #FFFFFF;
-    --sidebar-bg: #3B0A0A;
-    --sidebar-dark: #210404;
-    --primary-color: #DC2626;
-    --primary-hover: #B91C1C;
-    --primary-light: #FEE2E2;
-    --primary-border: #FECACA;
-    --primary-gradient: linear-gradient(135deg, #DC2626 0%, #EF4444 100%);
-    --header-gradient: linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(59, 130, 246, 0.05) 100%);
-    --accent-color: #3B82F6;
-    --accent-light: #EFF6FF;
-    --ink: #3B0A0A;
-    --ink-muted: #7E3E3E;
-    --ink-light: #B47F7F;
-    --ring-glow: rgba(220, 38, 38, 0.25);
-    --card-border: 1px solid #FECACA;
-    --card-shadow: 0 2px 10px rgba(220, 38, 38, 0.06);
-  }
-
-  /* Legacy fallback support */
   [data-theme="terracotta"] {
+    /* 1. Warm Terracotta & Espresso (Default Warm Studio) */
     --studio-canvas: #FAF8F5;
     --app-bg: #FAF8F5;
     --paper: #FFFFFF;
-    --card-bg: #FFFFFF;
     --sidebar-bg: #240C0B;
     --sidebar-dark: #180504;
     --primary-color: #FF6B00;
@@ -360,15 +21,13 @@
     --ink-muted: #6E5B58;
     --ink-light: #A08E8B;
     --ring-glow: rgba(255, 107, 0, 0.25);
-    --card-border: 1px solid #EAE5DE;
-    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 6px 16px rgba(0, 0, 0, 0.03);
   }
 
   [data-theme="emerald"] {
+    /* 2. Emerald & Forest Sage (Fresh Botanical Pet Spa) */
     --studio-canvas: #F4F8F6;
     --app-bg: #F4F8F6;
     --paper: #FFFFFF;
-    --card-bg: #FFFFFF;
     --sidebar-bg: #0E2925;
     --sidebar-dark: #071715;
     --primary-color: #059669;
@@ -383,15 +42,13 @@
     --ink-muted: #4B6358;
     --ink-light: #7E998E;
     --ring-glow: rgba(5, 150, 105, 0.25);
-    --card-border: 1px solid #D1E7DD;
-    --card-shadow: 0 2px 8px rgba(14, 41, 37, 0.05);
   }
 
   [data-theme="ocean"] {
+    /* 3. Ocean Breeze & Navy (Modern Coastal Blue) */
     --studio-canvas: #F0F6FF;
     --app-bg: #F0F6FF;
     --paper: #FFFFFF;
-    --card-bg: #FFFFFF;
     --sidebar-bg: #0F172A;
     --sidebar-dark: #020617;
     --primary-color: #2563EB;
@@ -406,15 +63,55 @@
     --ink-muted: #475569;
     --ink-light: #94A3B8;
     --ring-glow: rgba(37, 99, 235, 0.25);
-    --card-border: 1px solid #DBEAFE;
-    --card-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  }
+
+  [data-theme="plum"] {
+    /* 4. Royal Plum & Dusty Rose (Luxury Boutique Pet Salon) */
+    --studio-canvas: #FAF5FF;
+    --app-bg: #FAF5FF;
+    --paper: #FFFFFF;
+    --sidebar-bg: #2E103B;
+    --sidebar-dark: #190521;
+    --primary-color: #9333EA;
+    --primary-hover: #7E22CE;
+    --primary-light: #F3E8FF;
+    --primary-border: #E9D5FF;
+    --primary-gradient: linear-gradient(135deg, #9333EA 0%, #A855F7 100%);
+    --header-gradient: linear-gradient(135deg, rgba(147, 51, 234, 0.08) 0%, rgba(219, 39, 119, 0.05) 100%);
+    --accent-color: #DB2777;
+    --accent-light: #FDF2F8;
+    --ink: #2E103B;
+    --ink-muted: #6B4E75;
+    --ink-light: #A38DAA;
+    --ring-glow: rgba(147, 51, 234, 0.25);
+  }
+
+  [data-theme="coral"] {
+    /* 5. Sunset Coral & Truffle (Artisan Pet Care) */
+    --studio-canvas: #FFF9F5;
+    --app-bg: #FFF9F5;
+    --paper: #FFFFFF;
+    --sidebar-bg: #351C14;
+    --sidebar-dark: #200E08;
+    --primary-color: #EA580C;
+    --primary-hover: #C2410C;
+    --primary-light: #FFF7ED;
+    --primary-border: #FFEDD5;
+    --primary-gradient: linear-gradient(135deg, #EA580C 0%, #FB923C 100%);
+    --header-gradient: linear-gradient(135deg, rgba(234, 88, 12, 0.08) 0%, rgba(202, 138, 4, 0.05) 100%);
+    --accent-color: #CA8A04;
+    --accent-light: #FEFCE8;
+    --ink: #351C14;
+    --ink-muted: #73544B;
+    --ink-light: #A68B83;
+    --ring-glow: rgba(234, 88, 12, 0.25);
   }
 
   [data-theme="slate"] {
+    /* 6. Midnight Slate & Champagne Gold (Executive Modern) */
     --studio-canvas: #F8FAFC;
     --app-bg: #F8FAFC;
     --paper: #FFFFFF;
-    --card-bg: #FFFFFF;
     --sidebar-bg: #18181B;
     --sidebar-dark: #09090B;
     --primary-color: #D97706;
@@ -429,15 +126,118 @@
     --ink-muted: #52525B;
     --ink-light: #A1A1AA;
     --ring-glow: rgba(217, 119, 6, 0.25);
-    --card-border: 1px solid #E2E8F0;
-    --card-shadow: 0 2px 8px rgba(24, 24, 27, 0.05);
+  }
+
+  [data-theme="nordic"] {
+    /* 7. Nordic Glacier Teal & Deep Pine */
+    --studio-canvas: #F0FDF9;
+    --app-bg: #F0FDF9;
+    --paper: #FFFFFF;
+    --sidebar-bg: #134E4A;
+    --sidebar-dark: #092B28;
+    --primary-color: #0D9488;
+    --primary-hover: #0F766E;
+    --primary-light: #CCFBF1;
+    --primary-border: #99F6E4;
+    --primary-gradient: linear-gradient(135deg, #0D9488 0%, #14B8A6 100%);
+    --header-gradient: linear-gradient(135deg, rgba(13, 148, 136, 0.08) 0%, rgba(245, 158, 11, 0.05) 100%);
+    --accent-color: #F59E0B;
+    --accent-light: #FEF3C7;
+    --ink: #134E4A;
+    --ink-muted: #4B6E6B;
+    --ink-light: #8BA8A5;
+    --ring-glow: rgba(13, 148, 136, 0.25);
+  }
+
+  [data-theme="lavender"] {
+    /* 8. Lavender Mist & Modern Lilac */
+    --studio-canvas: #FAF8FF;
+    --app-bg: #FAF8FF;
+    --paper: #FFFFFF;
+    --sidebar-bg: #2E1065;
+    --sidebar-dark: #1B073D;
+    --primary-color: #7C3AED;
+    --primary-hover: #6D28D9;
+    --primary-light: #EDE9FE;
+    --primary-border: #DDD6FE;
+    --primary-gradient: linear-gradient(135deg, #7C3AED 0%, #8B5CF6 100%);
+    --header-gradient: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(6, 182, 212, 0.05) 100%);
+    --accent-color: #06B6D4;
+    --accent-light: #ECFEFF;
+    --ink: #2E1065;
+    --ink-muted: #6B4E99;
+    --ink-light: #A793CE;
+    --ring-glow: rgba(124, 58, 237, 0.25);
+  }
+
+  [data-theme="rose"] {
+    /* 9. Cyber Rose & Neon Berry */
+    --studio-canvas: #FFF5F6;
+    --app-bg: #FFF5F6;
+    --paper: #FFFFFF;
+    --sidebar-bg: #4C0519;
+    --sidebar-dark: #29020C;
+    --primary-color: #E11D48;
+    --primary-hover: #BE123C;
+    --primary-light: #FFE4E6;
+    --primary-border: #FECDD3;
+    --primary-gradient: linear-gradient(135deg, #E11D48 0%, #F43F5E 100%);
+    --header-gradient: linear-gradient(135deg, rgba(225, 29, 72, 0.08) 0%, rgba(139, 92, 246, 0.05) 100%);
+    --accent-color: #8B5CF6;
+    --accent-light: #F5F3FF;
+    --ink: #4C0519;
+    --ink-muted: #883B4F;
+    --ink-light: #C0798C;
+    --ring-glow: rgba(225, 29, 72, 0.25);
+  }
+
+  [data-theme="gold"] {
+    /* 10. Imperial Espresso & Royal Amber Gold */
+    --studio-canvas: #FCF9F2;
+    --app-bg: #FCF9F2;
+    --paper: #FFFFFF;
+    --sidebar-bg: #2A1B0E;
+    --sidebar-dark: #170E07;
+    --primary-color: #D97706;
+    --primary-hover: #B45309;
+    --primary-light: #FEF3C7;
+    --primary-border: #FDE68A;
+    --primary-gradient: linear-gradient(135deg, #D97706 0%, #F59E0B 100%);
+    --header-gradient: linear-gradient(135deg, rgba(217, 119, 6, 0.08) 0%, rgba(16, 185, 129, 0.05) 100%);
+    --accent-color: #10B981;
+    --accent-light: #ECFDF5;
+    --ink: #2A1B0E;
+    --ink-muted: #705541;
+    --ink-light: #AC9482;
+    --ring-glow: rgba(217, 119, 6, 0.25);
+  }
+
+  [data-theme="crimson"] {
+    /* 11. Crimson Wine & Velvet Bordeaux */
+    --studio-canvas: #FFF6F6;
+    --app-bg: #FFF6F6;
+    --paper: #FFFFFF;
+    --sidebar-bg: #3B0A0A;
+    --sidebar-dark: #210404;
+    --primary-color: #DC2626;
+    --primary-hover: #B91C1C;
+    --primary-light: #FEE2E2;
+    --primary-border: #FECACA;
+    --primary-gradient: linear-gradient(135deg, #DC2626 0%, #EF4444 100%);
+    --header-gradient: linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(59, 130, 246, 0.05) 100%);
+    --accent-color: #3B82F6;
+    --accent-light: #EFF6FF;
+    --ink: #3B0A0A;
+    --ink-muted: #7E3E3E;
+    --ink-light: #B47F7F;
+    --ring-glow: rgba(220, 38, 38, 0.25);
   }
 
   [data-theme="monochrome"] {
+    /* 12. Obsidian Minimalist & Platinum Silver */
     --studio-canvas: #FAFAFA;
     --app-bg: #FAFAFA;
     --paper: #FFFFFF;
-    --card-bg: #FFFFFF;
     --sidebar-bg: #09090B;
     --sidebar-dark: #000000;
     --primary-color: #18181B;
@@ -452,17 +252,16 @@
     --ink-muted: #52525B;
     --ink-light: #A1A1AA;
     --ring-glow: rgba(24, 24, 27, 0.2);
-    --card-border: 1px solid #E4E4E7;
-    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   }
+
 
   body {
     font-family: "Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: var(--app-bg, #0A1C16);
-    color: var(--ink, #F8FAFC);
+    background-color: var(--app-bg, #FAF8F5);
+    color: var(--ink);
     font-size: 15px;
     line-height: 1.5;
-    transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+    transition: background-color 0.3s ease;
   }
 
   h1, h2, h3, h4, .font-display {
@@ -471,38 +270,32 @@
 }
 
 /* Custom UI Component Classes */
-.bg-theme-canvas {
-  background-color: var(--studio-canvas, #0A1C16);
-}
-.bg-theme-card {
-  background-color: var(--card-bg, #112920);
-}
 .bg-theme-primary {
-  background-color: var(--primary-color, #D4AF37);
+  background-color: var(--primary-color, #FF6B00);
 }
 .bg-theme-primary-hover:hover {
-  background-color: var(--primary-hover, #C59F2A);
+  background-color: var(--primary-hover, #E55C00);
 }
 .bg-theme-light {
-  background-color: var(--primary-light, rgba(212, 175, 55, 0.15));
+  background-color: var(--primary-light, #FFF0E6);
 }
 .bg-theme-sidebar {
-  background-color: var(--sidebar-bg, #06120E);
+  background-color: var(--sidebar-bg, #240C0B);
 }
 .text-theme-primary {
-  color: var(--primary-color, #D4AF37);
+  color: var(--primary-color, #FF6B00);
 }
 .text-theme-ink {
-  color: var(--ink, #F8FAFC);
+  color: var(--ink, #240C0B);
 }
 .text-theme-muted {
-  color: var(--ink-muted, #94A3B8);
+  color: var(--ink-muted, #6E5B58);
 }
 .border-theme-primary {
-  border-color: var(--primary-color, #D4AF37);
+  border-color: var(--primary-color, #FF6B00);
 }
 .border-theme-subtle {
-  border-color: var(--primary-border, #234E3E);
+  border-color: var(--primary-border, #E6DFD5);
 }
 .theme-gradient-bg {
   background: var(--primary-gradient);
@@ -511,83 +304,49 @@
   background: var(--header-gradient);
 }
 .theme-glow {
-  box-shadow: 0 0 25px var(--ring-glow, rgba(212, 175, 55, 0.35));
+  box-shadow: 0 0 25px var(--ring-glow, rgba(255, 107, 0, 0.25));
 }
 
 .btn-primary {
-  background: var(--primary-gradient, linear-gradient(135deg, #D4AF37 0%, #F3E5AB 100%));
-  color: #0F172A;
-  font-weight: 600;
-  box-shadow: 0 4px 14px var(--ring-glow, rgba(212, 175, 55, 0.25));
+  background: var(--primary-gradient, linear-gradient(135deg, #FF6B00 0%, #FF8833 100%));
+  color: #ffffff;
+  box-shadow: 0 4px 14px var(--ring-glow, rgba(255, 107, 0, 0.25));
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .btn-primary:hover {
-  filter: brightness(1.06);
+  filter: brightness(0.94);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px var(--ring-glow, rgba(212, 175, 55, 0.4));
+  box-shadow: 0 6px 18px var(--ring-glow, rgba(255, 107, 0, 0.35));
 }
 
+
 .btn-dark {
-  background-color: var(--sidebar-bg, #06120E);
-  color: var(--ink, #ffffff);
-  border: 1px solid var(--primary-border, rgba(255, 255, 255, 0.1));
+  background-color: var(--sidebar-bg, #240C0B);
+  color: #ffffff;
   transition: all 0.2s ease;
 }
 .btn-dark:hover {
   opacity: 0.9;
-  border-color: var(--primary-color, #D4AF37);
 }
 
 .btn-ghost {
-  background: var(--card-bg, #112920);
-  border: 1px solid var(--primary-border, #234E3E);
-  color: var(--ink, #F8FAFC);
+  background: #ffffff;
+  border: 1px solid #E6DFD5;
+  color: var(--ink, #240C0B);
   transition: all 0.2s ease;
 }
 .btn-ghost:hover {
-  border-color: var(--primary-color, #D4AF37);
-  color: var(--primary-color, #D4AF37);
+  border-color: #D8D3C4;
+  color: var(--primary-color, #FF6B00);
 }
 
-/* Master Adaptive Card Box */
 .card-box {
-  background-color: var(--card-bg, #112920);
-  border-radius: 18px;
-  border: var(--card-border, 1px solid rgba(255, 255, 255, 0.1));
-  box-shadow: var(--card-shadow, 0 4px 20px rgba(0, 0, 0, 0.1));
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 6px 16px rgba(0, 0, 0, 0.03);
   padding: 24px;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-[data-theme="glassmorphism"] .card-box {
-  backdrop-filter: var(--surface-blur, blur(16px));
-  -webkit-backdrop-filter: var(--surface-blur, blur(16px));
-}
-
-[data-theme="neobrutalist"] .card-box {
-  border-radius: 12px;
-  border: 2.5px solid #000000;
-  box-shadow: 4px 4px 0px #000000;
-}
-[data-theme="neobrutalist"] .btn-primary {
-  border-radius: 8px;
-  border: 2px solid #000000;
-  box-shadow: 3px 3px 0px #000000;
-  color: #000000;
-}
-[data-theme="neobrutalist"] .btn-primary:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0px #000000;
-}
-
-[data-theme="luxury"] .card-box {
-  border-color: rgba(212, 175, 55, 0.25);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
-}
-
-[data-theme="black-gold"] .card-box {
-  border-color: rgba(234, 179, 8, 0.25);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+  border: 1px solid #EAE5DE;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
 }
 
 /* Custom Scrollbar */
@@ -599,13 +358,12 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--primary-border, rgba(150, 150, 150, 0.3));
+  background: #D8D3C4;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-color, #D4AF37);
+  background: #A08E8B;
 }
-
 
 /* Print Styles - Isolate only the printable invoice/document and hide everything else */
 @media print {

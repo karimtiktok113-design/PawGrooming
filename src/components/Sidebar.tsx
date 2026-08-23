@@ -1,7 +1,6 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
-import { useDashboardSystem } from '../context/DashboardSystemContext';
 import { ViewMode } from '../types';
 import { isScreenAllowed } from '../data/permissionPresets';
 import { 
@@ -21,8 +20,7 @@ import {
   LogOut,
   ShieldCheck,
   Lock,
-  Crown,
-  Sliders
+  Crown
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -33,7 +31,6 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) => {
   const { view, setView, clients, settings } = useApp();
   const { currentProfile, isAdmin, logout, returnToAdmin } = useAuth();
-  const { setIsAdminStudioOpen } = useDashboardSystem();
 
   // Calculate alerts badge count
   const alertCount = React.useMemo(() => {
@@ -170,22 +167,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
 
         {/* Bottom User Profile Section & Actions */}
         <div className="pt-4 border-t border-white/10 space-y-2">
-          {/* SaaS Admin Studio Trigger */}
-          <button
-            id="btn-sidebar-admin-studio"
-            onClick={() => {
-              setIsAdminStudioOpen(true);
-              if (setMobileOpen) setMobileOpen(false);
-            }}
-            className="w-full flex items-center justify-between py-2 px-3 rounded-xl bg-gradient-to-r from-[#FF6B00]/20 to-[#FF8833]/10 hover:from-[#FF6B00]/30 hover:to-[#FF8833]/20 text-[#FFA052] hover:text-white text-[11px] font-bold border border-[#FF6B00]/30 transition-all cursor-pointer shadow-xs"
-          >
-            <div className="flex items-center gap-1.5">
-              <Sliders className="w-3.5 h-3.5 text-[#FF6B00]" />
-              <span>14 Themes & Layouts</span>
-            </div>
-            <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#FF6B00] text-white font-black uppercase">Studio</span>
-          </button>
-
           {isAdmin && (
             <button
               onClick={returnToAdmin}

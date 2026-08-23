@@ -1,6 +1,6 @@
 {
-  "name": "PawGroom — Customizable SaaS Dashboard System",
-  "description": "Multi-client SaaS dashboard screen system for PawGroom featuring 14 premium visual themes, 7 responsive dashboard layout archetypes, dynamic Admin Studio control panel, real-time live synchronization, KPI analytics, booking operations, pet CRM records, retail inventory, and groomer leaderboards.",
+  "name": "PawBook Pro — Dog Grooming Studio",
+  "description": "Park Grooming Dashboard with SaaS Multi-Tenant Authentication, Client Login Portal, Admin Management Control Center, Invoices & Digital QR Receipts, Appointment Scheduling, Client & Pet Directory, Service Catalog, Staff Management, Loyalty Program, Vaccine Alerts, and Revenue Analytics.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

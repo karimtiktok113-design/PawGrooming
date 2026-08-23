@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { DashboardSystemProvider } from './context/DashboardSystemContext';
 import { ViewMode } from './types';
 import { isScreenAllowed } from './data/permissionPresets';
 import { Sidebar } from './components/Sidebar';
@@ -28,7 +27,6 @@ import { AdminDashboard } from './components/admin/AdminDashboard';
 import { InactiveAccountModal } from './components/auth/InactiveAccountModal';
 import { DeletedAccountModal } from './components/auth/DeletedAccountModal';
 import { ClientNotificationRenderer } from './components/notifications/ClientNotificationRenderer';
-import { AdminStudioDrawer } from './components/dashboard/AdminStudioDrawer';
 import { ArrowLeft } from 'lucide-react';
 
 const MainApp: React.FC = () => {
@@ -163,9 +161,6 @@ const MainApp: React.FC = () => {
 
       {/* Global Modals Container */}
       <ModalContainer />
-
-      {/* SaaS Admin Studio Drawer (Theme Switcher & Controls) */}
-      <AdminStudioDrawer />
     </div>
   );
 };
@@ -181,9 +176,6 @@ const AppContent: React.FC = () => {
       {/* Real-time Deleted Account Alert Modal */}
       <DeletedAccountModal />
 
-      {/* Global Admin Studio Drawer */}
-      <AdminStudioDrawer />
-
       {/* Routing based on authView */}
       {authView === 'client_login' && <ClientLogin />}
       {authView === 'admin_login' && <AdminLogin />}
@@ -197,9 +189,7 @@ export function App() {
   return (
     <AuthProvider>
       <AppProvider>
-        <DashboardSystemProvider>
-          <AppContent />
-        </DashboardSystemProvider>
+        <AppContent />
       </AppProvider>
     </AuthProvider>
   );
