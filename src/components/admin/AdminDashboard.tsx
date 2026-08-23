@@ -1,6 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { ClientProfile, SubscriptionPlan, AccountStatus, isClientProfileOnline } from '../../types/auth';
+import { 
+  ClientProfile, 
+  SubscriptionPlan, 
+  AccountStatus, 
+  isClientProfileOnline,
+  getProfileSessionCounts 
+} from '../../types/auth';
 import { generateNextProfileId, generateSuggestedPassword } from '../../data/initialAuthData';
 import { 
   Users, 
@@ -518,10 +524,9 @@ export const AdminDashboard: React.FC = () => {
                     filteredProfiles.map((p) => {
                       const isActive = p.status === 'active';
                       const isExpired = p.expiryDate < today;
-                      const activeSessions = (p.activeSessions || []).filter(s => s.status === 'active');
-                      const deviceCount = activeSessions.length || (p.isCurrentlyLoggedIn ? 1 : 0);
+                      const { activeCount, onlineCount, totalCount, bannedCount } = getProfileSessionCounts(p);
+                      const isOnline = isClientProfileOnline(p);
                       const isSingleDeviceEnforced = !!p.enforceSingleDeviceLogin;
-                      const bannedCount = (p.bannedDevices || []).length;
                       const isSelected = selectedClientIds.includes(p.profileId);
 
                       return (
@@ -568,11 +573,16 @@ export const AdminDashboard: React.FC = () => {
 
                           {/* Live Status & Device Tracking */}
                           <td className="py-3.5 px-4 space-y-1">
-                            <div className="flex items-center gap-2">
-                              {isClientProfileOnline(p) ? (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              {isOnline ? (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-sm shadow-emerald-500/10">
                                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                  ONLINE
+                                  ONLINE {onlineCount > 1 ? `(${onlineCount})` : ''}
+                                </span>
+                              ) : activeCount > 0 ? (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                                  IDLE ({activeCount})
                                 </span>
                               ) : (
                                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-slate-800 text-slate-400 border border-slate-700">
@@ -587,10 +597,10 @@ export const AdminDashboard: React.FC = () => {
                                   setDevicesModalOpen(true);
                                 }}
                                 className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 transition-colors cursor-pointer"
-                                title="Click to view and manage logged-in devices"
+                                title="Click to view and manage active & online device sessions"
                               >
                                 <Laptop className="w-3 h-3" />
-                                <span>{deviceCount} {deviceCount === 1 ? 'Device' : 'Devices'}</span>
+                                <span>{activeCount} Active {onlineCount > 0 ? `(${onlineCount} Online)` : ''}</span>
                               </button>
                             </div>
 

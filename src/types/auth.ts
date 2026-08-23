@@ -289,16 +289,78 @@ export interface AdminNotification {
 /**
  * Check if a client profile is currently online based on session status and recent heartbeat activity.
  * A client is considered online if:
- * 1. isCurrentlyLoggedIn is true
- * 2. lastActiveAt is within the last 40 seconds (fresh heartbeat)
+ * 1. isCurrentlyLoggedIn is true and lastActiveAt is within the last 60 seconds (fresh heartbeat), OR
+ * 2. Any active session in activeSessions has transmitted a heartbeat within the last 60 seconds.
  */
 export function isClientProfileOnline(profile?: ClientProfile | null): boolean {
-  if (!profile || !profile.isCurrentlyLoggedIn) return false;
-  if (!profile.lastActiveAt) return false;
-  const lastActiveMs = new Date(profile.lastActiveAt).getTime();
-  if (isNaN(lastActiveMs)) return false;
+  if (!profile) return false;
+  
+  const now = Date.now();
+  const bannedSet = new Set((profile.bannedDevices || []).map(d => d.toLowerCase()));
+
+  // 1. Check profile-level heartbeat and logged in flag
+  if (profile.isCurrentlyLoggedIn && profile.lastActiveAt) {
+    const lastActiveMs = new Date(profile.lastActiveAt).getTime();
+    if (!isNaN(lastActiveMs) && now - lastActiveMs >= 0 && now - lastActiveMs < 60000) {
+      return true;
+    }
+  }
+
+  // 2. Check individual active sessions
+  if (Array.isArray(profile.activeSessions)) {
+    const hasOnlineSession = profile.activeSessions.some(s => {
+      if (s.status !== 'active' || bannedSet.has(s.deviceId.toLowerCase())) return false;
+      if (!s.lastActiveAt) return false;
+      const sessMs = new Date(s.lastActiveAt).getTime();
+      return !isNaN(sessMs) && now - sessMs >= 0 && now - sessMs < 60000;
+    });
+    if (hasOnlineSession) return true;
+  }
+
+  return false;
+}
+
+/**
+ * Check if a specific device session is currently transmitting an active online heartbeat
+ */
+export function isDeviceSessionOnline(session?: ClientDeviceSession | null, profileIsOnline: boolean = false): boolean {
+  if (!session || session.status !== 'active') return false;
+  if (!session.lastActiveAt) return profileIsOnline;
+  const lastActiveMs = new Date(session.lastActiveAt).getTime();
+  if (isNaN(lastActiveMs)) return profileIsOnline;
   const diffMs = Date.now() - lastActiveMs;
-  // Consider online if heartbeat was active within the last 40 seconds
-  return diffMs >= 0 && diffMs < 40000;
+  return diffMs >= 0 && diffMs < 60000;
+}
+
+/**
+ * Get unified counts for active sessions, online sessions, and total devices for a client profile
+ */
+export function getProfileSessionCounts(profile?: ClientProfile | null): {
+  activeCount: number;
+  onlineCount: number;
+  totalCount: number;
+  bannedCount: number;
+} {
+  if (!profile) {
+    return { activeCount: 0, onlineCount: 0, totalCount: 0, bannedCount: 0 };
+  }
+
+  const bannedSet = new Set((profile.bannedDevices || []).map(d => d.toLowerCase()));
+  const isOnline = isClientProfileOnline(profile);
+  const rawSessions = Array.isArray(profile.activeSessions) ? profile.activeSessions : [];
+
+  let activeCount = rawSessions.filter(s => s.status === 'active' && !bannedSet.has(s.deviceId.toLowerCase())).length;
+  let onlineCount = rawSessions.filter(s => s.status === 'active' && !bannedSet.has(s.deviceId.toLowerCase()) && isDeviceSessionOnline(s, isOnline)).length;
+
+  // If profile is marked logged in or online, but sessions array is empty, count the live primary session
+  if (activeCount === 0 && (profile.isCurrentlyLoggedIn || isOnline)) {
+    activeCount = 1;
+    if (isOnline) onlineCount = 1;
+  }
+
+  const totalCount = Math.max(rawSessions.length, activeCount);
+  const bannedCount = (profile.bannedDevices || []).length;
+
+  return { activeCount, onlineCount, totalCount, bannedCount };
 }
 

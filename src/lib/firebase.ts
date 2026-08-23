@@ -13,7 +13,7 @@ import {
 } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import firebaseConfig from '../../firebase-applet-config.json';
-import { ClientProfile, AdminNotification } from '../types/auth';
+import { ClientProfile, AdminNotification, ClientDeviceSession } from '../types/auth';
 import { compressDataUrl } from '../utils/imageCompressor';
 
 // 1. Initialize Firebase App
@@ -212,7 +212,11 @@ export async function markProfileOfflineInFirestore(profileId: string, sessionId
 /**
  * Directly update client presence heartbeat in Firestore
  */
-export async function updateProfileHeartbeatInFirestore(profileId: string, sessionId?: string): Promise<void> {
+export async function updateProfileHeartbeatInFirestore(
+  profileId: string, 
+  sessionId?: string,
+  deviceMetadata?: Partial<ClientDeviceSession>
+): Promise<void> {
   try {
     const ref = doc(db, PROFILES_COLLECTION, profileId);
     const snap = await getDoc(ref);
@@ -223,9 +227,64 @@ export async function updateProfileHeartbeatInFirestore(profileId: string, sessi
     let updatedSessions = Array.isArray(existing.activeSessions) ? [...existing.activeSessions] : [];
 
     if (sessionId) {
-      updatedSessions = updatedSessions.map(s =>
-        s.sessionId === sessionId ? { ...s, status: 'active' as const, lastActiveAt: now } : s
-      );
+      const sessionIndex = updatedSessions.findIndex(s => s.sessionId === sessionId);
+      if (sessionIndex >= 0) {
+        updatedSessions[sessionIndex] = {
+          ...updatedSessions[sessionIndex],
+          status: 'active' as const,
+          lastActiveAt: now
+        };
+      } else {
+        // Create new active session record if missing
+        const newSessionRecord: ClientDeviceSession = {
+          sessionId,
+          deviceId: deviceMetadata?.deviceId || `dev_${profileId.toLowerCase()}`,
+          deviceType: deviceMetadata?.deviceType || 'desktop',
+          deviceName: deviceMetadata?.deviceName || existing.lastActiveDevice || `${existing.businessName || 'Client'} (Browser)`,
+          browser: deviceMetadata?.browser || 'Web Browser',
+          os: deviceMetadata?.os || 'Desktop OS',
+          location: deviceMetadata?.location || 'Local Network',
+          ipAddress: deviceMetadata?.ipAddress || '192.168.1.1',
+          loginAt: now,
+          lastActiveAt: now,
+          status: 'active',
+          isCurrentDevice: true
+        };
+        updatedSessions = [newSessionRecord, ...updatedSessions].slice(0, 20);
+      }
+    } else if (updatedSessions.length === 0) {
+      // If no session ID was given but client is online and activeSessions is empty, synthesize primary active session
+      const fallbackSessionId = `sess_live_${profileId.toLowerCase()}`;
+      const fallbackSession: ClientDeviceSession = {
+        sessionId: fallbackSessionId,
+        deviceId: `dev_primary_${profileId.toLowerCase()}`,
+        deviceType: 'desktop',
+        deviceName: existing.lastActiveDevice || `${existing.businessName || 'Client'} Workstation`,
+        browser: 'Web Browser',
+        os: 'Desktop OS',
+        location: 'Local Network',
+        ipAddress: '192.168.1.1',
+        loginAt: existing.lastActiveAt || now,
+        lastActiveAt: now,
+        status: 'active',
+        isCurrentDevice: true
+      };
+      updatedSessions = [fallbackSession];
+    } else {
+      // Update most recent active session
+      const activeIdx = updatedSessions.findIndex(s => s.status === 'active');
+      if (activeIdx >= 0) {
+        updatedSessions[activeIdx] = {
+          ...updatedSessions[activeIdx],
+          lastActiveAt: now
+        };
+      } else {
+        updatedSessions[0] = {
+          ...updatedSessions[0],
+          status: 'active',
+          lastActiveAt: now
+        };
+      }
     }
 
     const updatePayload = sanitizeForFirestore({

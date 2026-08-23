@@ -762,13 +762,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const profile = authDatabase.profiles.find(p => p.profileId === profileId);
     if (!profile) return;
 
+    const currentDeviceRaw = detectCurrentDevice();
+    const now = new Date().toISOString();
+    const newDeviceSession: ClientDeviceSession = {
+      ...currentDeviceRaw,
+      loginAt: now,
+      lastActiveAt: now,
+      status: 'active',
+      isCurrentDevice: true
+    };
+
+    let updatedSessions = Array.isArray(profile.activeSessions) ? [...profile.activeSessions] : [];
+    if (profile.enforceSingleDeviceLogin) {
+      updatedSessions = updatedSessions.map(s => ({ ...s, status: 'terminated' as const }));
+    }
+    updatedSessions = [newDeviceSession, ...updatedSessions.filter(s => s.sessionId !== newDeviceSession.sessionId)].slice(0, 20);
+
+    const updatedProfile: ClientProfile = {
+      ...profile,
+      isCurrentlyLoggedIn: true,
+      lastActiveAt: now,
+      lastActiveDevice: newDeviceSession.deviceName,
+      activeSessions: updatedSessions
+    };
+
     const newSession: AuthSession = {
       userType: 'client',
-      profile,
+      profile: updatedProfile,
+      sessionId: newDeviceSession.sessionId,
+      deviceId: newDeviceSession.deviceId,
       token: `impersonate_${profileId}_${Date.now()}`,
-      loginTime: new Date().toISOString(),
+      loginTime: now,
       rememberMe: false
     };
+
+    setAuthDatabase(prev => ({
+      ...prev,
+      profiles: prev.profiles.map(p => p.profileId === profileId ? updatedProfile : p),
+      lastUpdated: now
+    }));
+
+    saveProfileToFirestore(updatedProfile).catch(() => {});
 
     persistSession(newSession, false);
     setAuthView('app');
