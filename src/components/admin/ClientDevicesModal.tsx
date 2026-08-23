@@ -86,10 +86,10 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
   const bannedList: string[] = Array.isArray(freshProfile.bannedDevices) ? freshProfile.bannedDevices : [];
   const bannedRecords: BannedDeviceRecord[] = Array.isArray(freshProfile.bannedDeviceRecords) ? freshProfile.bannedDeviceRecords : [];
   
-  // Real-time ticker to refresh session active states every 3s
+  // Real-time ticker to refresh session active states every 1s
   const [, setPresenceTick] = useState(0);
   useEffect(() => {
-    const timer = setInterval(() => setPresenceTick(t => t + 1), 3000);
+    const timer = setInterval(() => setPresenceTick(t => t + 1), 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -99,7 +99,7 @@ export const ClientDevicesModal: React.FC<ClientDevicesModalProps> = ({
     // Session is active if profile is online or session had recent heartbeat
     if (!s.lastActiveAt) return isProfileOnlineNow;
     const diff = Date.now() - new Date(s.lastActiveAt).getTime();
-    return diff >= 0 && diff < 60000;
+    return diff >= 0 && diff < 7000;
   });
   const activeSessionsCount = activeSessions.length;
 

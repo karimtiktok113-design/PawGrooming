@@ -288,18 +288,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // 1. Initial online mark
     updateProfileHeartbeatInFirestore(profileId, sessionId).catch(() => {});
 
-    // 2. Periodic heartbeat every 12 seconds
+    // 2. Periodic heartbeat every 2 seconds
     const heartbeatInterval = setInterval(() => {
       if (document.visibilityState !== 'hidden') {
         updateProfileHeartbeatInFirestore(profileId, sessionId).catch(() => {});
       }
-    }, 12000);
+    }, 2000);
 
-    // 3. User interaction activity throttle (at most every 10s)
+    // 3. User interaction activity throttle (at most every 1.5s)
     let lastActivityPing = Date.now();
     const handleUserActivity = () => {
       const now = Date.now();
-      if (now - lastActivityPing > 10000) {
+      if (now - lastActivityPing > 1500) {
         lastActivityPing = now;
         updateProfileHeartbeatInFirestore(profileId, sessionId).catch(() => {});
       }
