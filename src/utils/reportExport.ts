@@ -17,6 +17,8 @@ export interface InvoiceReportItem {
   serviceName: string;
   groomerName: string;
   subtotal: number;
+  groomingRev?: number;
+  retailRev?: number;
   discountAmount: number;
   discountCode: string;
   taxRate: number;
@@ -108,8 +110,8 @@ export function generatePremiumInvoicesCSV(
 
   const grossInvoiced = invoices.reduce((sum, i) => sum + i.total, 0);
   const totalTax = invoices.reduce((sum, i) => sum + i.taxAmount, 0);
-  const totalSubtotal = invoices.reduce((sum, i) => sum + i.subtotal, 0);
-  const totalRetail = invoices.reduce((sum, i) => sum + i.retailTotal, 0);
+  const totalGrooming = invoices.reduce((sum, i) => sum + (i.groomingRev !== undefined ? i.groomingRev : i.subtotal), 0);
+  const totalRetail = invoices.reduce((sum, i) => sum + (i.retailRev !== undefined ? i.retailRev : i.retailTotal), 0);
   const avgTicket = totalCount > 0 ? grossInvoiced / totalCount : 0;
 
   const lines: string[] = [];
@@ -126,9 +128,8 @@ export function generatePremiumInvoicesCSV(
   lines.push(`"# ==========================================================================="`);
   lines.push(`"# FINANCIAL SUMMARY MATRIX:"`);
   lines.push(`"# Total Invoices: ${totalCount} | Paid: ${paidCount} | Pending Due: ${dueCount} | Cancelled: ${cancelledCount}"`);
-  lines.push(`"# Gross Invoiced: ${currency} ${grossInvoiced.toFixed(2)} | Net Subtotal: ${currency} ${totalSubtotal.toFixed(2)}"`);
-  lines.push(`"# Total Tax Collected: ${currency} ${totalTax.toFixed(2)} | Retail Product Sales: ${currency} ${totalRetail.toFixed(2)}"`);
-  lines.push(`"# Average Invoice Ticket: ${currency} ${avgTicket.toFixed(2)}"`);
+  lines.push(`"# Gross Invoiced: ${currency} ${grossInvoiced.toFixed(2)} | Grooming Services: ${currency} ${totalGrooming.toFixed(2)} | Retail Products: ${currency} ${totalRetail.toFixed(2)}"`);
+  lines.push(`"# Total Tax Collected: ${currency} ${totalTax.toFixed(2)} | Average Ticket: ${currency} ${avgTicket.toFixed(2)}"`);
   lines.push(`"# ==========================================================================="`);
   lines.push(``);
 

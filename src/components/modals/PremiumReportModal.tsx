@@ -156,14 +156,16 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
         petName: client?.name || 'Pet',
         petBreed: client?.breed || 'Breed',
         petSize: client?.size || 'medium',
-        serviceName: service?.name || 'Grooming Service',
+        serviceName: inv.serviceOrPackageName || service?.name || 'Grooming Service',
         groomerName: stylist?.name || 'Stylist',
         subtotal: inv.taxableSubtotal,
-        discountAmount: appt.discountAmount || 0,
-        discountCode: appt.discountCode || '',
-        taxRate: taxRate,
+        groomingRev: inv.groomingRevenue,
+        retailRev: inv.retailRevenue,
+        discountAmount: inv.discountAmount,
+        discountCode: inv.discountCode,
+        taxRate: inv.taxRate || taxRate,
         taxAmount: inv.taxAmount,
-        retailTotal: appt.retail || 0,
+        retailTotal: inv.retailRevenue,
         total: inv.totalAmount,
         notes: appt.notes || '',
       };
@@ -176,8 +178,8 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
     const paidCount = invoiceReportData.filter((i) => i.isPaid).length;
     const dueCount = invoiceReportData.filter((i) => !i.isPaid && !i.isCancelled).length;
     const grossTotal = invoiceReportData.reduce((acc, i) => acc + i.total, 0);
-    const groomingTotal = invoiceReportData.reduce((acc, i) => acc + i.subtotal, 0);
-    const retailTotal = invoiceReportData.reduce((acc, i) => acc + i.retailTotal, 0);
+    const groomingTotal = invoiceReportData.reduce((acc, i) => acc + (i.groomingRev ?? i.subtotal), 0);
+    const retailTotal = invoiceReportData.reduce((acc, i) => acc + (i.retailRev ?? i.retailTotal), 0);
     const taxTotal = invoiceReportData.reduce((acc, i) => acc + i.taxAmount, 0);
     const avgTicket = totalCount > 0 ? grossTotal / totalCount : 0;
     const paidRate = totalCount > 0 ? (paidCount / totalCount) * 100 : 0;
@@ -208,9 +210,9 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
   const dailyChartData = useMemo(() => {
     const map: Record<string, { date: string; fullDate: string; grooming: number; retail: number; total: number; count: number }> = {};
 
-    // Group filtered appointments by date
-    filteredAppointments.forEach((a) => {
-      const d = a.date;
+    // Group filtered invoices by date
+    invoiceReportData.forEach((i) => {
+      const d = i.date;
       if (!map[d]) {
         map[d] = {
           date: d.slice(5),
@@ -221,27 +223,26 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
           count: 0,
         };
       }
-      map[d].grooming += a.price;
-      map[d].retail += a.retail || 0;
-      map[d].total += a.price + (a.retail || 0);
+      map[d].grooming += i.groomingRev ?? i.subtotal;
+      map[d].retail += i.retailRev ?? i.retailTotal;
+      map[d].total += i.total;
       map[d].count += 1;
     });
 
     return Object.values(map).sort((a, b) => a.fullDate.localeCompare(b.fullDate));
-  }, [filteredAppointments]);
+  }, [invoiceReportData]);
 
   // Service Breakdown Data
   const servicesChartData = useMemo(() => {
     const map: Record<string, { name: string; count: number; total: number }> = {};
 
-    filteredAppointments.forEach((a) => {
-      const svc = services.find((s) => s.id === a.serviceId);
-      const name = svc ? svc.name : 'Other Services';
+    invoiceReportData.forEach((i) => {
+      const name = i.serviceName || 'Other Services';
       if (!map[name]) {
         map[name] = { name, count: 0, total: 0 };
       }
       map[name].count += 1;
-      map[name].total += a.price;
+      map[name].total += i.groomingRev ?? i.subtotal;
     });
 
     const list = Object.values(map).sort((a, b) => b.total - a.total);
@@ -251,7 +252,7 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
       ...item,
       percentage: totalGroomRev > 0 ? (item.total / totalGroomRev) * 100 : 0,
     }));
-  }, [filteredAppointments, services]);
+  }, [invoiceReportData]);
 
   // Staff Performance Data
   const staffChartData = useMemo(() => {
@@ -271,8 +272,9 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
 
     filteredAppointments.forEach((a) => {
       if (map[a.staffId]) {
+        const inv = calculateAppointmentInvoice(a, { services, packages, settings, redemptions });
         map[a.staffId].count += 1;
-        map[a.staffId].serviceRev += a.price;
+        map[a.staffId].serviceRev += inv.groomingRevenue;
       }
     });
 
@@ -284,7 +286,7 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
         studioNet: st.serviceRev - commissionPayout,
       };
     }).sort((a, b) => b.serviceRev - a.serviceRev);
-  }, [filteredAppointments, staff]);
+  }, [filteredAppointments, staff, services, packages, settings, redemptions]);
 
   // Download Handler
   const handleDownloadCSV = () => {

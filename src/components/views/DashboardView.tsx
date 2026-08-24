@@ -176,7 +176,10 @@ export const DashboardView: React.FC = () => {
 
       const completedAppts = clientAppts.filter(a => a.status === 'completed');
       const totalVisits = completedAppts.length;
-      const lifetimeSpend = completedAppts.reduce((sum, a) => sum + (a.totalAmount || (a.price + (a.retail || 0))), 0);
+      const lifetimeSpend = completedAppts.reduce((sum, a) => {
+        const inv = calculateAppointmentInvoice(a, { services, packages, settings, redemptions });
+        return sum + inv.totalAmount;
+      }, 0);
 
       const nextAppt = clientAppts.find(a => a.date >= todayStr);
       const lastAppt = completedAppts[completedAppts.length - 1];

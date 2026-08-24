@@ -13,6 +13,8 @@ export interface CalculatedInvoiceData {
   taxRate: number;
   taxAmount: number;
   totalAmount: number;
+  groomingRevenue: number;
+  retailRevenue: number;
   pointsEarned: number;
   isPaid: boolean;
   serviceOrPackageName: string;
@@ -59,6 +61,8 @@ export function calculateAppointmentInvoice(
       taxRate: 8.5,
       taxAmount: 0,
       totalAmount: 0,
+      groomingRevenue: 0,
+      retailRevenue: 0,
       pointsEarned: 0,
       isPaid: false,
       serviceOrPackageName: 'Grooming Treatment',
@@ -111,6 +115,17 @@ export function calculateAppointmentInvoice(
   const taxAmount = Math.round(taxableSubtotal * (taxRate / 100) * 100) / 100;
   const totalAmount = taxableSubtotal + taxAmount;
 
+  // Mathematically distribute net total into service and retail revenue such that groomingRevenue + retailRevenue === totalAmount
+  let groomingRevenue = 0;
+  let retailRevenue = 0;
+  if (grossSubtotal > 0) {
+    groomingRevenue = Math.round((totalAmount * (servicePrice / grossSubtotal)) * 100) / 100;
+    retailRevenue = Math.round((totalAmount - groomingRevenue) * 100) / 100;
+  } else {
+    groomingRevenue = 0;
+    retailRevenue = 0;
+  }
+
   const pointsEarned = Math.floor(totalAmount);
   const isPaid = appt.status === 'completed';
   const serviceOrPackageName = pkg ? pkg.name : (service?.name || 'Grooming Treatment');
@@ -128,6 +143,8 @@ export function calculateAppointmentInvoice(
     taxRate,
     taxAmount,
     totalAmount,
+    groomingRevenue,
+    retailRevenue,
     pointsEarned,
     isPaid,
     serviceOrPackageName,
