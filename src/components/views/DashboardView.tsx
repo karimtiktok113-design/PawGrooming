@@ -510,46 +510,46 @@ export const DashboardView: React.FC = () => {
         </div>
       )}
 
-      {/* Center Operational Hub: Cohesive 2-Column Balanced Architecture */}
+      {/* Center Operational Hub: Cohesive 2-Column Balanced Architecture with Equal Heights */}
       {(showTodaySchedule || showPetSummaryTable) && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 items-stretch">
         
-        {/* Left Col: Today's Grooming Operations & Live Queue */}
+        {/* Left Column: Grooming Floor Operations */}
         {showTodaySchedule && (
         <motion.div 
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
-          className={`${showPetSummaryTable ? 'lg:col-span-7' : 'lg:col-span-12'} bg-white text-[#240C0B] p-6 rounded-[28px] border border-[#E6DFD5] shadow-xs space-y-5 flex flex-col justify-between`}
+          className="bg-[#FAF8F5] text-[#240C0B] p-5 sm:p-6 rounded-2xl border border-[#E6DFD5] shadow-xs flex flex-col h-full justify-between"
         >
           {/* Header & Filter Switcher */}
           <div>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E6DFD5]">
+            <div className="flex items-center justify-between gap-3 pb-3 border-b border-[#E6DFD5]">
               <div>
-                <h2 className="font-display font-black text-xl text-[#240C0B] flex items-center gap-2">
-                  <Scissors className="w-5 h-5 text-[#FF6B00]" />
+                <h2 className="font-display font-black text-lg sm:text-xl text-[#240C0B] flex items-center gap-2">
+                  <Scissors className="w-4 h-4 sm:w-5 sm:h-5 text-[#FF6B00]" />
                   <span>Grooming Floor Operations</span>
                 </h2>
-                <p className="text-xs text-[#7A6865] font-semibold mt-0.5">
+                <p className="text-[11px] sm:text-xs text-[#7A6865] font-semibold mt-0.5">
                   Live appointments, instant checkout, and WhatsApp invoice dispatch.
                 </p>
               </div>
 
               <button
                 onClick={() => openModal('appointmentForm', { date: todayStr })}
-                className="self-start sm:self-center px-3.5 py-1.5 bg-[#FF6B00] hover:bg-[#E55C00] text-white text-xs font-black rounded-full shadow-2xs flex items-center gap-1.5 cursor-pointer transition-all active:scale-95"
+                className="px-3 sm:px-3.5 py-1.5 bg-[#FF6B00] hover:bg-[#E55C00] text-white text-[11px] sm:text-xs font-black rounded-xl shadow-2xs flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shrink-0"
               >
-                <Plus className="w-3.5 h-3.5" /> Book Groom
+                <Plus className="w-3.5 h-3.5" /> <span>Book Groom</span>
               </button>
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex items-center gap-1.5 mt-3 bg-[#FAF8F5] p-1 rounded-2xl border border-[#E6DFD5]">
+            <div className="flex items-center gap-1.5 mt-3 bg-white p-1 rounded-xl border border-[#E6DFD5]">
               <button
                 onClick={() => setApptFilter('today')}
-                className={`flex-1 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer text-center ${
+                className={`flex-1 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer text-center ${
                   apptFilter === 'today' 
-                    ? 'bg-[#240C0B] text-white shadow-xs' 
+                    ? 'bg-[#240C0B] text-white shadow-2xs' 
                     : 'text-[#7A6865] hover:text-[#240C0B]'
                 }`}
               >
@@ -557,9 +557,9 @@ export const DashboardView: React.FC = () => {
               </button>
               <button
                 onClick={() => setApptFilter('upcoming')}
-                className={`flex-1 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer text-center ${
+                className={`flex-1 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer text-center ${
                   apptFilter === 'upcoming' 
-                    ? 'bg-[#240C0B] text-white shadow-xs' 
+                    ? 'bg-[#240C0B] text-white shadow-2xs' 
                     : 'text-[#7A6865] hover:text-[#240C0B]'
                 }`}
               >
@@ -567,9 +567,9 @@ export const DashboardView: React.FC = () => {
               </button>
               <button
                 onClick={() => setApptFilter('completed')}
-                className={`flex-1 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer text-center ${
+                className={`flex-1 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer text-center ${
                   apptFilter === 'completed' 
-                    ? 'bg-[#240C0B] text-white shadow-xs' 
+                    ? 'bg-[#240C0B] text-white shadow-2xs' 
                     : 'text-[#7A6865] hover:text-[#240C0B]'
                 }`}
               >
@@ -579,14 +579,14 @@ export const DashboardView: React.FC = () => {
           </div>
 
           {/* Session Cards List */}
-          <div className="space-y-3 max-h-[460px] overflow-y-auto pr-1">
+          <div className="flex-1 min-h-[480px] max-h-[560px] overflow-y-auto pr-1 space-y-3 mt-3">
             {displayedCardAppts.length === 0 ? (
-              <div className="p-8 text-center text-[#7A6865] text-xs space-y-3 bg-[#FAF8F5] rounded-2xl border border-[#E6DFD5]">
+              <div className="h-full flex flex-col items-center justify-center p-8 text-center text-[#7A6865] text-xs space-y-3 bg-white rounded-xl border border-[#E6DFD5]">
                 <p className="font-bold text-sm text-[#240C0B]">No appointments in this view</p>
                 <p className="text-xs text-[#7A6865]">Create a new appointment to schedule pet styling.</p>
                 <button
                   onClick={() => openModal('appointmentForm', { date: todayStr })}
-                  className="px-4 py-2 bg-[#FF6B00] hover:bg-[#E55C00] text-white text-xs font-black rounded-full shadow-sm"
+                  className="px-4 py-2 bg-[#FF6B00] hover:bg-[#E55C00] text-white text-xs font-black rounded-xl shadow-xs"
                 >
                   Book Appointment
                 </button>
@@ -609,7 +609,7 @@ export const DashboardView: React.FC = () => {
                 return (
                   <div 
                     key={item.id}
-                    className="p-4 rounded-2xl bg-[#FAF8F5] hover:bg-white border border-[#E6DFD5] hover:border-[#D8D3C4] hover:shadow-xs transition-all space-y-3"
+                    className="p-3.5 sm:p-4 rounded-xl bg-white hover:border-[#D8D3C4] border border-[#E6DFD5] hover:shadow-xs transition-all space-y-3"
                   >
                     <div className="flex items-start justify-between gap-3">
                       {/* Pet & Owner Details */}
@@ -621,23 +621,23 @@ export const DashboardView: React.FC = () => {
                           <img 
                             src={petAvatar} 
                             alt={client?.name || 'Pet'} 
-                            className="w-12 h-12 rounded-2xl object-cover border-2 border-white shadow-xs"
+                            className="w-11 h-11 rounded-xl object-cover border border-[#E6DFD5] shadow-2xs"
                           />
                           {isCompleted ? (
-                            <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#10B981] text-white flex items-center justify-center text-[9px]">
+                            <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#10B981] text-white flex items-center justify-center text-[9px] font-bold">
                               ✓
                             </div>
                           ) : (
-                            <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#FF6B00] border-2 border-white" />
+                            <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#FF6B00] border-2 border-white" />
                           )}
                         </div>
 
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <h3 className="font-display font-black text-base text-[#240C0B] truncate">
+                            <h3 className="font-display font-black text-sm sm:text-base text-[#240C0B] truncate">
                               {client?.name || 'Unknown Pet'}
                             </h3>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-[#7A6865] border border-[#E6DFD5] shrink-0">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#FAF8F5] text-[#7A6865] border border-[#E6DFD5] shrink-0">
                               {client?.breed || 'Dog'}
                             </span>
                           </div>
@@ -649,7 +649,7 @@ export const DashboardView: React.FC = () => {
 
                       {/* Status & Timing Chip */}
                       <div className="text-right shrink-0">
-                        <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full ${statusBadgeStyle}`}>
+                        <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-md ${statusBadgeStyle}`}>
                           {item.status}
                         </span>
                         <div className="text-[11px] font-extrabold text-[#240C0B] mt-1 flex items-center gap-1 justify-end">
@@ -660,7 +660,7 @@ export const DashboardView: React.FC = () => {
                     </div>
 
                     {/* Service & Groomer Highlights */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-2.5 bg-white rounded-xl border border-[#E6DFD5] text-xs">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-2.5 bg-[#FAF8F5] rounded-lg border border-[#E6DFD5] text-xs">
                       <div>
                         <span className="text-[10px] text-[#A08E8B] font-bold block uppercase">Treatment</span>
                         <span className="font-extrabold text-[#240C0B] truncate block">
@@ -708,11 +708,12 @@ export const DashboardView: React.FC = () => {
                               packageName: item.packageName,
                             });
                           }}
-                          className="px-3 py-1.5 bg-[#FFF3EB] hover:bg-[#FFE0CD] text-[#FF6B00] border border-[#FFD0B3] text-xs font-extrabold rounded-xl flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs active:scale-95"
+                          className="px-2.5 sm:px-3 py-1.5 bg-[#FFF3EB] hover:bg-[#FFE0CD] text-[#FF6B00] border border-[#FFD0B3] text-xs font-extrabold rounded-lg flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs active:scale-95"
                           title="Print A4 Invoice or Share on WhatsApp"
                         >
                           <Printer className="w-3.5 h-3.5" />
-                          <span>Invoice & WhatsApp</span>
+                          <span className="hidden sm:inline">Invoice & WhatsApp</span>
+                          <span className="sm:hidden">Invoice</span>
                         </button>
 
                         {/* Complete Groom Button */}
@@ -722,7 +723,7 @@ export const DashboardView: React.FC = () => {
                               e.stopPropagation();
                               handleComplete(item.id, client?.name || 'Pet');
                             }}
-                            className="px-3 py-1.5 bg-[#10B981] hover:bg-[#059669] text-white text-xs font-black rounded-xl flex items-center gap-1 transition-all cursor-pointer shadow-2xs active:scale-95"
+                            className="px-2.5 sm:px-3 py-1.5 bg-[#10B981] hover:bg-[#059669] text-white text-xs font-black rounded-lg flex items-center gap-1 transition-all cursor-pointer shadow-2xs active:scale-95"
                             title="Complete and Award Loyalty Points"
                           >
                             <Check className="w-3.5 h-3.5" />
@@ -736,7 +737,7 @@ export const DashboardView: React.FC = () => {
                             e.stopPropagation();
                             openModal('appointmentForm', { appointment: item });
                           }}
-                          className="px-2.5 py-1.5 bg-white hover:bg-[#FAF8F5] text-[#240C0B] border border-[#D8D3C4] text-xs font-bold rounded-xl transition-all cursor-pointer"
+                          className="px-2.5 py-1.5 bg-white hover:bg-[#FAF8F5] text-[#240C0B] border border-[#D8D3C4] text-xs font-bold rounded-lg transition-all cursor-pointer"
                         >
                           Edit
                         </button>
@@ -750,29 +751,30 @@ export const DashboardView: React.FC = () => {
         </motion.div>
         )}
 
-        {/* Right Col: Pet Health & VIP Directory */}
+        {/* Right Column: Pet Health & VIP Directory */}
         {showPetSummaryTable && (
         <motion.div 
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.25 }}
-          className={`${showTodaySchedule ? 'lg:col-span-5' : 'lg:col-span-12'} bg-white text-[#240C0B] p-6 rounded-[28px] border border-[#E6DFD5] shadow-xs space-y-4 flex flex-col justify-between`}
+          className="bg-[#FAF8F5] text-[#240C0B] p-5 sm:p-6 rounded-2xl border border-[#E6DFD5] shadow-xs flex flex-col h-full justify-between"
         >
           {/* Header */}
           <div>
             <div className="flex items-center justify-between gap-2 pb-3 border-b border-[#E6DFD5]">
               <div>
-                <h2 className="font-display font-black text-xl text-[#240C0B]">
-                  Pet Health & VIP Dogs
+                <h2 className="font-display font-black text-lg sm:text-xl text-[#240C0B] flex items-center gap-2">
+                  <HeartPulse className="w-4 h-4 sm:w-5 sm:h-5 text-[#2E8A81]" />
+                  <span>Pet Health & VIP Dogs</span>
                 </h2>
-                <p className="text-xs text-[#7A6865] font-semibold mt-0.5">
+                <p className="text-[11px] sm:text-xs text-[#7A6865] font-semibold mt-0.5">
                   {clients.length} Registered Dogs • Vaccine & Care Status
                 </p>
               </div>
 
               <button 
                 onClick={() => setView('clients')}
-                className="text-xs font-bold text-[#FF6B00] hover:underline cursor-pointer bg-[#FFF3EB] px-3 py-1 rounded-full border border-[#FFD0B3] shrink-0"
+                className="text-xs font-bold text-[#FF6B00] hover:underline cursor-pointer bg-white px-3 py-1 rounded-xl border border-[#E6DFD5] shrink-0"
               >
                 Directory →
               </button>
@@ -782,20 +784,20 @@ export const DashboardView: React.FC = () => {
             <div className="flex items-center gap-1.5 mt-3 overflow-x-auto pb-1 text-[11px] font-bold">
               <button
                 onClick={() => setPetSummaryTab('all')}
-                className={`px-3 py-1 rounded-full transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-3 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                   petSummaryTab === 'all' 
                     ? 'bg-[#240C0B] text-white shadow-2xs' 
-                    : 'bg-[#FAF8F5] text-[#7A6865] hover:bg-[#E6DFD5]'
+                    : 'bg-white text-[#7A6865] hover:bg-[#E6DFD5] border border-[#E6DFD5]'
                 }`}
               >
                 All ({clients.length})
               </button>
               <button
                 onClick={() => setPetSummaryTab('vaccine')}
-                className={`px-3 py-1 rounded-full transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
+                className={`px-3 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
                   petSummaryTab === 'vaccine' 
                     ? 'bg-[#EF4444] text-white shadow-2xs' 
-                    : 'bg-[#FEF2F2] text-[#DC2626] hover:bg-[#FEE2E2]'
+                    : 'bg-[#FEF2F2] text-[#DC2626] hover:bg-[#FEE2E2] border border-[#FECACA]'
                 }`}
               >
                 <ShieldAlert className="w-3 h-3" />
@@ -803,10 +805,10 @@ export const DashboardView: React.FC = () => {
               </button>
               <button
                 onClick={() => setPetSummaryTab('special')}
-                className={`px-3 py-1 rounded-full transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
+                className={`px-3 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
                   petSummaryTab === 'special' 
                     ? 'bg-[#D97706] text-white shadow-2xs' 
-                    : 'bg-[#FFFBEB] text-[#D97706] hover:bg-[#FEF3C7]'
+                    : 'bg-[#FFFBEB] text-[#D97706] hover:bg-[#FEF3C7] border border-[#FDE68A]'
                 }`}
               >
                 <HeartPulse className="w-3 h-3" />
@@ -814,10 +816,10 @@ export const DashboardView: React.FC = () => {
               </button>
               <button
                 onClick={() => setPetSummaryTab('vip')}
-                className={`px-3 py-1 rounded-full transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
+                className={`px-3 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
                   petSummaryTab === 'vip' 
                     ? 'bg-[#3B1F70] text-white shadow-2xs' 
-                    : 'bg-[#ECE5FF] text-[#3B1F70] hover:bg-[#E1D4FF]'
+                    : 'bg-[#ECE5FF] text-[#3B1F70] hover:bg-[#E1D4FF] border border-[#D3C0FF]'
                 }`}
               >
                 <Award className="w-3 h-3" />
@@ -833,19 +835,19 @@ export const DashboardView: React.FC = () => {
                 placeholder="Search dog, breed, or owner..."
                 value={petSummarySearch}
                 onChange={(e) => setPetSummarySearch(e.target.value)}
-                className="w-full pl-8 pr-3 py-2 text-xs bg-[#FAF8F5] border border-[#E6DFD5] rounded-xl outline-none text-[#240C0B] placeholder:text-[#A08E8B] focus:bg-white focus:border-[#FF6B00]"
+                className="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-[#E6DFD5] rounded-xl outline-none text-[#240C0B] placeholder:text-[#A08E8B] focus:border-[#FF6B00]"
               />
             </div>
           </div>
 
           {/* Dogs Data Cards List */}
-          <div className="space-y-3 max-h-[460px] overflow-y-auto pr-1">
+          <div className="flex-1 min-h-[480px] max-h-[560px] overflow-y-auto pr-1 space-y-3 mt-3">
             {filteredPetSummary.length === 0 ? (
-              <div className="p-6 text-center text-[#7A6865] text-xs space-y-1 bg-[#FAF8F5] rounded-2xl border border-[#E6DFD5]">
-                <p className="font-bold">No pets match this filter</p>
+              <div className="h-full flex flex-col items-center justify-center p-6 text-center text-[#7A6865] text-xs space-y-1 bg-white rounded-xl border border-[#E6DFD5]">
+                <p className="font-bold text-sm text-[#240C0B]">No pets match this filter</p>
                 <button
                   onClick={() => { setPetSummaryTab('all'); setPetSummarySearch(''); }}
-                  className="text-[11px] text-[#FF6B00] underline font-bold cursor-pointer"
+                  className="text-[11px] text-[#FF6B00] underline font-bold cursor-pointer mt-1"
                 >
                   Clear Filter
                 </button>
@@ -856,7 +858,7 @@ export const DashboardView: React.FC = () => {
                 return (
                   <div
                     key={item.client.id}
-                    className="bg-[#FAF8F5] hover:bg-white p-3.5 rounded-2xl border border-[#E6DFD5] transition-all space-y-2.5 shadow-2xs"
+                    className="bg-white hover:border-[#D8D3C4] p-3.5 sm:p-4 rounded-xl border border-[#E6DFD5] transition-all space-y-2.5 shadow-2xs hover:shadow-xs"
                   >
                     {/* Dog Header */}
                     <div className="flex items-start justify-between gap-2">
@@ -864,7 +866,7 @@ export const DashboardView: React.FC = () => {
                         <img
                           src={avatar}
                           alt={item.client.name}
-                          className="w-10 h-10 rounded-2xl object-cover border border-[#E6DFD5] shrink-0"
+                          className="w-10 h-10 rounded-xl object-cover border border-[#E6DFD5] shrink-0"
                           referrerPolicy="no-referrer"
                         />
                         <div>
@@ -872,7 +874,7 @@ export const DashboardView: React.FC = () => {
                             <span className="font-black text-sm text-[#240C0B]">
                               {item.client.name}
                             </span>
-                            <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-md bg-white text-[#7A6865] border border-[#E6DFD5]">
+                            <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-md bg-[#FAF8F5] text-[#7A6865] border border-[#E6DFD5]">
                               {item.client.size} • {item.client.weight || '15'} lbs
                             </span>
                             {item.isVip && (
@@ -888,13 +890,13 @@ export const DashboardView: React.FC = () => {
                       </div>
 
                       {/* Rabies Status Badge */}
-                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 shadow-2xs ${item.statusBg}`}>
+                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-md shrink-0 shadow-2xs ${item.statusBg}`}>
                         Rabies {item.healthStatus}
                       </span>
                     </div>
 
                     {/* Care Highlights */}
-                    <div className="grid grid-cols-2 gap-1.5 text-[10px] bg-white p-2 rounded-xl border border-[#E6DFD5]">
+                    <div className="grid grid-cols-2 gap-1.5 text-[10px] bg-[#FAF8F5] p-2 rounded-lg border border-[#E6DFD5]">
                       <div>
                         <span className="text-[#A08E8B] font-bold block">Next Session</span>
                         <span className="font-extrabold text-[#240C0B] truncate block">
