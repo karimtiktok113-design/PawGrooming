@@ -572,7 +572,17 @@ const AppointmentDetailModal: React.FC<{ data: any; onClose: () => void }> = ({ 
   const [newPromoType, setNewPromoType] = useState<'percent' | 'fixed'>('percent');
   const [newPromoVal, setNewPromoVal] = useState<number>(15);
 
-  const servicePrice = pkg ? pkg.price : (service?.price || appt.price || 0);
+  const isPureRetail = Boolean(
+    appt.isRetailOnly ||
+    appt.serviceId === 'retail_sale' ||
+    appt.serviceId === 'retail_only' ||
+    appt.serviceId === 'pure_retail' ||
+    appt.serviceId === 'none' ||
+    (!appt.serviceId && retailAddon > 0) ||
+    (appt.price === 0 && retailAddon > 0 && !appt.packageId && !appt.packageName)
+  );
+
+  const servicePrice = isPureRetail ? 0 : (pkg ? pkg.price : (appt.price !== undefined ? appt.price : (service?.price || 0)));
   const grossSubtotal = servicePrice + retailAddon;
 
   // Selected promo calculation
@@ -727,8 +737,10 @@ const AppointmentDetailModal: React.FC<{ data: any; onClose: () => void }> = ({ 
             <span>{client?.owner} • {client?.phone}</span>
           </div>
           <div>
-            <span className="font-bold text-[#173E39]">Service / Package: </span>
-            {pkg ? (
+            <span className="font-bold text-[#173E39]">{isPureRetail ? 'Transaction Type: ' : 'Service / Package: '}</span>
+            {isPureRetail ? (
+              <span className="font-bold text-[#2E8A81]">🛍️ Direct Retail Merchandise Sale</span>
+            ) : pkg ? (
               <span className="font-bold text-[#FF6B00]">✨ {pkg.name} ({formatPrice(pkg.price)})</span>
             ) : (
               <span className="font-semibold text-[#173E39]">{service?.name} ({formatPrice(service?.price || appt.price)})</span>
@@ -1060,10 +1072,12 @@ const AppointmentDetailModal: React.FC<{ data: any; onClose: () => void }> = ({ 
             <span className="text-[10px] text-[#7A6865] font-normal">US Tax Setting: {taxRate}%</span>
           </div>
 
-          <div className="flex justify-between text-[#5C716C]">
-            <span>{pkg ? `Spa Package (${pkg.name}):` : `Grooming Service (${service?.name || 'Service'}):`}</span>
-            <span className="font-bold text-[#173E39]">{formatPrice(servicePrice)}</span>
-          </div>
+          {!isPureRetail && servicePrice > 0 && (
+            <div className="flex justify-between text-[#5C716C]">
+              <span>{pkg ? `Spa Package (${pkg.name}):` : `Grooming Service (${service?.name || 'Service'}):`}</span>
+              <span className="font-bold text-[#173E39]">{formatPrice(servicePrice)}</span>
+            </div>
+          )}
 
           {purchasedProducts.length > 0 ? (
             <div className="space-y-1 pt-0.5">
@@ -3507,7 +3521,18 @@ const InvoiceModal: React.FC<{ data: any; onClose: () => void }> = ({ data, onCl
   const retailAddon = data?.retailAddon !== undefined 
     ? data.retailAddon 
     : (purchasedItems.length > 0 ? purchasedItems.reduce((s, p) => s + (p.price || 0) * (p.quantity || 1), 0) : (appt.retail || 0));
-  const servicePrice = pkg ? pkg.price : (service?.price || appt.price || 0);
+
+  const isPureRetail = Boolean(
+    appt.isRetailOnly ||
+    appt.serviceId === 'retail_sale' ||
+    appt.serviceId === 'retail_only' ||
+    appt.serviceId === 'pure_retail' ||
+    appt.serviceId === 'none' ||
+    (!appt.serviceId && retailAddon > 0) ||
+    (appt.price === 0 && retailAddon > 0 && !appt.packageId && !appt.packageName)
+  );
+
+  const servicePrice = isPureRetail ? 0 : (pkg ? pkg.price : (service?.price || appt.price || 0));
   const subtotal = servicePrice + retailAddon;
 
   // Read client/dog promo code discount if applied
@@ -3848,14 +3873,18 @@ const InvoiceModal: React.FC<{ data: any; onClose: () => void }> = ({ data, onCl
 
             <div className="flex-1 p-4 rounded-xl bg-[#FAF8F5] border border-[#E6DFD5] space-y-2">
               <p className="text-[10px] font-black uppercase tracking-widest text-[#7A6865] border-b border-[#E6DFD5] pb-1">
-                Clinical Details & Stylist
+                {isPureRetail ? 'Point of Sale & Store Details' : 'Clinical Details & Stylist'}
               </p>
               <div className="space-y-1">
                 <p className="font-display font-bold text-sm text-[#240C0B]">
-                  {groomer?.name || 'Master Pet Stylist'}
+                  {isPureRetail ? 'Retail Counter / Store Sale' : (groomer?.name || 'Master Pet Stylist')}
                 </p>
                 <p className="text-[11px] text-[#6E5B58]">
-                  Session Length: <strong className="text-[#240C0B]">{appt.duration} Minutes</strong>
+                  {isPureRetail ? (
+                    <>Transaction Type: <strong className="text-[#240C0B]">Direct Retail Product Sale</strong></>
+                  ) : (
+                    <>Session Length: <strong className="text-[#240C0B]">{appt.duration} Minutes</strong></>
+                  )}
                 </p>
                 <p className="text-[11px] text-[#6E5B58]">
                   Sales Tax Reg: US-94028-PAW • Rate: <strong className="text-[#240C0B]">{taxRate}%</strong>
@@ -3880,33 +3909,35 @@ const InvoiceModal: React.FC<{ data: any; onClose: () => void }> = ({ data, onCl
               </thead>
               <tbody className="divide-y divide-[#E6DFD5] text-[#240C0B]">
                 {/* Main Service or Spa Package */}
-                <tr>
-                  <td className="py-3 pr-3">
-                    <div className="font-display font-bold text-sm text-[#240C0B]">
-                      {pkg ? `✨ ${pkg.name} (Spa Package Bundle)` : (service?.name || 'Full Grooming & Spa Treatment')}
-                    </div>
-                    <div className="text-[11px] text-[#7A6865] mt-0.5 leading-relaxed">
-                      {pkg ? (
-                        <span>
-                          Includes complete bundled care treatments: {pkg.serviceIds.map(sid => services.find(s => s.id === sid)?.name).filter(Boolean).join(' + ')}. Hand blowout, coat conditioning, & luxury styling.
-                        </span>
-                      ) : (
-                        <span>
-                          Hydro-massage bath, coat conditioning, hand blowout, custom scissor style & hygiene trim.
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="py-3 px-2 text-center font-medium text-[#7A6865] text-[11px]">
-                    {pkg ? `${pkg.duration}m` : `${appt.duration}m`}
-                  </td>
-                  <td className="py-3 px-2 text-right font-medium text-[#7A6865] text-[11px]">
-                    {formatPrice(servicePrice)}
-                  </td>
-                  <td className="py-3 pl-2 text-right font-bold text-sm text-[#240C0B]">
-                    {formatPrice(servicePrice)}
-                  </td>
-                </tr>
+                {!isPureRetail && servicePrice > 0 && (
+                  <tr>
+                    <td className="py-3 pr-3">
+                      <div className="font-display font-bold text-sm text-[#240C0B]">
+                        {pkg ? `✨ ${pkg.name} (Spa Package Bundle)` : (service?.name || 'Full Grooming & Spa Treatment')}
+                      </div>
+                      <div className="text-[11px] text-[#7A6865] mt-0.5 leading-relaxed">
+                        {pkg ? (
+                          <span>
+                            Includes complete bundled care treatments: {pkg.serviceIds.map(sid => services.find(s => s.id === sid)?.name).filter(Boolean).join(' + ')}. Hand blowout, coat conditioning, & luxury styling.
+                          </span>
+                        ) : (
+                          <span>
+                            Hydro-massage bath, coat conditioning, hand blowout, custom scissor style & hygiene trim.
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="py-3 px-2 text-center font-medium text-[#7A6865] text-[11px]">
+                      {pkg ? `${pkg.duration}m` : `${appt.duration}m`}
+                    </td>
+                    <td className="py-3 px-2 text-right font-medium text-[#7A6865] text-[11px]">
+                      {formatPrice(servicePrice)}
+                    </td>
+                    <td className="py-3 pl-2 text-right font-bold text-sm text-[#240C0B]">
+                      {formatPrice(servicePrice)}
+                    </td>
+                  </tr>
+                )}
 
                 {/* Itemized Retail Products or Legacy Addon */}
                 {purchasedItems.length > 0 ? (

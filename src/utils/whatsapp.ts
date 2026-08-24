@@ -52,26 +52,39 @@ export function generateWhatsAppInvoiceText(data: WhatsAppInvoiceData): string {
   const currencySymbol = clinicSettings?.currency === 'EUR' ? '€' : clinicSettings?.currency === 'GBP' ? '£' : '$';
   const fmt = (n?: number | null) => `${currencySymbol}${Number(n ?? 0).toFixed(2)}`;
 
+  const isPureRetail = Boolean(
+    appointment.isRetailOnly ||
+    appointment.serviceId === 'retail_sale' ||
+    appointment.serviceId === 'retail_only' ||
+    appointment.serviceId === 'pure_retail' ||
+    (servicePrice === 0 && retailAddon > 0 && !packageName)
+  );
+
   const lines: string[] = [
     `🐾 *${clinicName.toUpperCase()}* 🐾`,
-    `*Official Pet Grooming Invoice & Receipt*`,
+    isPureRetail ? `*Official Pet Care Retail Receipt*` : `*Official Pet Grooming Invoice & Receipt*`,
     `----------------------------------------`,
     `📄 *Invoice #:* ${invoiceNum}`,
     `📅 *Date:* ${appointment.date} at ${appointment.start}`,
     `👤 *Pet Parent:* ${client.owner}`,
     `🐶 *Patient:* ${client.name} (${client.breed || 'Canine'}, ${client.size || 'Standard'})`,
-    `✂️ *Stylist:* ${groomerName || 'Master Groomer'}`,
-    `----------------------------------------`,
   ];
 
-  if (packageName) {
-    lines.push(`✨ *Spa Package:* ${packageName} (Luxury Package Bundle)`);
-    lines.push(`⏳ *Duration:* ${appointment.duration} mins`);
-    lines.push(`💵 *Package Rate:* ${fmt(servicePrice)}`);
-  } else {
-    lines.push(`✨ *Service:* ${serviceName || 'Full Grooming Treatment'}`);
-    lines.push(`⏳ *Duration:* ${appointment.duration} mins`);
-    lines.push(`💵 *Service Rate:* ${fmt(servicePrice)}`);
+  if (!isPureRetail) {
+    lines.push(`✂️ *Stylist:* ${groomerName || 'Master Groomer'}`);
+  }
+  lines.push(`----------------------------------------`);
+
+  if (!isPureRetail) {
+    if (packageName) {
+      lines.push(`✨ *Spa Package:* ${packageName} (Luxury Package Bundle)`);
+      lines.push(`⏳ *Duration:* ${appointment.duration} mins`);
+      lines.push(`💵 *Package Rate:* ${fmt(servicePrice)}`);
+    } else {
+      lines.push(`✨ *Service:* ${serviceName || 'Full Grooming Treatment'}`);
+      lines.push(`⏳ *Duration:* ${appointment.duration} mins`);
+      lines.push(`💵 *Service Rate:* ${fmt(servicePrice)}`);
+    }
   }
 
   const items = (purchasedItems && purchasedItems.length > 0) 

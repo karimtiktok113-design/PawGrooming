@@ -123,7 +123,7 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
   // Filtered appointments
   const filteredAppointments = useMemo(() => {
     return appointments.filter((a) => {
-      if (a.status === 'cancelled') return false;
+      if (a.status === 'cancelled' || a.status === 'noshow') return false;
       if (a.date < dateRangeBounds.start || a.date > dateRangeBounds.end) return false;
 
       const isPaid = a.status === 'completed';
@@ -330,17 +330,18 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
         const cl = clients.find((c) => c.id === a.clientId);
         const svc = services.find((s) => s.id === a.serviceId);
         const st = staff.find((s) => s.id === a.staffId);
+        const inv = calculateAppointmentInvoice(a, { services, packages, settings, redemptions });
         return {
           id: a.id,
           date: a.date,
           time: a.start,
-          client: cl?.owner || 'Client',
-          pet: cl?.name || 'Pet',
-          service: svc?.name || 'Service',
-          staff: st?.name || 'Staff',
-          groomPrice: a.price,
-          retailPrice: a.retail || 0,
-          total: a.price + (a.retail || 0),
+          client: cl?.owner || a.client || 'Client',
+          pet: cl?.name || a.petName || 'Pet',
+          service: a.isRetailOnly ? 'Pure Retail Merchandise' : (svc?.name || a.packageName || 'Service'),
+          staff: st?.name || 'Salon Team',
+          groomPrice: inv.groomingRevenue,
+          retailPrice: inv.retailRevenue,
+          total: inv.totalAmount,
           status: a.status,
         };
       });
@@ -416,17 +417,18 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
         const cl = clients.find((c) => c.id === a.clientId);
         const svc = services.find((s) => s.id === a.serviceId);
         const st = staff.find((s) => s.id === a.staffId);
+        const inv = calculateAppointmentInvoice(a, { services, packages, settings, redemptions });
         return {
           id: a.id,
           date: a.date,
           time: a.start,
-          client: cl?.owner || 'Client',
-          pet: cl?.name || 'Pet',
-          service: svc?.name || 'Service',
-          staff: st?.name || 'Staff',
-          groomPrice: a.price,
-          retailPrice: a.retail || 0,
-          total: a.price + (a.retail || 0),
+          client: cl?.owner || a.client || 'Client',
+          pet: cl?.name || a.petName || 'Pet',
+          service: a.isRetailOnly ? 'Pure Retail Merchandise' : (svc?.name || a.packageName || 'Service'),
+          staff: st?.name || 'Salon Team',
+          groomPrice: inv.groomingRevenue,
+          retailPrice: inv.retailRevenue,
+          total: inv.totalAmount,
           status: a.status,
         };
       });
@@ -801,8 +803,8 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
               <div className="text-xl sm:text-2xl font-black font-display text-[#2E8A81]">
                 {formatPrice(metrics.retailTotal)}
               </div>
-              <div className="text-[11px] text-[#7A6865]">
-                Tax: {formatPrice(metrics.taxTotal)}
+              <div className="text-[11px] text-[#7A6865] truncate" title="Synced with Store & Inventory">
+                Tax: {formatPrice(metrics.taxTotal)} • Synced with Store
               </div>
             </div>
 

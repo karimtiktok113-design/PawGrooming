@@ -24,6 +24,7 @@ import {
   Calendar,
   FileText,
   Download,
+  Printer,
   X,
   Eye,
   Check
@@ -144,8 +145,8 @@ export const BusinessView: React.FC = () => {
     const sales: RetailSaleRecord[] = [];
 
     appointments.forEach((appt) => {
-      // Exclude cancelled appointments so revenue aligns 100% with Invoices and Revenue view
-      if (appt.status === 'cancelled') return;
+      // Exclude cancelled and noshow appointments so revenue aligns 100% with Invoices, Executive Reports, and Revenue view
+      if (appt.status === 'cancelled' || appt.status === 'noshow') return;
 
       const client = clients.find((c) => c.id === appt.clientId);
       const petName = client ? client.name : (appt.petName || 'Pet');
@@ -163,12 +164,42 @@ export const BusinessView: React.FC = () => {
         redemptions,
       });
 
-      if (appt.purchasedItems && appt.purchasedItems.length > 0) {
-        appt.purchasedItems.forEach((item, idx) => {
-          const qty = item.quantity || 1;
-          const price = item.price || 0;
+      if (invoiceData.retailRevenue > 0) {
+        if (appt.purchasedItems && appt.purchasedItems.length > 0) {
+          const totalRawCatalog = appt.purchasedItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
+          appt.purchasedItems.forEach((item, idx) => {
+            const qty = item.quantity || 1;
+            const price = item.price || 0;
+            const rawItemTotal = price * qty;
+            // Proportionally scale each item's totalAmount so their exact sum matches invoiceData.retailRevenue
+            const itemRevenue = totalRawCatalog > 0 
+              ? Math.round((invoiceData.retailRevenue * (rawItemTotal / totalRawCatalog)) * 100) / 100
+              : invoiceData.retailRevenue;
+
+            sales.push({
+              saleId: `${appt.id}_${item.itemId || idx}`,
+              appointmentId: appt.id,
+              invoiceNumber,
+              date: appt.date,
+              clientId: appt.clientId,
+              clientName,
+              ownerName,
+              petName,
+              petBreed,
+              itemId: item.itemId || 'custom_item',
+              productName: item.name || 'Retail Product',
+              unitPrice: price,
+              quantity: qty,
+              totalAmount: itemRevenue,
+              status: appt.status,
+              isPaid,
+            });
+          });
+        } else {
+          // General retail add-on (e.g. appt.retail)
+          const retailAmount = invoiceData.retailRevenue;
           sales.push({
-            saleId: `${appt.id}_${item.itemId || idx}`,
+            saleId: `${appt.id}_retail`,
             appointmentId: appt.id,
             invoiceNumber,
             date: appt.date,
@@ -177,36 +208,15 @@ export const BusinessView: React.FC = () => {
             ownerName,
             petName,
             petBreed,
-            itemId: item.itemId || 'custom_item',
-            productName: item.name || 'Retail Product',
-            unitPrice: price,
-            quantity: qty,
-            totalAmount: price * qty,
+            itemId: 'general_retail',
+            productName: 'Salon Retail Merchandise',
+            unitPrice: appt.retail || retailAmount,
+            quantity: 1,
+            totalAmount: retailAmount,
             status: appt.status,
             isPaid,
           });
-        });
-      } else if (invoiceData.retailRevenue > 0 || (appt.retail || 0) > 0) {
-        // Fallback synchronization for appointments that logged general retail total
-        const retailAmount = invoiceData.retailRevenue > 0 ? invoiceData.retailRevenue : (appt.retail || 0);
-        sales.push({
-          saleId: `${appt.id}_retail`,
-          appointmentId: appt.id,
-          invoiceNumber,
-          date: appt.date,
-          clientId: appt.clientId,
-          clientName,
-          ownerName,
-          petName,
-          petBreed,
-          itemId: 'general_retail',
-          productName: 'Salon Retail Merchandise',
-          unitPrice: retailAmount,
-          quantity: 1,
-          totalAmount: retailAmount,
-          status: appt.status,
-          isPaid,
-        });
+        }
       }
     });
 
@@ -241,7 +251,7 @@ export const BusinessView: React.FC = () => {
     return map;
   }, [inventory, allRetailSales]);
 
-  // Overall Retail Store KPIs
+  // Overall Retail Store KPIs (All Time)
   const totalRetailRevenue = useMemo(() => {
     return allRetailSales.reduce((sum, s) => sum + s.totalAmount, 0);
   }, [allRetailSales]);
@@ -303,6 +313,15 @@ export const BusinessView: React.FC = () => {
     });
   }, [allRetailSales, salesSearch, selectedProductFilter, selectedTimeframe, selectedStatusFilter, inventory]);
 
+  // Filtered Retail Revenue matching active timeframe filter
+  const filteredRetailRevenue = useMemo(() => {
+    return filteredRetailSales.reduce((sum, s) => sum + s.totalAmount, 0);
+  }, [filteredRetailSales]);
+
+  const filteredUnitsSold = useMemo(() => {
+    return filteredRetailSales.reduce((sum, s) => sum + s.quantity, 0);
+  }, [filteredRetailSales]);
+
   // Handle Quick Direct Retail Sale submission
   const handleRecordDirectSale = (e: React.FormEvent) => {
     e.preventDefault();
@@ -319,7 +338,6 @@ export const BusinessView: React.FC = () => {
       return;
     }
 
-    const defaultService = services[0] || { id: 'srv_bath', price: 0 };
     const purchasedItem: PurchasedRetailItem = {
       itemId: item.id,
       name: item.name,
@@ -327,15 +345,16 @@ export const BusinessView: React.FC = () => {
       quantity: directSaleQty,
     };
 
-    // Add appointment with 0 service cost or quick walk-in retail purchase
+    // Add pure retail sale record with 0 grooming service cost
     addAppointment({
       clientId: client.id,
-      serviceId: defaultService.id,
-      staffId: client.staffId || 'staff_sarah',
+      serviceId: 'retail_sale',
+      isRetailOnly: true,
+      staffId: client.staffId || (staff && staff.length > 0 ? staff[0].id : 'st1'),
       date: directSaleDate,
       start: '10:00',
       duration: 15,
-      price: 0, // Pure retail purchase
+      price: 0, // Pure retail purchase, strictly 0 grooming service cost
       retail: item.price * directSaleQty,
       purchasedItems: [purchasedItem],
       status: directSaleStatus,
@@ -526,7 +545,7 @@ export const BusinessView: React.FC = () => {
               <div className="font-display font-black text-lg text-[#357A54] mt-1">
                 {formatPrice(totalRetailRevenue)}
               </div>
-              <div className="text-[10px] text-[#5C716C] mt-0.5">{totalUnitsSold} total units sold to clients</div>
+              <div className="text-[10px] text-[#5C716C] mt-0.5">{totalUnitsSold} units sold • Synced with Revenue</div>
             </div>
 
             <div className="card-box p-3.5">
@@ -659,19 +678,27 @@ export const BusinessView: React.FC = () => {
           {/* Executive Retail Sales Overview Strip */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="card-box p-4 border-l-4 border-l-[#357A54]">
-              <span className="text-[11px] font-bold text-[#5C716C] uppercase tracking-wider block">Retail Revenue</span>
+              <span className="text-[11px] font-bold text-[#5C716C] uppercase tracking-wider block">
+                {selectedTimeframe === 'all' ? 'Retail Revenue' : selectedTimeframe === 'month' ? 'This Month Retail' : 'Today Retail'}
+              </span>
               <div className="font-display font-black text-2xl text-[#357A54] mt-1">
-                {formatPrice(totalRetailRevenue)}
+                {formatPrice(selectedTimeframe === 'all' ? totalRetailRevenue : filteredRetailRevenue)}
               </div>
-              <span className="text-[10px] text-[#5C716C] mt-0.5 block">From client store purchases</span>
+              <span className="text-[10px] text-[#5C716C] mt-0.5 block">
+                {selectedTimeframe === 'all' 
+                  ? 'From client store purchases • Synced with Revenue' 
+                  : `From ${filteredUnitsSold} units (${formatPrice(totalRetailRevenue)} all-time synced)`}
+              </span>
             </div>
 
             <div className="card-box p-4 border-l-4 border-l-[#2E8A81]">
-              <span className="text-[11px] font-bold text-[#5C716C] uppercase tracking-wider block">Units Sold</span>
+              <span className="text-[11px] font-bold text-[#5C716C] uppercase tracking-wider block">
+                {selectedTimeframe === 'all' ? 'Units Sold' : 'Filtered Units'}
+              </span>
               <div className="font-display font-black text-2xl text-[#173E39] mt-1">
-                {totalUnitsSold}
+                {selectedTimeframe === 'all' ? totalUnitsSold : filteredUnitsSold}
               </div>
-              <span className="text-[10px] text-[#5C716C] mt-0.5 block">Across all retail transactions</span>
+              <span className="text-[10px] text-[#5C716C] mt-0.5 block">Across {selectedTimeframe === 'all' ? 'all' : selectedTimeframe} retail transactions</span>
             </div>
 
             <div className="card-box p-4 border-l-4 border-l-[#FF6B00]">
@@ -847,21 +874,38 @@ export const BusinessView: React.FC = () => {
                           </span>
                         </td>
                         <td className="py-3 px-4 text-right whitespace-nowrap">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const appt = appointments.find((a) => a.id === sale.appointmentId);
-                              if (appt) {
-                                openModal('appointmentDetail', { appointment: appt });
-                              } else {
-                                showToast('Opening invoice record', 'info');
-                              }
-                            }}
-                            className="p-1.5 text-[#5C716C] hover:text-[#173E39] hover:bg-[#EAE7DC] rounded-lg transition-colors cursor-pointer"
-                            title="View Appointment Invoice"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
+                          <div className="flex items-center justify-end gap-1">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const appt = appointments.find((a) => a.id === sale.appointmentId);
+                                if (appt) {
+                                  openModal('invoiceModal', { appointment: appt });
+                                } else {
+                                  showToast('Opening invoice record', 'info');
+                                }
+                              }}
+                              className="p-1.5 text-[#FF6B00] hover:bg-[#FFF3EB] rounded-lg transition-colors cursor-pointer"
+                              title="Print / View Official Retail Invoice"
+                            >
+                              <Printer className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const appt = appointments.find((a) => a.id === sale.appointmentId);
+                                if (appt) {
+                                  openModal('appointmentDetail', { appointment: appt });
+                                } else {
+                                  showToast('Opening invoice record', 'info');
+                                }
+                              }}
+                              className="p-1.5 text-[#5C716C] hover:text-[#173E39] hover:bg-[#EAE7DC] rounded-lg transition-colors cursor-pointer"
+                              title="View Transaction Details"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))

@@ -107,6 +107,7 @@ export interface Appointment {
   status: AppointmentStatus;
   retail?: number;
   purchasedItems?: PurchasedRetailItem[];
+  isRetailOnly?: boolean;
   notes?: string;
   discountAmount?: number;
   discountCode?: string;

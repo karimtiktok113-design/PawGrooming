@@ -17,6 +17,7 @@ export interface CalculatedInvoiceData {
   retailRevenue: number;
   pointsEarned: number;
   isPaid: boolean;
+  isPureRetail: boolean;
   serviceOrPackageName: string;
   invoiceNum: string;
 }
@@ -65,6 +66,7 @@ export function calculateAppointmentInvoice(
       retailRevenue: 0,
       pointsEarned: 0,
       isPaid: false,
+      isPureRetail: false,
       serviceOrPackageName: 'Grooming Treatment',
       invoiceNum: 'INV-1001',
     };
@@ -75,17 +77,34 @@ export function calculateAppointmentInvoice(
   const settings = context?.settings;
   const redemptions = context?.redemptions || [];
 
-  const pkg = appt.packageId 
-    ? packages.find((p) => p.id === appt.packageId)
-    : (appt.packageName ? packages.find(p => p.name.toLowerCase() === appt.packageName?.toLowerCase()) : null);
-
-  const service = services.find((s) => s.id === appt.serviceId);
-
   const purchasedItems = appt.purchasedItems || [];
   const retailAddon = purchasedItems.length > 0 
     ? purchasedItems.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0)
     : (appt.retail || 0);
-  const servicePrice = pkg ? pkg.price : (service?.price || appt.price || 0);
+
+  // Identify pure retail sales recorded from Store / Inventory POS
+  const isPureRetail = Boolean(
+    appt.isRetailOnly ||
+    appt.serviceId === 'retail_sale' ||
+    appt.serviceId === 'retail_only' ||
+    appt.serviceId === 'pure_retail' ||
+    appt.serviceId === 'none' ||
+    (!appt.serviceId && retailAddon > 0) ||
+    (appt.price === 0 && retailAddon > 0 && !appt.packageId && !appt.packageName)
+  );
+
+  const pkg = !isPureRetail && appt.packageId 
+    ? packages.find((p) => p.id === appt.packageId)
+    : (!isPureRetail && appt.packageName ? packages.find(p => p.name.toLowerCase() === appt.packageName?.toLowerCase()) : null);
+
+  const service = !isPureRetail && appt.serviceId
+    ? services.find((s) => s.id === appt.serviceId)
+    : null;
+
+  // Pure retail sales have 0 service cost
+  const servicePrice = isPureRetail
+    ? 0
+    : (pkg ? pkg.price : (appt.price !== undefined ? appt.price : (service?.price || 0)));
   const grossSubtotal = servicePrice + retailAddon;
 
   let discountAmount = appt.discountAmount || 0;
@@ -119,8 +138,16 @@ export function calculateAppointmentInvoice(
   let groomingRevenue = 0;
   let retailRevenue = 0;
   if (grossSubtotal > 0) {
-    groomingRevenue = Math.round((totalAmount * (servicePrice / grossSubtotal)) * 100) / 100;
-    retailRevenue = Math.round((totalAmount - groomingRevenue) * 100) / 100;
+    if (servicePrice === 0) {
+      groomingRevenue = 0;
+      retailRevenue = totalAmount;
+    } else if (retailAddon === 0) {
+      groomingRevenue = totalAmount;
+      retailRevenue = 0;
+    } else {
+      groomingRevenue = Math.round((totalAmount * (servicePrice / grossSubtotal)) * 100) / 100;
+      retailRevenue = Math.round((totalAmount - groomingRevenue) * 100) / 100;
+    }
   } else {
     groomingRevenue = 0;
     retailRevenue = 0;
@@ -128,7 +155,24 @@ export function calculateAppointmentInvoice(
 
   const pointsEarned = Math.floor(totalAmount);
   const isPaid = appt.status === 'completed';
-  const serviceOrPackageName = pkg ? pkg.name : (service?.name || 'Grooming Treatment');
+
+  let serviceOrPackageName = 'Grooming Treatment';
+  if (isPureRetail) {
+    if (purchasedItems.length === 1) {
+      serviceOrPackageName = `${purchasedItems[0].name}`;
+    } else if (purchasedItems.length > 1) {
+      serviceOrPackageName = `Retail: ${purchasedItems[0].name} (+${purchasedItems.length - 1} more)`;
+    } else {
+      serviceOrPackageName = 'Retail Purchase';
+    }
+  } else if (pkg) {
+    serviceOrPackageName = pkg.name;
+  } else if (service) {
+    serviceOrPackageName = service.name;
+  } else if (appt.price === 0 && retailAddon > 0) {
+    serviceOrPackageName = 'Retail Purchase';
+  }
+
   const invoiceNum = formatShortInvoiceNumber(appt);
 
   return {
@@ -147,6 +191,7 @@ export function calculateAppointmentInvoice(
     retailRevenue,
     pointsEarned,
     isPaid,
+    isPureRetail,
     serviceOrPackageName,
     invoiceNum,
   };

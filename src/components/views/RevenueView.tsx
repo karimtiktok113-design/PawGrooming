@@ -453,15 +453,15 @@ export const RevenueView: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Synchronized 4 Primary Financial KPI Cards (Exact match with Invoices Section) */}
+      {/* 2. Synchronized 5 Primary Financial KPI Cards (Exact match with Store & Inventory and Invoices) */}
       {showFinancialOverview && (
         <>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3.5">
             
             {/* Metric 1: Total Revenue / Total Invoiced */}
             <div className="bg-[#FAF8F5] border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-2xs">
               <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#7A6865] uppercase tracking-wider">
-                <span>{timePeriod === 'all' ? 'Total Revenue (Invoiced)' : 'Period Revenue'}</span>
+                <span>{timePeriod === 'all' ? 'Total Revenue' : 'Period Revenue'}</span>
                 <Receipt className="w-3.5 h-3.5 text-[#240C0B]" />
               </div>
               <div className="mt-1.5 flex items-baseline gap-2">
@@ -470,11 +470,43 @@ export const RevenueView: React.FC = () => {
                 </span>
               </div>
               <div className="text-[10px] sm:text-[11px] text-[#A08E8B] mt-0.5 truncate">
-                {timePeriod === 'all' ? `Across ${allTimeStats.totalCount} bookings` : `${formatPrice(activeStats.totalGrooming)} svc + ${formatPrice(activeStats.totalRetail)} retail`}
+                {formatPrice(timePeriod === 'all' ? allTimeStats.totalGrooming : activeStats.totalGrooming)} svc + {formatPrice(timePeriod === 'all' ? allTimeStats.totalRetail : activeStats.totalRetail)} retail
               </div>
             </div>
 
-            {/* Metric 2: Settled & Paid Revenue */}
+            {/* Metric 2: Retail Add-ons & Store Revenue (Synchronized with Activity & Store section) */}
+            <div className="bg-[#FAF8F5] border border-[#D8D3C4] p-3.5 sm:p-4 rounded-2xl shadow-2xs">
+              <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#2E8A81] uppercase tracking-wider">
+                <span>Retail Add-ons</span>
+                <ShoppingBag className="w-3.5 h-3.5 text-[#2E8A81]" />
+              </div>
+              <div className="mt-1.5 flex items-baseline gap-2">
+                <span className="font-display font-black text-xl sm:text-2xl text-[#2E8A81]">
+                  {formatPrice(timePeriod === 'all' ? allTimeStats.totalRetail : activeStats.totalRetail)}
+                </span>
+              </div>
+              <div className="text-[10px] sm:text-[11px] text-[#5C716C] mt-0.5 truncate" title="Synced with Store & Inventory">
+                Synced with Store & Inventory
+              </div>
+            </div>
+
+            {/* Metric 3: Grooming Services Revenue */}
+            <div className="bg-[#FAF8F5] border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-2xs">
+              <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#FF6B00] uppercase tracking-wider">
+                <span>Grooming Services</span>
+                <Scissors className="w-3.5 h-3.5 text-[#FF6B00]" />
+              </div>
+              <div className="mt-1.5 flex items-baseline gap-2">
+                <span className="font-display font-black text-xl sm:text-2xl text-[#173E39]">
+                  {formatPrice(timePeriod === 'all' ? allTimeStats.totalGrooming : activeStats.totalGrooming)}
+                </span>
+              </div>
+              <div className="text-[10px] sm:text-[11px] text-[#A08E8B] mt-0.5 truncate">
+                From service bookings
+              </div>
+            </div>
+
+            {/* Metric 4: Settled & Paid Revenue */}
             <div className="bg-[#F0FDF4] border border-[#DCFCE7] p-3.5 sm:p-4 rounded-2xl shadow-2xs">
               <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#166534] uppercase tracking-wider">
                 <span>Settled & Paid</span>
@@ -493,8 +525,8 @@ export const RevenueView: React.FC = () => {
               </div>
             </div>
 
-            {/* Metric 3: Payment Due / Pending Invoices */}
-            <div className="bg-[#FFFBEB] border border-[#FEF3C7] p-3.5 sm:p-4 rounded-2xl shadow-2xs">
+            {/* Metric 5: Payment Due / Pending Invoices */}
+            <div className="bg-[#FFFBEB] border border-[#FEF3C7] p-3.5 sm:p-4 rounded-2xl shadow-2xs col-span-2 sm:col-span-1">
               <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#92400E] uppercase tracking-wider">
                 <span>Payment Due</span>
                 <Clock className="w-3.5 h-3.5 text-[#D97706]" />
@@ -506,22 +538,6 @@ export const RevenueView: React.FC = () => {
               </div>
               <div className="text-[10px] sm:text-[11px] text-[#B45309]/80 mt-0.5">
                 {timePeriod === 'all' ? `${allTimeStats.pendingCount} pending payment` : `${activeStats.pendingCount} unpaid`}
-              </div>
-            </div>
-
-            {/* Metric 4: Average Ticket / Invoice */}
-            <div className="bg-[#FAF8F5] border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-2xs">
-              <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#7A6865] uppercase tracking-wider">
-                <span>Average Invoice</span>
-                <DollarSign className="w-3.5 h-3.5 text-[#240C0B]" />
-              </div>
-              <div className="mt-1.5 flex items-baseline gap-2">
-                <span className="font-display font-black text-xl sm:text-2xl text-[#240C0B]">
-                  {formatPrice(timePeriod === 'all' ? allTimeStats.avgInvoice : activeStats.avgTicket)}
-                </span>
-              </div>
-              <div className="text-[10px] sm:text-[11px] text-[#A08E8B] mt-0.5">
-                Per scheduled session
               </div>
             </div>
           </div>
