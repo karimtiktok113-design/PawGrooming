@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { PurchasedRetailItem } from '../../types';
-import { X, Check, Calendar, Phone, Mail, Award, AlertTriangle, Send, Trash2, Printer, FileText, Receipt, Scissors, ShieldAlert, Copy, Gift, Sparkles, Share2, MessageCircle, Upload, Image as ImageIcon, Camera, RefreshCw, Download, Plus, Minus, ShoppingBag } from 'lucide-react';
+import { X, Check, Calendar, Phone, Mail, Award, AlertTriangle, Send, Trash2, Printer, FileText, Receipt, Scissors, ShieldAlert, Copy, Gift, Sparkles, Share2, MessageCircle, Upload, Image as ImageIcon, Camera, RefreshCw, Download, Plus, Minus, ShoppingBag, DollarSign } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { openWhatsAppInvoice, generateWhatsAppInvoiceText } from '../../utils/whatsapp';
 import { formatShortInvoiceNumber, calculateAppointmentInvoice } from '../../utils/invoice';
@@ -1954,41 +1954,115 @@ const GiftCardFormModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 const ExpenseFormModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { addExpense } = useApp();
   const [desc, setDesc] = useState('');
-  const [amount, setAmount] = useState(45);
+  const [amount, setAmount] = useState<number>(45);
   const [category, setCategory] = useState<'supplies' | 'equipment' | 'vehicle' | 'insurance' | 'marketing' | 'other'>('supplies');
+  const [date, setDate] = useState<string>(() => new Date().toISOString().slice(0, 10));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addExpense({ desc, amount, category, date: '2026-08-12' });
+    if (!desc.trim()) return;
+    addExpense({ desc: desc.trim(), amount: Number(amount) || 0, category, date: date || new Date().toISOString().slice(0, 10) });
     onClose();
   };
 
+  const setPresetDate = (daysAgo: number) => {
+    const d = new Date();
+    d.setDate(d.getDate() - daysAgo);
+    setDate(d.toISOString().slice(0, 10));
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 text-xs">
-      <h3 className="font-display font-bold text-xl text-[#173E39]">Log Studio Expense</h3>
-      <div>
-        <label className="font-bold text-[#173E39]">Description</label>
-        <input type="text" value={desc} onChange={(e) => setDesc(e.target.value)} required placeholder="e.g. Shampoo restocking" className="w-full mt-1 p-2 border rounded-xl" />
-      </div>
-      <div className="grid grid-cols-2 gap-3">
+    <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+      <div className="flex items-center justify-between border-b border-[#D8D3C4]/60 pb-3">
         <div>
-          <label className="font-bold text-[#173E39]">Amount ($)</label>
-          <input type="number" value={amount} onChange={(e) => setAmount(parseFloat(e.target.value))} required className="w-full mt-1 p-2 border rounded-xl" />
+          <h3 className="font-display font-black text-xl text-[#173E39]">Log Studio Expense</h3>
+          <p className="text-[#5C716C] text-[11px] mt-0.5">Record salon overhead, inventory purchases, or operational costs for any specific date</p>
+        </div>
+        <div className="p-2 rounded-2xl bg-[#FEF2F2] text-[#C9503A]">
+          <DollarSign className="w-5 h-5" />
+        </div>
+      </div>
+
+      <div>
+        <label className="font-bold text-[#173E39] block mb-1">Expense Description *</label>
+        <input 
+          type="text" 
+          value={desc} 
+          onChange={(e) => setDesc(e.target.value)} 
+          required 
+          placeholder="e.g. Organic Oatmeal Shampoo 5L Restock, Scissor Sharpening" 
+          className="w-full p-2.5 bg-white border border-[#D8D3C4] rounded-xl text-xs focus:border-[#173E39] outline-none" 
+        />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label className="font-bold text-[#173E39] block mb-1">Amount ($) *</label>
+          <input 
+            type="number" 
+            step="0.01"
+            min="0"
+            value={amount} 
+            onChange={(e) => setAmount(parseFloat(e.target.value) || 0)} 
+            required 
+            className="w-full p-2.5 bg-white border border-[#D8D3C4] rounded-xl text-xs font-bold text-[#C9503A] focus:border-[#173E39] outline-none" 
+          />
         </div>
         <div>
-          <label className="font-bold text-[#173E39]">Category</label>
-          <select value={category} onChange={(e) => setCategory(e.target.value as any)} className="w-full mt-1 p-2 border rounded-xl">
-            <option value="supplies">Supplies</option>
-            <option value="equipment">Equipment</option>
-            <option value="vehicle">Vehicle / Van</option>
-            <option value="insurance">Insurance</option>
-            <option value="marketing">Marketing</option>
+          <label className="font-bold text-[#173E39] block mb-1">Cost Category</label>
+          <select 
+            value={category} 
+            onChange={(e) => setCategory(e.target.value as any)} 
+            className="w-full p-2.5 bg-white border border-[#D8D3C4] rounded-xl text-xs font-medium focus:border-[#173E39] outline-none"
+          >
+            <option value="supplies">🧴 Supplies & Shampoos</option>
+            <option value="equipment">✂️ Equipment & Blades</option>
+            <option value="vehicle">🚐 Vehicle / Mobile Van</option>
+            <option value="insurance">🛡️ Insurance & Permits</option>
+            <option value="marketing">📣 Marketing & Promos</option>
+            <option value="other">📦 Other Studio Overhead</option>
           </select>
         </div>
       </div>
-      <div className="pt-2 flex justify-end gap-2">
+
+      <div>
+        <div className="flex items-center justify-between mb-1">
+          <label className="font-bold text-[#173E39]">Expense Date *</label>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setPresetDate(0)}
+              className={`px-2 py-0.5 text-[10px] rounded-lg font-bold transition-all cursor-pointer ${
+                date === new Date().toISOString().slice(0, 10)
+                  ? 'bg-[#173E39] text-white'
+                  : 'bg-[#EAE7DC] text-[#5C716C] hover:text-[#173E39]'
+              }`}
+            >
+              Today
+            </button>
+            <button
+              type="button"
+              onClick={() => setPresetDate(1)}
+              className="px-2 py-0.5 text-[10px] rounded-lg font-bold bg-[#EAE7DC] text-[#5C716C] hover:text-[#173E39] transition-all cursor-pointer"
+            >
+              Yesterday
+            </button>
+          </div>
+        </div>
+        <input 
+          type="date" 
+          value={date} 
+          onChange={(e) => setDate(e.target.value)} 
+          required 
+          className="w-full p-2.5 bg-white border border-[#D8D3C4] rounded-xl text-xs font-semibold text-[#173E39] focus:border-[#173E39] outline-none" 
+        />
+      </div>
+
+      <div className="pt-3 border-t border-[#D8D3C4]/60 flex items-center justify-end gap-2">
         <button type="button" onClick={onClose} className="btn-ghost text-xs px-4 py-2 rounded-xl">Cancel</button>
-        <button type="submit" className="btn-primary text-xs px-5 py-2 rounded-xl font-bold">Record Expense</button>
+        <button type="submit" className="btn-primary text-xs px-5 py-2.5 rounded-xl font-bold shadow-md cursor-pointer">
+          Record Expense
+        </button>
       </div>
     </form>
   );

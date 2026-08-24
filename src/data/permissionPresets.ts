@@ -138,6 +138,7 @@ export const ALL_SCREEN_SECTIONS: Record<ViewMode, SectionDefinition[]> = {
   ],
   business: [
     { id: 'inventory', screenId: 'business', label: 'Retail Store Stock & Products', description: 'SKU management, stock levels, low-stock warnings, and reorder levels' },
+    { id: 'retailSales', screenId: 'business', label: 'Retail Sales & Client Orders', description: 'Real-time sales ledger showing which clients purchased which inventory items and revenue generated' },
     { id: 'giftCards', screenId: 'business', label: 'Gift Cards Engine & Issuance', description: 'Issue digital gift vouchers, track balances, reload & redeem cards' },
     { id: 'expenses', screenId: 'business', label: 'Operating Expenses Ledger', description: 'Log studio overhead, supplies, equipment maintenance, and utility costs' },
     { id: 'waitlist', screenId: 'business', label: 'Standby Client Waitlist', description: 'Manage standby queue and auto-fill cancelled appointment slots' },
@@ -212,6 +213,7 @@ export const FULL_ACCESS_SECTIONS: ScreenSectionPermissions = {
   },
   business: {
     inventory: true,
+    retailSales: true,
     giftCards: true,
     expenses: true,
     waitlist: true,

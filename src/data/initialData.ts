@@ -571,19 +571,105 @@ export const INITIAL_APPOINTMENTS: Appointment[] = [
   },
   { id: 'ap6', clientId: 'cl2', serviceId: 'sv6', staffId: 'st1', date: dDays(-3), start: '14:00', duration: 60, price: 60, status: 'completed' },
   { id: 'ap7', clientId: 'cl12', serviceId: 'sv1', staffId: 'st1', date: dDays(-4), start: '14:00', duration: 75, price: 55, status: 'completed' },
-  { id: 'ap8', clientId: 'cl15', serviceId: 'sv2', staffId: 'st1', date: dDays(-4), start: '10:00', duration: 90, price: 70, status: 'completed', retail: 22 },
+  { 
+    id: 'ap8', 
+    clientId: 'cl15', 
+    serviceId: 'sv2', 
+    staffId: 'st1', 
+    date: dDays(-4), 
+    start: '10:00', 
+    duration: 90, 
+    price: 70, 
+    status: 'completed', 
+    retail: 22,
+    purchasedItems: [
+      { itemId: 'in7', name: 'Paw Balm 30ml', price: 11, quantity: 2 }
+    ]
+  },
   { id: 'ap9', clientId: 'cl10', serviceId: 'sv6', staffId: 'st1', date: dDays(-6), start: '10:00', duration: 60, price: 60, status: 'completed' },
-  { id: 'ap10', clientId: 'cl14', serviceId: 'sv2', staffId: 'st1', date: dDays(-6), start: '13:00', duration: 90, price: 70, status: 'completed', retail: 14 },
+  { 
+    id: 'ap10', 
+    clientId: 'cl14', 
+    serviceId: 'sv2', 
+    staffId: 'st1', 
+    date: dDays(-6), 
+    start: '13:00', 
+    duration: 90, 
+    price: 70, 
+    status: 'completed', 
+    retail: 14,
+    purchasedItems: [
+      { itemId: 'in3', name: 'Detangling Spray 250ml', price: 14, quantity: 1 }
+    ]
+  },
   { id: 'ap11', clientId: 'cl4', serviceId: 'sv3', staffId: 'st1', date: dDays(-7), start: '11:00', duration: 120, price: 90, status: 'completed' },
   { id: 'ap12', clientId: 'cl8', serviceId: 'sv1', staffId: 'st1', date: dDays(-7), start: '15:00', duration: 75, price: 55, status: 'completed' },
-  { id: 'ap13', clientId: 'cl5', serviceId: 'sv1', staffId: 'st1', date: dDays(-8), start: '09:30', duration: 75, price: 55, status: 'completed', retail: 18 },
+  { 
+    id: 'ap13', 
+    clientId: 'cl5', 
+    serviceId: 'sv1', 
+    staffId: 'st1', 
+    date: dDays(-8), 
+    start: '09:30', 
+    duration: 75, 
+    price: 55, 
+    status: 'completed', 
+    retail: 18,
+    purchasedItems: [
+      { itemId: 'in1', name: 'Oatmeal Shampoo 500ml', price: 18, quantity: 1 }
+    ]
+  },
   { id: 'ap14', clientId: 'cl11', serviceId: 'sv2', staffId: 'st1', date: dDays(-8), start: '14:00', duration: 90, price: 70, status: 'completed' },
   { id: 'ap15', clientId: 'cl13', serviceId: 'sv4', staffId: 'st2', date: dDays(-9), start: '10:00', duration: 45, price: 38, status: 'completed' },
-  { id: 'ap16', clientId: 'cl2', serviceId: 'sv6', staffId: 'st1', date: dDays(-10), start: '10:00', duration: 60, price: 60, status: 'completed', retail: 16 },
+  { 
+    id: 'ap16', 
+    clientId: 'cl2', 
+    serviceId: 'sv6', 
+    staffId: 'st1', 
+    date: dDays(-10), 
+    start: '10:00', 
+    duration: 60, 
+    price: 60, 
+    status: 'completed', 
+    retail: 16,
+    purchasedItems: [
+      { itemId: 'in5', name: 'Dental Chews (bag)', price: 10, quantity: 1 },
+      { itemId: 'in6', name: 'Bandana / Bow', price: 6, quantity: 1 }
+    ]
+  },
   { id: 'ap17', clientId: 'cl15', serviceId: 'sv1', staffId: 'st1', date: dDays(-10), start: '14:30', duration: 75, price: 55, status: 'completed' },
   { id: 'ap18', clientId: 'cl1', serviceId: 'sv5', staffId: 'st2', date: dDays(-12), start: '10:00', duration: 40, price: 35, status: 'completed' },
-  { id: 'ap19', clientId: 'cl9', serviceId: 'sv1', staffId: 'st1', date: dDays(-12), start: '15:30', duration: 75, price: 55, status: 'completed', retail: 12 },
-  { id: 'ap20', clientId: 'cl10', serviceId: 'sv6', staffId: 'st1', date: dDays(-14), start: '11:00', duration: 60, price: 60, status: 'completed', retail: 16 },
+  { 
+    id: 'ap19', 
+    clientId: 'cl9', 
+    serviceId: 'sv1', 
+    staffId: 'st1', 
+    date: dDays(-12), 
+    start: '15:30', 
+    duration: 75, 
+    price: 55, 
+    status: 'completed', 
+    retail: 12,
+    purchasedItems: [
+      { itemId: 'in4', name: 'Ear Cleaner 120ml', price: 12, quantity: 1 }
+    ]
+  },
+  { 
+    id: 'ap20', 
+    clientId: 'cl10', 
+    serviceId: 'sv6', 
+    staffId: 'st1', 
+    date: dDays(-14), 
+    start: '11:00', 
+    duration: 60, 
+    price: 60, 
+    status: 'completed', 
+    retail: 16,
+    purchasedItems: [
+      { itemId: 'in5', name: 'Dental Chews (bag)', price: 10, quantity: 1 },
+      { itemId: 'in6', name: 'Bandana / Bow', price: 6, quantity: 1 }
+    ]
+  },
 ];
 
 export const INITIAL_INVENTORY: InventoryItem[] = [

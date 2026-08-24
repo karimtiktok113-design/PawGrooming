@@ -111,6 +111,7 @@ export interface ScreenSectionPermissions {
   };
   business?: {
     inventory?: boolean;
+    retailSales?: boolean;
     giftCards?: boolean;
     expenses?: boolean;
     waitlist?: boolean;
