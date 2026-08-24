@@ -459,7 +459,7 @@ export const RevenueView: React.FC = () => {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3.5">
             
             {/* Metric 1: Total Revenue / Total Invoiced */}
-            <div className="bg-[#FAF8F5] border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-2xs">
+            <div className="bg-white border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-2xs">
               <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#7A6865] uppercase tracking-wider">
                 <span>{timePeriod === 'all' ? 'Total Revenue' : 'Period Revenue'}</span>
                 <Receipt className="w-3.5 h-3.5 text-[#240C0B]" />
@@ -475,7 +475,7 @@ export const RevenueView: React.FC = () => {
             </div>
 
             {/* Metric 2: Retail Add-ons & Store Revenue (Synchronized with Activity & Store section) */}
-            <div className="bg-[#FAF8F5] border border-[#D8D3C4] p-3.5 sm:p-4 rounded-2xl shadow-2xs">
+            <div className="bg-white border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-2xs">
               <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#2E8A81] uppercase tracking-wider">
                 <span>Retail Add-ons</span>
                 <ShoppingBag className="w-3.5 h-3.5 text-[#2E8A81]" />
@@ -491,7 +491,7 @@ export const RevenueView: React.FC = () => {
             </div>
 
             {/* Metric 3: Grooming Services Revenue */}
-            <div className="bg-[#FAF8F5] border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-2xs">
+            <div className="bg-white border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-2xs">
               <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#FF6B00] uppercase tracking-wider">
                 <span>Grooming Services</span>
                 <Scissors className="w-3.5 h-3.5 text-[#FF6B00]" />
@@ -507,7 +507,7 @@ export const RevenueView: React.FC = () => {
             </div>
 
             {/* Metric 4: Settled & Paid Revenue */}
-            <div className="bg-[#F0FDF4] border border-[#DCFCE7] p-3.5 sm:p-4 rounded-2xl shadow-2xs">
+            <div className="bg-white border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-2xs">
               <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#166534] uppercase tracking-wider">
                 <span>Settled & Paid</span>
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#16a34a]" />
@@ -526,7 +526,7 @@ export const RevenueView: React.FC = () => {
             </div>
 
             {/* Metric 5: Payment Due / Pending Invoices */}
-            <div className="bg-[#FFFBEB] border border-[#FEF3C7] p-3.5 sm:p-4 rounded-2xl shadow-2xs col-span-2 sm:col-span-1">
+            <div className="bg-white border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-2xs col-span-2 sm:col-span-1">
               <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#92400E] uppercase tracking-wider">
                 <span>Payment Due</span>
                 <Clock className="w-3.5 h-3.5 text-[#D97706]" />
@@ -545,7 +545,7 @@ export const RevenueView: React.FC = () => {
           {/* 3. Secondary Metrics: Today's Revenue & Net Operating Profit Banner */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             {/* Today's Live Invoiced Revenue */}
-            <div className="card-box p-4 bg-gradient-to-br from-theme-light via-white to-[#FAF8F5] border border-theme-subtle">
+            <div className="card-box p-4 bg-white border border-[#E6DFD5]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-theme-primary" />
@@ -564,7 +564,7 @@ export const RevenueView: React.FC = () => {
             </div>
 
             {/* Net Operating Profit Margin */}
-            <div className="card-box p-4 bg-[#F0FDF4] border border-[#DCFCE7]">
+            <div className="card-box p-4 bg-white border border-[#E6DFD5]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-emerald-600" />
@@ -579,7 +579,7 @@ export const RevenueView: React.FC = () => {
               <div className="text-2xl sm:text-3xl font-display font-black text-emerald-900 tracking-tight mt-1.5">
                 {formatPrice(activeStats.netProfit)}
               </div>
-              <p className="text-xs text-emerald-800/80 mt-1">
+              <p className="text-xs text-[#7A6865] mt-1">
                 Gross revenue minus {formatPrice(activeStats.totalExpenses)} operational studio expenses.
               </p>
             </div>

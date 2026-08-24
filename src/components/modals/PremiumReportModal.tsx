@@ -769,7 +769,7 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
           {/* Executive Summary Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             
-            <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#E6DFD5] space-y-1 shadow-2xs">
+            <div className="p-4 rounded-2xl bg-white border border-[#E6DFD5] space-y-1 shadow-2xs">
               <span className="text-[10px] font-black uppercase text-[#A08E8B] tracking-wider block">
                 Gross Invoiced
               </span>
@@ -784,7 +784,7 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#E6DFD5] space-y-1 shadow-2xs">
+            <div className="p-4 rounded-2xl bg-white border border-[#E6DFD5] space-y-1 shadow-2xs">
               <span className="text-[10px] font-black uppercase text-[#A08E8B] tracking-wider block">
                 Grooming Services
               </span>
@@ -796,7 +796,7 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#E6DFD5] space-y-1 shadow-2xs">
+            <div className="p-4 rounded-2xl bg-white border border-[#E6DFD5] space-y-1 shadow-2xs">
               <span className="text-[10px] font-black uppercase text-[#A08E8B] tracking-wider block">
                 Retail & Add-ons
               </span>
@@ -808,7 +808,7 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#E6DFD5] space-y-1 shadow-2xs">
+            <div className="p-4 rounded-2xl bg-white border border-[#E6DFD5] space-y-1 shadow-2xs">
               <span className="text-[10px] font-black uppercase text-[#A08E8B] tracking-wider block">
                 Net Operating Profit
               </span>

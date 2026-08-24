@@ -13,18 +13,29 @@ import {
   ChevronDown,
   Dog,
   Scissors,
-  Check
+  Check,
+  PanelLeft,
+  PanelLeftClose,
+  PanelLeftOpen
 } from 'lucide-react';
 import { ClientNotificationDrawer } from './notifications/ClientNotificationDrawer';
 import { ColorTheme } from '../types';
+import { SidebarMode } from './Sidebar';
 import { formatISO, getFixedToday } from '../data/initialData';
 
 interface HeaderProps {
   onMenuClick?: () => void;
   isSidebarOpen?: boolean;
+  sidebarMode?: SidebarMode;
+  setSidebarMode?: (mode: SidebarMode) => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onMenuClick, isSidebarOpen = false }) => {
+export const Header: React.FC<HeaderProps> = ({ 
+  onMenuClick, 
+  isSidebarOpen = false,
+  sidebarMode = 'expanded',
+  setSidebarMode
+}) => {
   const { 
     view, 
     setView, 
@@ -111,6 +122,30 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick, isSidebarOpen = fal
             >
               {isSidebarOpen ? <X className="w-4 h-4 sm:w-5 sm:h-5 text-white" /> : <Menu className="w-4 h-4 sm:w-5 sm:h-5 text-[#240C0B]" />}
             </button>
+
+            {/* Desktop Sliding Sidebar Toggle Button */}
+            {setSidebarMode && (
+              <button
+                onClick={() => {
+                  if (sidebarMode === 'expanded') setSidebarMode('collapsed');
+                  else if (sidebarMode === 'collapsed') setSidebarMode('expanded');
+                  else setSidebarMode('expanded');
+                }}
+                className={`hidden lg:flex items-center justify-center w-9 h-9 rounded-full border text-xs font-bold transition-all cursor-pointer shrink-0 shadow-2xs hover:scale-105 active:scale-95 ${
+                  sidebarMode === 'collapsed'
+                    ? 'bg-theme-light border-theme-primary/40 text-theme-primary'
+                    : 'bg-white border-[#E6DFD5] text-[#7A6865] hover:text-[#240C0B] hover:border-[#D8D3C4]'
+                }`}
+                title={sidebarMode === 'expanded' ? "Collapse sidebar (⌘B)" : "Expand sidebar (⌘B)"}
+                aria-label="Toggle sidebar collapse"
+              >
+                {sidebarMode === 'collapsed' ? (
+                  <PanelLeftOpen className="w-4 h-4" />
+                ) : (
+                  <PanelLeft className="w-4 h-4" />
+                )}
+              </button>
+            )}
 
             {/* Mobile Minimalist Brand Header */}
             <div className="flex sm:hidden items-center gap-1.5 min-w-0 pr-1">

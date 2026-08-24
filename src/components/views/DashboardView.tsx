@@ -413,7 +413,7 @@ export const DashboardView: React.FC = () => {
             transition={{ duration: 0.25, delay: 0.05 }}
             whileHover={{ y: -3, scale: 1.01 }}
             onClick={() => setView('calendar')}
-            className="bg-[#FAF8F5] border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+            className="bg-white border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
           >
             <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#7A6865] uppercase tracking-wider">
               <span>Appointments Today</span>
@@ -441,7 +441,7 @@ export const DashboardView: React.FC = () => {
             transition={{ duration: 0.25, delay: 0.1 }}
             whileHover={{ y: -3, scale: 1.01 }}
             onClick={() => setView('revenue')}
-            className="bg-[#FAF8F5] border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+            className="bg-white border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
           >
             <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#7A6865] uppercase tracking-wider">
               <span>Revenue Today</span>
@@ -464,7 +464,7 @@ export const DashboardView: React.FC = () => {
             transition={{ duration: 0.25, delay: 0.15 }}
             whileHover={{ y: -3, scale: 1.01 }}
             onClick={() => setView('clients')}
-            className="bg-[#FAF8F5] border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+            className="bg-white border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
           >
             <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#7A6865] uppercase tracking-wider">
               <span>Total Clients</span>
@@ -492,7 +492,7 @@ export const DashboardView: React.FC = () => {
             transition={{ duration: 0.25, delay: 0.2 }}
             whileHover={{ y: -3, scale: 1.01 }}
             onClick={() => setView('revenue')}
-            className="bg-[#FAF8F5] border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+            className="bg-white border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
           >
             <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#7A6865] uppercase tracking-wider">
               <span>Total Revenue (All Time)</span>
@@ -520,7 +520,7 @@ export const DashboardView: React.FC = () => {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
-          className="bg-[#FAF8F5] text-[#240C0B] p-5 sm:p-6 rounded-2xl border border-[#E6DFD5] shadow-xs flex flex-col h-full justify-between"
+          className="bg-white text-[#240C0B] p-5 sm:p-6 rounded-2xl border border-[#E6DFD5] shadow-xs flex flex-col h-full justify-between"
         >
           {/* Header & Filter Switcher */}
           <div>
@@ -757,7 +757,7 @@ export const DashboardView: React.FC = () => {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.25 }}
-          className="bg-[#FAF8F5] text-[#240C0B] p-5 sm:p-6 rounded-2xl border border-[#E6DFD5] shadow-xs flex flex-col h-full justify-between"
+          className="bg-white text-[#240C0B] p-5 sm:p-6 rounded-2xl border border-[#E6DFD5] shadow-xs flex flex-col h-full justify-between"
         >
           {/* Header */}
           <div>
@@ -983,7 +983,7 @@ export const DashboardView: React.FC = () => {
             </button>
             <button
               onClick={() => setView('gallery')}
-              className="px-3.5 py-2 bg-[#FAF8F5] hover:bg-[#E6DFD5] text-[#240C0B] text-xs font-extrabold rounded-full border border-[#D8D3C4] transition-all cursor-pointer"
+              className="px-3.5 py-2 bg-white hover:bg-[#FAF8F5] text-[#240C0B] text-xs font-extrabold rounded-full border border-[#D8D3C4] transition-all cursor-pointer shadow-2xs"
             >
               View Full Gallery →
             </button>
@@ -995,7 +995,7 @@ export const DashboardView: React.FC = () => {
           {transformations.slice(0, 3).map((tr) => (
             <div 
               key={tr.id}
-              className="bg-[#FAF8F5] p-4 rounded-2xl border border-[#E6DFD5] space-y-3 hover:border-[#FF6B00] transition-all flex flex-col justify-between group"
+              className="bg-white p-4 rounded-2xl border border-[#E6DFD5] space-y-3 hover:border-[#FF6B00] transition-all flex flex-col justify-between group shadow-2xs"
             >
               <div>
                 <div className="flex items-start justify-between gap-2">

@@ -3,7 +3,8 @@ import { AppProvider, useApp } from './context/AppContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ViewMode } from './types';
 import { isScreenAllowed } from './data/permissionPresets';
-import { Sidebar } from './components/Sidebar';
+import { Sidebar, SidebarMode } from './components/Sidebar';
+import { FloatingSidebarTrigger } from './components/common/FloatingSidebarTrigger';
 import { Header } from './components/Header';
 import { DashboardView } from './components/views/DashboardView';
 import { CalendarView } from './components/views/CalendarView';
@@ -33,17 +34,45 @@ const MainApp: React.FC = () => {
   const { view, settings } = useApp();
   const { currentProfile, isAdmin, returnToAdmin } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+  // Persistent Sidebar Mode (expanded | collapsed | hidden)
+  const [sidebarMode, setSidebarMode] = useState<SidebarMode>(() => {
+    try {
+      const saved = localStorage.getItem('pawbook_sidebar_mode');
+      if (saved === 'expanded' || saved === 'collapsed' || saved === 'hidden') {
+        return saved;
+      }
+    } catch (e) {
+      // Fallback
+    }
+    return 'expanded';
+  });
 
-  // Close sidebar on Escape key
+  const handleSetSidebarMode = (mode: SidebarMode) => {
+    setSidebarMode(mode);
+    try {
+      localStorage.setItem('pawbook_sidebar_mode', mode);
+    } catch (e) {}
+  };
+
+  // Keyboard Shortcuts (⌘B or Ctrl+B or [ to toggle sidebar, Esc to close drawers)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setIsSidebarOpen(false);
       }
+
+      // ⌘B or Ctrl+B or '[' to toggle sidebar collapse/expand
+      if ((e.metaKey || e.ctrlKey) && (e.key === 'b' || e.key === 'B')) {
+        e.preventDefault();
+        handleSetSidebarMode(
+          sidebarMode === 'expanded' ? 'collapsed' : sidebarMode === 'collapsed' ? 'expanded' : 'expanded'
+        );
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [sidebarMode]);
 
   const screenTitles: Record<ViewMode, string> = {
     dashboard: 'Dashboard',
@@ -96,6 +125,14 @@ const MainApp: React.FC = () => {
     }
   };
 
+  // Calculate layout offset classes based on sidebar state
+  const sidebarOffsetClass = 
+    sidebarMode === 'expanded' 
+      ? 'lg:pl-[256px]' 
+      : sidebarMode === 'collapsed' 
+        ? 'lg:pl-[74px]' 
+        : 'lg:pl-0';
+
   return (
     <div 
       data-theme={settings.colorTheme || 'terracotta'} 
@@ -104,6 +141,12 @@ const MainApp: React.FC = () => {
     >
       {/* Toast Notification Container */}
       <Toast />
+
+      {/* Floating Edge Trigger when desktop sidebar is in Hidden mode */}
+      <FloatingSidebarTrigger 
+        sidebarMode={sidebarMode} 
+        setSidebarMode={handleSetSidebarMode} 
+      />
 
       {/* Interactive Push & Broadcast Notification Orchestration */}
       <ClientNotificationRenderer />
@@ -136,14 +179,21 @@ const MainApp: React.FC = () => {
         className="w-full flex-1 flex flex-col md:flex-row relative min-h-screen text-[#240C0B] transition-colors duration-300 print:hidden"
         style={{ backgroundColor: 'var(--app-bg, #FAF8F5)' }}
       >
-        {/* Side Navigation Bar (Fixed left sidebar with responsive toggle) */}
-        <Sidebar mobileOpen={isSidebarOpen} setMobileOpen={setIsSidebarOpen} />
+        {/* Sliding Side Navigation Bar (Desktop fixed & mobile drawer) */}
+        <Sidebar 
+          mobileOpen={isSidebarOpen} 
+          setMobileOpen={setIsSidebarOpen}
+          sidebarMode={sidebarMode}
+          setSidebarMode={handleSetSidebarMode}
+        />
 
-        {/* Main Content Area (Offset with lg:pl-[240px] to never overlap sidebar) */}
-        <div className="flex-1 flex flex-col min-w-0 min-h-full pb-20 lg:pb-0 lg:pl-[240px]">
+        {/* Main Content Area (Smooth dynamic offset transition) */}
+        <div className={`flex-1 flex flex-col min-w-0 min-h-full pb-20 lg:pb-0 transition-[padding] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${sidebarOffsetClass}`}>
           <Header 
             onMenuClick={() => setIsSidebarOpen((prev) => !prev)} 
             isSidebarOpen={isSidebarOpen}
+            sidebarMode={sidebarMode}
+            setSidebarMode={handleSetSidebarMode}
           />
 
           <main className="flex-1 p-3 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-4 sm:space-y-6">
@@ -152,7 +202,7 @@ const MainApp: React.FC = () => {
           </main>
         </div>
 
-        {/* Mobile & Tablet Quick Bottom Navigation */}
+        {/* Mobile & Tablet Floating Bottom Navigation */}
         <MobileNav 
           isSidebarOpen={isSidebarOpen} 
           setIsSidebarOpen={setIsSidebarOpen} 
