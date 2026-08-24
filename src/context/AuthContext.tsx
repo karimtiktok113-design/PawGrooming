@@ -285,15 +285,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const profileId = session.profile.profileId;
     const sessionId = session.sessionId;
 
-    // 1. Initial online mark
+    // 1. Initial online heartbeat mark
     updateProfileHeartbeatInFirestore(profileId, sessionId).catch(() => {});
 
-    // 2. Periodic heartbeat every 12 seconds
+    // 2. Continuous steady heartbeat every 10 seconds while logged in
     const heartbeatInterval = setInterval(() => {
-      if (document.visibilityState !== 'hidden') {
-        updateProfileHeartbeatInFirestore(profileId, sessionId).catch(() => {});
-      }
-    }, 12000);
+      updateProfileHeartbeatInFirestore(profileId, sessionId).catch(() => {});
+    }, 10000);
 
     // 3. User interaction activity throttle (at most every 10s)
     let lastActivityPing = Date.now();
@@ -307,8 +305,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     window.addEventListener('pointerdown', handleUserActivity, { passive: true });
     window.addEventListener('keydown', handleUserActivity, { passive: true });
+    window.addEventListener('scroll', handleUserActivity, { passive: true });
 
-    // 4. Visibility change handler
+    // 4. Visibility change handler: immediately refresh heartbeat when tab becomes visible
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         updateProfileHeartbeatInFirestore(profileId, sessionId).catch(() => {});
@@ -316,7 +315,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // 5. Browser/Tab close or navigate away: immediately mark offline in Firestore
+    // 5. Browser/Tab close or navigate away: mark offline in Firestore
     const handleBeforeUnload = () => {
       markProfileOfflineInFirestore(profileId, sessionId).catch(() => {});
     };
@@ -328,10 +327,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       clearInterval(heartbeatInterval);
       window.removeEventListener('pointerdown', handleUserActivity);
       window.removeEventListener('keydown', handleUserActivity);
+      window.removeEventListener('scroll', handleUserActivity);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleBeforeUnload);
       window.removeEventListener('pagehide', handleBeforeUnload);
-      markProfileOfflineInFirestore(profileId, sessionId).catch(() => {});
+      // NOTE: Do NOT call markProfileOfflineInFirestore on component re-render/cleanup!
+      // Offline should only be triggered on explicit logout or browser window/tab close (beforeunload/pagehide).
     };
   }, [session?.userType, session?.profile?.profileId, session?.sessionId]);
 
@@ -498,16 +499,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
-    // If currently logged in client, mark logged out in state
+    // If currently logged in client, mark logged out in state and Firestore
     if (session && session.userType === 'client' && session.profile) {
       const pId = session.profile.profileId;
+      const sId = session.sessionId;
+      markProfileOfflineInFirestore(pId, sId).catch(() => {});
       const target = authDatabase.profiles.find(p => p.profileId === pId);
       if (target) {
         const updated = {
           ...target,
           isCurrentlyLoggedIn: false,
           activeSessions: Array.isArray(target.activeSessions)
-            ? target.activeSessions.map(s => s.sessionId === session.sessionId ? { ...s, status: 'terminated' as const } : s)
+            ? target.activeSessions.map(s => s.sessionId === sId ? { ...s, status: 'terminated' as const } : s)
             : []
         };
         saveProfileToFirestore(updated).catch(() => {});
