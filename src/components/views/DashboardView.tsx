@@ -28,7 +28,9 @@ import {
   Layers,
   ArrowRight,
   CheckCircle2,
-  Info
+  Info,
+  Receipt,
+  ShoppingBag
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -92,7 +94,7 @@ export const DashboardView: React.FC = () => {
   // Today's appointments sorted by start time
   const todaysAppts = React.useMemo(() => {
     return appointments
-      .filter((a) => a.date === todayStr && a.status !== 'cancelled')
+      .filter((a) => a.date === todayStr && a.status !== 'cancelled' && a.status !== 'noshow')
       .sort((a, b) => a.start.localeCompare(b.start));
   }, [appointments, todayStr]);
 
@@ -107,12 +109,64 @@ export const DashboardView: React.FC = () => {
   // Month-To-Date Revenue
   const mtdRevenue = React.useMemo(() => {
     return appointments
-      .filter((a) => a.status !== 'cancelled' && a.date.startsWith(currentMonthStr))
+      .filter((a) => a.status !== 'cancelled' && a.status !== 'noshow' && a.date.startsWith(currentMonthStr))
       .reduce((sum, a) => {
         const inv = calculateAppointmentInvoice(a, { services, packages, settings, redemptions });
         return sum + inv.totalAmount;
       }, 0);
   }, [appointments, currentMonthStr, services, packages, settings, redemptions]);
+
+  // Synchronized Financial Metrics across all views (Revenue, Invoices, Executive Reports, Store & Inventory)
+  const financialStats = React.useMemo(() => {
+    let totalRevenue = 0;
+    let totalPaid = 0;
+    let totalPending = 0;
+    let paidCount = 0;
+    let pendingCount = 0;
+    let totalGrooming = 0;
+    let totalRetail = 0;
+    let totalTax = 0;
+    let totalDiscounts = 0;
+
+    appointments.forEach((appt) => {
+      // Exclude cancelled and noshow appointments to match 100% with Invoices, Executive Reports, and Revenue View
+      if (appt.status === 'cancelled' || appt.status === 'noshow') return;
+
+      const inv = calculateAppointmentInvoice(appt, { services, packages, settings, redemptions });
+      totalRevenue += inv.totalAmount;
+      totalGrooming += inv.groomingRevenue;
+      totalRetail += inv.retailRevenue;
+      totalTax += inv.taxAmount;
+      totalDiscounts += inv.discountAmount;
+
+      if (inv.isPaid) {
+        totalPaid += inv.totalAmount;
+        paidCount++;
+      } else {
+        totalPending += inv.totalAmount;
+        pendingCount++;
+      }
+    });
+
+    const totalValidCount = paidCount + pendingCount;
+    const paidRate = totalValidCount > 0 ? Math.round((paidCount / totalValidCount) * 100) : 100;
+    const avgInvoice = totalValidCount > 0 ? totalRevenue / totalValidCount : 0;
+
+    return {
+      totalRevenue,
+      totalPaid,
+      totalPending,
+      paidCount,
+      pendingCount,
+      totalValidCount,
+      paidRate,
+      totalGrooming,
+      totalRetail,
+      totalTax,
+      totalDiscounts,
+      avgInvoice,
+    };
+  }, [appointments, services, packages, settings, redemptions]);
 
   // Featured pet names for morning greeting
   const featuredPetsText = React.useMemo(() => {
@@ -349,109 +403,108 @@ export const DashboardView: React.FC = () => {
       {/* Spotlight Notification Hero Card */}
       <ClientNotificationSpotlight />
 
-      {/* Top Row: 3 Premium Metric Cards */}
+      {/* Synchronized 4 Primary Financial & Operational KPI Cards with matching borders, light shadows & hover animation */}
       {showKpis && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {/* Card 1: Total Appointments Today (Lavender) */}
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          {/* Card 1: Total number of appointments today */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.05 }}
-            whileHover={{ y: -4, scale: 1.01 }}
+            transition={{ duration: 0.25, delay: 0.05 }}
+            whileHover={{ y: -3, scale: 1.01 }}
             onClick={() => setView('calendar')}
-            className="bg-gradient-to-br from-[#ECE5FF] via-[#E1D4FF] to-[#D3C0FF] text-[#321360] p-6 rounded-[28px] relative overflow-hidden shadow-xs hover:shadow-md transition-all border border-white/60 flex justify-between items-center cursor-pointer"
+            className="bg-[#FAF8F5] border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
           >
-            <div className="relative z-10 space-y-2">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-[#321360] text-white flex items-center justify-center">
-                  <Calendar className="w-3.5 h-3.5" />
-                </div>
-                <span className="text-xs font-bold opacity-80 uppercase tracking-wider">Appointments Today</span>
-              </div>
-              <div className="font-display font-black text-4xl tracking-tight text-[#321360]">
+            <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#7A6865] uppercase tracking-wider">
+              <span>Appointments Today</span>
+              <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FF6B00]" />
+            </div>
+            <div className="mt-2 flex items-baseline gap-2">
+              <span className="font-display font-black text-2xl sm:text-3xl text-[#240C0B] tracking-tight">
                 {todaysAppts.length}
-              </div>
-              <div className="inline-flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-1 bg-white/70 text-[#321360] rounded-full shadow-2xs">
-                <span>{appointments.length} Total</span>
-                <span className="opacity-70 font-normal">on calendar</span>
-              </div>
+              </span>
+              {todaysAppts.length > 0 && (
+                <span className="text-[10px] font-bold px-1.5 py-0.5 bg-[#FFF0E6] text-[#FF6B00] rounded-md shrink-0">
+                  {todaysAppts.filter((a) => a.status === 'completed').length} completed
+                </span>
+              )}
             </div>
-
-            <div className="w-20 h-20 opacity-90 shrink-0 transform rotate-12 pointer-events-none">
-              <svg viewBox="0 0 100 100" className="w-full h-full fill-[#A885EE]">
-                <ellipse cx="50" cy="65" rx="22" ry="18" />
-                <circle cx="28" cy="40" r="10" />
-                <circle cx="50" cy="30" r="11" />
-                <circle cx="72" cy="40" r="10" />
-              </svg>
+            <div className="text-[10px] sm:text-[11px] text-[#7A6865] mt-1 truncate">
+              {appointments.filter((a) => a.status !== 'cancelled' && a.status !== 'noshow').length} total active bookings
             </div>
           </motion.div>
 
-          {/* Card 2: Total Revenue Today (Peach) */}
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }}
+          {/* Card 2: Total revenue today (with total revenue this month beneath) */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
-            whileHover={{ y: -4, scale: 1.01 }}
+            transition={{ duration: 0.25, delay: 0.1 }}
+            whileHover={{ y: -3, scale: 1.01 }}
             onClick={() => setView('revenue')}
-            className="bg-gradient-to-br from-[#FFE4D3] via-[#FFD7BE] to-[#FFC5A1] text-[#541900] p-6 rounded-[28px] relative overflow-hidden shadow-xs hover:shadow-md transition-all border border-white/60 flex justify-between items-center cursor-pointer"
+            className="bg-[#FAF8F5] border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
           >
-            <div className="relative z-10 space-y-2">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-[#541900] text-white flex items-center justify-center">
-                  <DollarSign className="w-3.5 h-3.5" />
-                </div>
-                <span className="text-xs font-bold opacity-80 uppercase tracking-wider">Revenue Today</span>
-              </div>
-              <div className="font-display font-black text-4xl tracking-tight text-[#541900]">
-                {formatPrice(todayRevenue)}
-              </div>
-              <div className="inline-flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-1 bg-white/70 text-[#541900] rounded-full shadow-2xs">
-                <span>{formatPrice(mtdRevenue)}</span>
-                <span className="opacity-70 font-normal">MTD {formattedMonthLabel.slice(0, 3)}</span>
-              </div>
+            <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#7A6865] uppercase tracking-wider">
+              <span>Revenue Today</span>
+              <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#357A54]" />
             </div>
-
-            <div className="w-20 h-20 opacity-90 shrink-0 transform -rotate-6 pointer-events-none">
-              <svg viewBox="0 0 100 100" className="w-full h-full fill-[#E27C44]">
-                <path d="M 15 50 Q 50 85 85 50 Z" />
-                <ellipse cx="50" cy="50" rx="35" ry="10" fill="#F49561" />
-                <circle cx="50" cy="48" r="4" fill="#541900" />
-              </svg>
+            <div className="mt-2 flex items-baseline gap-2">
+              <span className="font-display font-black text-2xl sm:text-3xl text-[#357A54] tracking-tight">
+                {formatPrice(todayRevenue)}
+              </span>
+            </div>
+            <div className="text-[10px] sm:text-[11px] text-[#7A6865] mt-1 truncate">
+              <span className="font-bold text-[#173E39]">This Month:</span> {formatPrice(mtdRevenue)}
             </div>
           </motion.div>
 
-          {/* Card 3: Active Clients / Pets (Pink) */}
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }}
+          {/* Card 3: Total number of clients */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.15 }}
-            whileHover={{ y: -4, scale: 1.01 }}
+            transition={{ duration: 0.25, delay: 0.15 }}
+            whileHover={{ y: -3, scale: 1.01 }}
             onClick={() => setView('clients')}
-            className="bg-gradient-to-br from-[#FFE2F2] via-[#FFD0E8] to-[#FFBBDC] text-[#560A38] p-6 rounded-[28px] relative overflow-hidden shadow-xs hover:shadow-md transition-all border border-white/60 flex justify-between items-center cursor-pointer"
+            className="bg-[#FAF8F5] border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
           >
-            <div className="relative z-10 space-y-2">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-[#560A38] text-white flex items-center justify-center">
-                  <Users className="w-3.5 h-3.5" />
-                </div>
-                <span className="text-xs font-bold opacity-80 uppercase tracking-wider">Registered Dogs & Clients</span>
-              </div>
-              <div className="font-display font-black text-4xl tracking-tight text-[#560A38]">
-                {clients.length}
-              </div>
-              <div className="inline-flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-1 bg-white/70 text-[#560A38] rounded-full shadow-2xs">
-                <span>{clients.filter(c => c.points > 0).length} Rewards</span>
-                <span className="opacity-70 font-normal">members</span>
-              </div>
+            <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#7A6865] uppercase tracking-wider">
+              <span>Total Clients</span>
+              <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2E8A81]" />
             </div>
+            <div className="mt-2 flex items-baseline gap-2">
+              <span className="font-display font-black text-2xl sm:text-3xl text-[#240C0B] tracking-tight">
+                {clients.length}
+              </span>
+              {clients.filter((c) => (c.points || 0) > 0).length > 0 && (
+                <span className="text-[10px] font-bold px-1.5 py-0.5 bg-[#E6F4F2] text-[#2E8A81] rounded-md shrink-0">
+                  {clients.filter((c) => (c.points || 0) > 0).length} rewards
+                </span>
+              )}
+            </div>
+            <div className="text-[10px] sm:text-[11px] text-[#7A6865] mt-1 truncate">
+              Registered pet owners & members
+            </div>
+          </motion.div>
 
-            <div className="w-20 h-20 opacity-90 shrink-0 transform rotate-6 pointer-events-none">
-              <svg viewBox="0 0 100 100" className="w-full h-full fill-[#E25C9E]">
-                <path d="M 25 35 L 75 35 L 80 80 Q 80 85 75 85 L 25 85 Q 20 85 20 80 Z" />
-                <path d="M 30 25 L 70 25 L 75 35 L 25 35 Z" fill="#F47BB4" />
-                <ellipse cx="50" cy="60" rx="8" ry="6" fill="#560A38" />
-              </svg>
+          {/* Card 4: Total revenue of all time */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, delay: 0.2 }}
+            whileHover={{ y: -3, scale: 1.01 }}
+            onClick={() => setView('revenue')}
+            className="bg-[#FAF8F5] border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#7A6865] uppercase tracking-wider">
+              <span>Total Revenue (All Time)</span>
+              <Receipt className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#240C0B]" />
+            </div>
+            <div className="mt-2 flex items-baseline gap-2">
+              <span className="font-display font-black text-2xl sm:text-3xl text-[#240C0B] tracking-tight">
+                {formatPrice(financialStats.totalRevenue)}
+              </span>
+            </div>
+            <div className="text-[10px] sm:text-[11px] text-[#7A6865] mt-1 truncate">
+              {formatPrice(financialStats.totalGrooming)} svc + {formatPrice(financialStats.totalRetail)} retail
             </div>
           </motion.div>
         </div>
