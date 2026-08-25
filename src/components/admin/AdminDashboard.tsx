@@ -280,10 +280,10 @@ export const AdminDashboard: React.FC = () => {
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
         
-        {/* Top Metric Cards */}
+        {/* Top Metric Cards with luminous glowing borders & ambient dark shadows */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
           {/* Total Profiles */}
-          <div className="p-4 rounded-2xl bg-[#1C0908] border border-white/10 flex items-center justify-between">
+          <div className="kpi-card-dark p-4 flex items-center justify-between">
             <div>
               <p className="text-[11px] font-bold text-[#A08E8B] uppercase tracking-wider">Total Clients</p>
               <p className="text-2xl font-black text-white font-display mt-0.5">{stats.total}</p>
@@ -295,7 +295,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Active Accounts */}
-          <div className="p-4 rounded-2xl bg-[#1C0908] border border-white/10 flex items-center justify-between">
+          <div className="kpi-card-dark p-4 flex items-center justify-between">
             <div>
               <p className="text-[11px] font-bold text-[#A08E8B] uppercase tracking-wider">Active Studios</p>
               <p className="text-2xl font-black text-[#2E8A81] font-display mt-0.5">{stats.active}</p>
@@ -307,7 +307,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Inactive Accounts */}
-          <div className="p-4 rounded-2xl bg-[#1C0908] border border-white/10 flex items-center justify-between">
+          <div className="kpi-card-dark p-4 flex items-center justify-between">
             <div>
               <p className="text-[11px] font-bold text-[#A08E8B] uppercase tracking-wider">Inactive Accounts</p>
               <p className="text-2xl font-black text-[#C9503A] font-display mt-0.5">{stats.inactive}</p>
@@ -319,7 +319,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Expired / Due Soon */}
-          <div className="p-4 rounded-2xl bg-[#1C0908] border border-white/10 flex items-center justify-between">
+          <div className="kpi-card-dark p-4 flex items-center justify-between">
             <div>
               <p className="text-[11px] font-bold text-[#A08E8B] uppercase tracking-wider">Expired Passes</p>
               <p className="text-2xl font-black text-[#FFB703] font-display mt-0.5">{stats.expired}</p>
@@ -331,7 +331,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Estimated MRR */}
-          <div className="p-4 rounded-2xl bg-[#1C0908] border border-white/10 flex items-center justify-between">
+          <div className="kpi-card-dark p-4 flex items-center justify-between">
             <div>
               <p className="text-[11px] font-bold text-[#A08E8B] uppercase tracking-wider">Est. Monthly Rev</p>
               <p className="text-2xl font-black text-white font-display mt-0.5">${stats.mrr}</p>

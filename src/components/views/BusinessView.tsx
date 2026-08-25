@@ -675,10 +675,10 @@ export const BusinessView: React.FC = () => {
           ========================================== */}
       {tab === 'sales' && (
         <div className="space-y-4">
-          {/* Executive Retail Sales Overview Strip */}
+          {/* Executive Retail Sales Overview Strip with glowing cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="card-box p-4 border-l-4 border-l-[#357A54]">
-              <span className="text-[11px] font-bold text-[#5C716C] uppercase tracking-wider block">
+            <div className="kpi-card-emerald p-4">
+              <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider block">
                 {selectedTimeframe === 'all' ? 'Retail Revenue' : selectedTimeframe === 'month' ? 'This Month Retail' : 'Today Retail'}
               </span>
               <div className="font-display font-black text-2xl text-[#357A54] mt-1">
@@ -691,8 +691,8 @@ export const BusinessView: React.FC = () => {
               </span>
             </div>
 
-            <div className="card-box p-4 border-l-4 border-l-[#2E8A81]">
-              <span className="text-[11px] font-bold text-[#5C716C] uppercase tracking-wider block">
+            <div className="kpi-card-teal p-4">
+              <span className="text-[11px] font-bold text-[#2E8A81] uppercase tracking-wider block">
                 {selectedTimeframe === 'all' ? 'Units Sold' : 'Filtered Units'}
               </span>
               <div className="font-display font-black text-2xl text-[#173E39] mt-1">
@@ -701,16 +701,16 @@ export const BusinessView: React.FC = () => {
               <span className="text-[10px] text-[#5C716C] mt-0.5 block">Across {selectedTimeframe === 'all' ? 'all' : selectedTimeframe} retail transactions</span>
             </div>
 
-            <div className="card-box p-4 border-l-4 border-l-[#FF6B00]">
-              <span className="text-[11px] font-bold text-[#5C716C] uppercase tracking-wider block">Top Selling Item</span>
+            <div className="kpi-card p-4">
+              <span className="text-[11px] font-bold text-[#FF6B00] uppercase tracking-wider block">Top Selling Item</span>
               <div className="font-display font-bold text-base text-[#173E39] mt-1 truncate" title={topSellingProduct.name}>
                 {topSellingProduct.name}
               </div>
               <span className="text-[10px] text-[#FF6B00] font-bold mt-0.5 block">{topSellingProduct.units} units sold</span>
             </div>
 
-            <div className="card-box p-4 border-l-4 border-l-[#7A6865]">
-              <span className="text-[11px] font-bold text-[#5C716C] uppercase tracking-wider block">Retail Clients</span>
+            <div className="kpi-card p-4">
+              <span className="text-[11px] font-bold text-[#7A6865] uppercase tracking-wider block">Retail Clients</span>
               <div className="font-display font-black text-2xl text-[#173E39] mt-1">
                 {uniqueRetailClientsCount}
               </div>
@@ -1168,9 +1168,9 @@ export const BusinessView: React.FC = () => {
           ========================================== */}
       {tab === 'expenses' && (
         <div className="space-y-4">
-          <div className="card-box p-4 flex items-center justify-between">
+          <div className="kpi-card-rose p-4 flex items-center justify-between">
             <div>
-              <span className="text-xs font-bold text-[#5C716C] uppercase tracking-wider">Total Recorded Overhead</span>
+              <span className="text-xs font-bold text-rose-900 uppercase tracking-wider">Total Recorded Overhead</span>
               <div className="font-display font-black text-2xl text-[#C9503A] mt-1">
                 {formatPrice(expenses.reduce((sum, e) => sum + e.amount, 0))}
               </div>

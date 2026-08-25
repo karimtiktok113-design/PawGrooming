@@ -403,7 +403,7 @@ export const DashboardView: React.FC = () => {
       {/* Spotlight Notification Hero Card */}
       <ClientNotificationSpotlight />
 
-      {/* Synchronized 4 Primary Financial & Operational KPI Cards with matching borders, light shadows & hover animation */}
+      {/* Synchronized 4 Primary Financial & Operational KPI Cards with glowing borders, luminous ambient shadows & interactive hover elevation */}
       {showKpis && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* Card 1: Total number of appointments today */}
@@ -411,9 +411,8 @@ export const DashboardView: React.FC = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, delay: 0.05 }}
-            whileHover={{ y: -3, scale: 1.01 }}
             onClick={() => setView('calendar')}
-            className="bg-white border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+            className="kpi-card p-3.5 sm:p-4 cursor-pointer flex flex-col justify-between"
           >
             <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#7A6865] uppercase tracking-wider">
               <span>Appointments Today</span>
@@ -439,16 +438,15 @@ export const DashboardView: React.FC = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, delay: 0.1 }}
-            whileHover={{ y: -3, scale: 1.01 }}
             onClick={() => setView('revenue')}
-            className="bg-white border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+            className="kpi-card-emerald p-3.5 sm:p-4 cursor-pointer flex flex-col justify-between"
           >
-            <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#7A6865] uppercase tracking-wider">
+            <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-emerald-800 uppercase tracking-wider">
               <span>Revenue Today</span>
-              <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#357A54]" />
+              <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" />
             </div>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="font-display font-black text-2xl sm:text-3xl text-[#357A54] tracking-tight">
+              <span className="font-display font-black text-2xl sm:text-3xl text-emerald-700 tracking-tight">
                 {formatPrice(todayRevenue)}
               </span>
             </div>
@@ -462,11 +460,10 @@ export const DashboardView: React.FC = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, delay: 0.15 }}
-            whileHover={{ y: -3, scale: 1.01 }}
             onClick={() => setView('clients')}
-            className="bg-white border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+            className="kpi-card-teal p-3.5 sm:p-4 cursor-pointer flex flex-col justify-between"
           >
-            <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#7A6865] uppercase tracking-wider">
+            <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#2E8A81] uppercase tracking-wider">
               <span>Total Clients</span>
               <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2E8A81]" />
             </div>
@@ -490,9 +487,8 @@ export const DashboardView: React.FC = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, delay: 0.2 }}
-            whileHover={{ y: -3, scale: 1.01 }}
             onClick={() => setView('revenue')}
-            className="bg-white border border-[#E6DFD5] p-3.5 sm:p-4 rounded-2xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+            className="kpi-card p-3.5 sm:p-4 cursor-pointer flex flex-col justify-between"
           >
             <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#7A6865] uppercase tracking-wider">
               <span>Total Revenue (All Time)</span>

@@ -406,11 +406,11 @@ export const InvoicesView: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Premium Minimalist KPI Metric Strip */}
+      {/* 2. Premium Minimalist KPI Metric Strip with glowing borders & radiant shadows */}
       {showSummaryCards && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
           {/* Metric 1: Total Invoiced */}
-          <div className="bg-white border border-[#E6DFD5] p-3 sm:p-4 rounded-2xl shadow-2xs">
+          <div className="kpi-card p-3.5 sm:p-4 flex flex-col justify-between">
             <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#7A6865] uppercase tracking-wider">
               <span>Total Invoiced</span>
               <Receipt className="w-3.5 h-3.5 text-[#240C0B]" />
@@ -426,7 +426,7 @@ export const InvoicesView: React.FC = () => {
           </div>
 
           {/* Metric 2: Settled & Paid */}
-          <div className="bg-white border border-[#E6DFD5] p-3 sm:p-4 rounded-2xl shadow-2xs">
+          <div className="kpi-card-emerald p-3.5 sm:p-4 flex flex-col justify-between">
             <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#166534] uppercase tracking-wider">
               <span>Settled & Paid</span>
               <CheckCircle2 className="w-3.5 h-3.5 text-[#16a34a]" />
@@ -445,7 +445,7 @@ export const InvoicesView: React.FC = () => {
           </div>
 
           {/* Metric 3: Payment Due */}
-          <div className="bg-white border border-[#E6DFD5] p-3 sm:p-4 rounded-2xl shadow-2xs">
+          <div className="kpi-card-amber p-3.5 sm:p-4 flex flex-col justify-between">
             <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#92400E] uppercase tracking-wider">
               <span>Payment Due</span>
               <Clock className="w-3.5 h-3.5 text-[#D97706]" />
@@ -461,8 +461,8 @@ export const InvoicesView: React.FC = () => {
           </div>
 
           {/* Metric 4: Average Invoice */}
-          <div className="bg-white border border-[#E6DFD5] p-3 sm:p-4 rounded-2xl shadow-2xs">
-            <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#7A6865] uppercase tracking-wider">
+          <div className="kpi-card-teal p-3.5 sm:p-4 flex flex-col justify-between">
+            <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-[#2E8A81] uppercase tracking-wider">
               <span>Avg Invoice</span>
               <TrendingUp className="w-3.5 h-3.5 text-[#2E8A81]" />
             </div>
