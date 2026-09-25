@@ -77,7 +77,7 @@ export const AdminDashboard: React.FC = () => {
   const [preselectedForPush, setPreselectedForPush] = useState<string | string[] | null>(null);
   const [selectedClientIds, setSelectedClientIds] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive' | 'expired'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive' | 'expired' | 'online'>('all');
   const [planFilter, setPlanFilter] = useState<'all' | SubscriptionPlan>('all');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -132,11 +132,21 @@ export const AdminDashboard: React.FC = () => {
   // Stats computation
   const today = new Date().toISOString().split('T')[0];
 
+  // Live ticker to re-evaluate real-time online/offline presence every 3 seconds
+  const [presenceTick, setPresenceTick] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPresenceTick(t => t + 1);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
   const stats = useMemo(() => {
     const total = authDatabase.profiles.length;
     const active = authDatabase.profiles.filter(p => p.status === 'active').length;
     const inactive = authDatabase.profiles.filter(p => p.status === 'inactive').length;
     const expired = authDatabase.profiles.filter(p => p.expiryDate < today).length;
+    const online = authDatabase.profiles.filter(p => isClientProfileOnline(p)).length;
     
     // Estimate MRR ($49 Starter, $99 Pro, $189 Premium, $349 Enterprise)
     const mrr = authDatabase.profiles.reduce((acc, p) => {
@@ -150,8 +160,8 @@ export const AdminDashboard: React.FC = () => {
       }
     }, 0);
 
-    return { total, active, inactive, expired, mrr };
-  }, [authDatabase.profiles, today]);
+    return { total, active, inactive, expired, online, mrr };
+  }, [authDatabase.profiles, today, presenceTick]);
 
   // Filtered Profiles
   const filteredProfiles = useMemo(() => {
@@ -167,22 +177,14 @@ export const AdminDashboard: React.FC = () => {
       if (statusFilter === 'active') matchStatus = p.status === 'active';
       if (statusFilter === 'inactive') matchStatus = p.status === 'inactive';
       if (statusFilter === 'expired') matchStatus = isExpired;
+      if (statusFilter === 'online') matchStatus = isClientProfileOnline(p);
 
       let matchPlan = true;
       if (planFilter !== 'all') matchPlan = p.plan === planFilter;
 
       return matchSearch && matchStatus && matchPlan;
     });
-  }, [authDatabase.profiles, searchTerm, statusFilter, planFilter, today]);
-
-  // Live ticker to re-evaluate real-time online/offline presence every 3 seconds
-  const [, setPresenceTick] = useState(0);
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setPresenceTick(t => t + 1);
-    }, 3000);
-    return () => clearInterval(timer);
-  }, []);
+  }, [authDatabase.profiles, searchTerm, statusFilter, planFilter, today, presenceTick]);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -294,11 +296,19 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Active Accounts */}
+          {/* Active Accounts & Live Online Studios */}
           <div className="kpi-card-dark p-4 flex items-center justify-between">
             <div>
               <p className="text-[11px] font-bold text-[#A08E8B] uppercase tracking-wider">Active Studios</p>
-              <p className="text-2xl font-black text-[#2E8A81] font-display mt-0.5">{stats.active}</p>
+              <div className="flex items-baseline gap-2 mt-0.5">
+                <span className="text-2xl font-black text-[#2E8A81] font-display">{stats.active}</span>
+                {stats.online > 0 && (
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-sm shadow-emerald-500/10">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    {stats.online} online now
+                  </span>
+                )}
+              </div>
               <p className="text-[10px] text-[#A08E8B] mt-0.5">{Math.round((stats.active / (stats.total || 1)) * 100)}% active rate</p>
             </div>
             <div className="p-3 rounded-xl bg-[#2E8A81]/15 text-[#2E8A81]">
@@ -419,6 +429,7 @@ export const AdminDashboard: React.FC = () => {
               className="bg-white/5 border border-white/10 text-white text-xs rounded-xl px-2.5 py-1.5 outline-none font-bold"
             >
               <option value="all" className="bg-[#1C0908]">All Statuses</option>
+              <option value="online" className="bg-[#1C0908]">🟢 Online Now ({stats.online})</option>
               <option value="active" className="bg-[#1C0908]">Active Only</option>
               <option value="inactive" className="bg-[#1C0908]">Inactive Only</option>
               <option value="expired" className="bg-[#1C0908]">Expired</option>

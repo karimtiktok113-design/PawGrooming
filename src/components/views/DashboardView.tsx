@@ -592,7 +592,7 @@ export const DashboardView: React.FC = () => {
                 const client = clients.find(c => c.id === item.clientId);
                 const service = services.find(s => s.id === item.serviceId);
                 const stylist = staff.find(st => st.id === item.staffId);
-                const petAvatar = client?.photo || PET_AVATARS[item.clientId] || DEFAULT_DOG_AVATAR;
+                const petAvatar = client?.photos?.[0] || PET_AVATARS[item.clientId] || DEFAULT_DOG_AVATAR;
                 const isCompleted = item.status === 'completed';
 
                 let statusBadgeStyle = 'bg-[#FFF3EB] text-[#FF6B00] border border-[#FFD0B3]';
@@ -850,7 +850,7 @@ export const DashboardView: React.FC = () => {
               </div>
             ) : (
               filteredPetSummary.map((item) => {
-                const avatar = item.client.photo || PET_AVATARS[item.client.id] || DEFAULT_DOG_AVATAR;
+                const avatar = item.client.photos?.[0] || PET_AVATARS[item.client.id] || DEFAULT_DOG_AVATAR;
                 return (
                   <div
                     key={item.client.id}

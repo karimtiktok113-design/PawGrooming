@@ -149,8 +149,8 @@ export const BusinessView: React.FC = () => {
       if (appt.status === 'cancelled' || appt.status === 'noshow') return;
 
       const client = clients.find((c) => c.id === appt.clientId);
-      const petName = client ? client.name : (appt.petName || 'Pet');
-      const ownerName = client ? client.owner : (appt.client || 'Client');
+      const petName = client ? client.name : 'Pet';
+      const ownerName = client ? client.owner : 'Client';
       const petBreed = client ? client.breed : 'Dog';
       const clientName = `${petName} (${ownerName})`;
       const invoiceNumber = appt.invoiceNumber || `INV-${appt.id.replace(/\D/g, '').slice(-4).padStart(4, '0')}`;

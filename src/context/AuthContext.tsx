@@ -171,7 +171,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setNotifications(onlineNotifs);
       }
     } catch (err) {
-      console.warn('Direct Firestore fetch error:', err);
+      const errMsg = (err instanceof Error ? err.message : String(err)).toLowerCase();
+      if (!errMsg.includes('abort')) {
+        console.warn('Direct Firestore fetch error:', err);
+      }
     }
   }, []);
 
@@ -193,7 +196,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
       },
       (err) => {
-        console.warn('Firestore profiles subscription notice:', err);
+        const errMsg = (err instanceof Error ? err.message : String(err)).toLowerCase();
+        if (!errMsg.includes('abort')) {
+          console.warn('Firestore profiles subscription notice:', err);
+        }
       }
     );
 
@@ -203,7 +209,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setNotifications(firestoreNotifs);
       },
       (err) => {
-        console.warn('Firestore notifications subscription notice:', err);
+        const errMsg = (err instanceof Error ? err.message : String(err)).toLowerCase();
+        if (!errMsg.includes('abort')) {
+          console.warn('Firestore notifications subscription notice:', err);
+        }
       }
     );
 
@@ -211,8 +220,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     refreshServerDatabase();
 
     return () => {
-      if (unsubscribeProfiles) unsubscribeProfiles();
-      if (unsubscribeNotifs) unsubscribeNotifs();
+      try {
+        if (unsubscribeProfiles) unsubscribeProfiles();
+      } catch {
+        // ignore abort
+      }
+      try {
+        if (unsubscribeNotifs) unsubscribeNotifs();
+      } catch {
+        // ignore abort
+      }
     };
   }, [refreshServerDatabase]);
 
@@ -276,7 +293,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [authDatabase.profiles, session?.sessionId, session?.deviceId]);
 
-  // Real-time presence management: Heartbeat & Tab/Browser Close (unload) handling
+  // Real-time presence management: Heartbeat & Active Browsing Activity handling
   useEffect(() => {
     if (!session || session.userType !== 'client' || !session.profile?.profileId) {
       return;
@@ -284,55 +301,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const profileId = session.profile.profileId;
     const sessionId = session.sessionId;
+    const currentDeviceRaw = detectCurrentDevice();
+    const deviceMetadata: Partial<ClientDeviceSession> = {
+      ...currentDeviceRaw,
+      deviceId: session.deviceId || currentDeviceRaw.deviceId
+    };
 
-    // 1. Initial online heartbeat mark
-    updateProfileHeartbeatInFirestore(profileId, sessionId).catch(() => {});
+    // 1. Initial online heartbeat mark immediately upon login or component mount
+    updateProfileHeartbeatInFirestore(profileId, sessionId, deviceMetadata).catch(() => {});
 
-    // 2. Continuous steady heartbeat every 10 seconds while logged in
+    // 2. Steady continuous heartbeat every 12 seconds while logged in
     const heartbeatInterval = setInterval(() => {
-      updateProfileHeartbeatInFirestore(profileId, sessionId).catch(() => {});
-    }, 10000);
+      updateProfileHeartbeatInFirestore(profileId, sessionId, deviceMetadata).catch(() => {});
+    }, 12000);
 
-    // 3. User interaction activity throttle (at most every 10s)
+    // 3. User interaction activity throttle (heartbeat on touch, click, scroll, keys, throttled to at most every 10s)
     let lastActivityPing = Date.now();
     const handleUserActivity = () => {
       const now = Date.now();
       if (now - lastActivityPing > 10000) {
         lastActivityPing = now;
-        updateProfileHeartbeatInFirestore(profileId, sessionId).catch(() => {});
+        updateProfileHeartbeatInFirestore(profileId, sessionId, deviceMetadata).catch(() => {});
       }
     };
 
     window.addEventListener('pointerdown', handleUserActivity, { passive: true });
+    window.addEventListener('touchstart', handleUserActivity, { passive: true });
     window.addEventListener('keydown', handleUserActivity, { passive: true });
     window.addEventListener('scroll', handleUserActivity, { passive: true });
+    window.addEventListener('focus', handleUserActivity, { passive: true });
 
-    // 4. Visibility change handler: immediately refresh heartbeat when tab becomes visible
+    // 4. Visibility change handler: immediately refresh heartbeat when tab becomes visible or gains focus
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        updateProfileHeartbeatInFirestore(profileId, sessionId).catch(() => {});
+        updateProfileHeartbeatInFirestore(profileId, sessionId, deviceMetadata).catch(() => {});
       }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // 5. Browser/Tab close or navigate away: mark offline in Firestore
-    const handleBeforeUnload = () => {
-      markProfileOfflineInFirestore(profileId, sessionId).catch(() => {});
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    window.addEventListener('pagehide', handleBeforeUnload);
-
     return () => {
       clearInterval(heartbeatInterval);
       window.removeEventListener('pointerdown', handleUserActivity);
+      window.removeEventListener('touchstart', handleUserActivity);
       window.removeEventListener('keydown', handleUserActivity);
       window.removeEventListener('scroll', handleUserActivity);
+      window.removeEventListener('focus', handleUserActivity);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      window.removeEventListener('pagehide', handleBeforeUnload);
-      // NOTE: Do NOT call markProfileOfflineInFirestore on component re-render/cleanup!
-      // Offline should only be triggered on explicit logout or browser window/tab close (beforeunload/pagehide).
+      // NOTE: Do not attach beforeunload/pagehide to blindly mark offline because pagehide/beforeunload
+      // fires during page reload, iframe refresh, or tab switching, causing the profile to flap offline.
+      // Real-time presence is accurately and reliably governed by the heartbeat window (120s),
+      // and explicit logout immediately marks the profile offline.
     };
   }, [session?.userType, session?.profile?.profileId, session?.sessionId]);
 
@@ -698,25 +716,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (session && session.userType === 'client' && session.profile && session.sessionId) {
       const pId = session.profile.profileId;
       const currentSessId = session.sessionId;
-      const target = authDatabase.profiles.find(p => p.profileId === pId);
-      if (target && Array.isArray(target.activeSessions)) {
-        const now = new Date().toISOString();
-        const updatedSessions = target.activeSessions.map(s =>
-          s.sessionId === currentSessId ? { ...s, lastActiveAt: now, status: 'active' as const } : s
-        );
-        const updatedProfile: ClientProfile = {
-          ...target,
-          isCurrentlyLoggedIn: true,
-          lastActiveAt: now,
-          activeSessions: updatedSessions
-        };
-        setAuthDatabase(prev => ({
-          ...prev,
-          profiles: prev.profiles.map(p => p.profileId === pId ? updatedProfile : p),
-          lastUpdated: now
-        }));
-        await saveProfileToFirestore(updatedProfile);
-      }
+      const currentDeviceRaw = detectCurrentDevice();
+      const deviceMetadata: Partial<ClientDeviceSession> = {
+        ...currentDeviceRaw,
+        deviceId: session.deviceId || currentDeviceRaw.deviceId
+      };
+      
+      const now = new Date().toISOString();
+      setAuthDatabase(prev => ({
+        ...prev,
+        profiles: prev.profiles.map(p => {
+          if (p.profileId !== pId) return p;
+          const updatedSessions = (p.activeSessions || []).map(s => 
+            s.sessionId === currentSessId ? { ...s, lastActiveAt: now, status: 'active' as const } : s
+          );
+          return {
+            ...p,
+            isCurrentlyLoggedIn: true,
+            lastActiveAt: now,
+            activeSessions: updatedSessions
+          };
+        }),
+        lastUpdated: now
+      }));
+
+      await updateProfileHeartbeatInFirestore(pId, currentSessId, deviceMetadata);
     }
   };
 
