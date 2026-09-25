@@ -51,23 +51,8 @@ export interface FirestoreErrorInfo {
 }
 
 export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
-  const errMsg = error instanceof Error ? error.message : String(error);
-  const errName = error instanceof Error ? error.name : (error as any)?.name || '';
-  const errCode = (error as any)?.code || '';
-
-  if (
-    errName === 'AbortError' ||
-    errCode === 'cancelled' ||
-    errMsg.includes('The user aborted a request') ||
-    errMsg.includes('signal is aborted without reason') ||
-    errMsg.toLowerCase().includes('aborted')
-  ) {
-    // Benign abort error - silently suppress
-    return;
-  }
-
   const errInfo: FirestoreErrorInfo = {
-    error: errMsg,
+    error: error instanceof Error ? error.message : String(error),
     authInfo: {
       userId: auth.currentUser?.uid || null,
       email: auth.currentUser?.email || null,
@@ -93,16 +78,6 @@ export async function testConnection(): Promise<boolean> {
     console.log('Connected to live Firebase Firestore database!');
     return true;
   } catch (error) {
-    const errMsg = error instanceof Error ? error.message : String(error);
-    const errName = error instanceof Error ? error.name : (error as any)?.name || '';
-    if (
-      errName === 'AbortError' ||
-      errMsg.includes('The user aborted a request') ||
-      errMsg.includes('signal is aborted without reason') ||
-      errMsg.toLowerCase().includes('aborted')
-    ) {
-      return false;
-    }
     if (error instanceof Error && error.message.includes('the client is offline')) {
       console.warn('Firebase client is offline or network is restricted.');
     } else {
@@ -248,39 +223,16 @@ export async function updateProfileHeartbeatInFirestore(
     if (!snap.exists()) return;
 
     const existing = snap.data() as ClientProfile;
-    // If profile is marked inactive/suspended, do not mark online
-    if (existing.status === 'inactive') return;
-
     const now = new Date().toISOString();
     let updatedSessions = Array.isArray(existing.activeSessions) ? [...existing.activeSessions] : [];
-
-    const bannedSet = new Set([
-      ...(existing.bannedDevices || []).map(d => d.toLowerCase()),
-      ...(existing.bannedDeviceRecords || []).map(r => r.deviceId.toLowerCase())
-    ]);
-
-    // If current device is explicitly banned, abort heartbeat
-    if (deviceMetadata?.deviceId && bannedSet.has(deviceMetadata.deviceId.toLowerCase())) {
-      return;
-    }
 
     if (sessionId) {
       const sessionIndex = updatedSessions.findIndex(s => s.sessionId === sessionId);
       if (sessionIndex >= 0) {
-        const sessDeviceId = updatedSessions[sessionIndex].deviceId || '';
-        if (sessDeviceId && bannedSet.has(sessDeviceId.toLowerCase())) {
-          return;
-        }
         updatedSessions[sessionIndex] = {
           ...updatedSessions[sessionIndex],
           status: 'active' as const,
-          lastActiveAt: now,
-          ...(deviceMetadata ? {
-            deviceType: deviceMetadata.deviceType || updatedSessions[sessionIndex].deviceType,
-            deviceName: deviceMetadata.deviceName || updatedSessions[sessionIndex].deviceName,
-            browser: deviceMetadata.browser || updatedSessions[sessionIndex].browser,
-            os: deviceMetadata.os || updatedSessions[sessionIndex].os
-          } : {})
+          lastActiveAt: now
         };
       } else {
         // Create new active session record if missing
@@ -305,12 +257,12 @@ export async function updateProfileHeartbeatInFirestore(
       const fallbackSessionId = `sess_live_${profileId.toLowerCase()}`;
       const fallbackSession: ClientDeviceSession = {
         sessionId: fallbackSessionId,
-        deviceId: deviceMetadata?.deviceId || `dev_primary_${profileId.toLowerCase()}`,
-        deviceType: deviceMetadata?.deviceType || 'desktop',
-        deviceName: deviceMetadata?.deviceName || existing.lastActiveDevice || `${existing.businessName || 'Client'} Workstation`,
-        browser: deviceMetadata?.browser || 'Web Browser',
-        os: deviceMetadata?.os || 'Desktop Workstation',
-        location: deviceMetadata?.location || 'Local Network',
+        deviceId: `dev_primary_${profileId.toLowerCase()}`,
+        deviceType: 'desktop',
+        deviceName: existing.lastActiveDevice || `${existing.businessName || 'Client'} Workstation`,
+        browser: 'Web Browser',
+        os: 'Desktop OS',
+        location: 'Local Network',
         ipAddress: '192.168.1.1',
         loginAt: existing.lastActiveAt || now,
         lastActiveAt: now,
@@ -320,17 +272,16 @@ export async function updateProfileHeartbeatInFirestore(
       updatedSessions = [fallbackSession];
     } else {
       // Update most recent active session
-      const activeIdx = updatedSessions.findIndex(s => s.status === 'active' && (!s.deviceId || !bannedSet.has(s.deviceId.toLowerCase())));
+      const activeIdx = updatedSessions.findIndex(s => s.status === 'active');
       if (activeIdx >= 0) {
         updatedSessions[activeIdx] = {
           ...updatedSessions[activeIdx],
-          status: 'active' as const,
           lastActiveAt: now
         };
       } else {
         updatedSessions[0] = {
           ...updatedSessions[0],
-          status: 'active' as const,
+          status: 'active',
           lastActiveAt: now
         };
       }
@@ -339,7 +290,6 @@ export async function updateProfileHeartbeatInFirestore(
     const updatePayload = sanitizeForFirestore({
       isCurrentlyLoggedIn: true,
       lastActiveAt: now,
-      ...(deviceMetadata?.deviceName ? { lastActiveDevice: deviceMetadata.deviceName } : {}),
       activeSessions: updatedSessions
     });
 
@@ -447,17 +397,6 @@ export function subscribeToOnlineFirestoreProfiles(
       onUpdate(list);
     },
     (error) => {
-      const errMsg = error instanceof Error ? error.message : String(error);
-      const errName = error instanceof Error ? error.name : (error as any)?.name || '';
-      if (
-        errName === 'AbortError' ||
-        errMsg.includes('The user aborted a request') ||
-        errMsg.includes('signal is aborted without reason') ||
-        errMsg.toLowerCase().includes('aborted') ||
-        (error as any)?.code === 'cancelled'
-      ) {
-        return;
-      }
       console.warn('Firestore realtime snapshot listener notice:', error);
       if (onError) onError(error);
     }
@@ -570,17 +509,6 @@ export function subscribeToOnlineFirestoreNotifications(
       onUpdate(list);
     },
     (error) => {
-      const errMsg = error instanceof Error ? error.message : String(error);
-      const errName = error instanceof Error ? error.name : (error as any)?.name || '';
-      if (
-        errName === 'AbortError' ||
-        errMsg.includes('The user aborted a request') ||
-        errMsg.includes('signal is aborted without reason') ||
-        errMsg.toLowerCase().includes('aborted') ||
-        (error as any)?.code === 'cancelled'
-      ) {
-        return;
-      }
       console.warn('Firestore realtime notification listener notice:', error);
       if (onError) onError(error);
     }

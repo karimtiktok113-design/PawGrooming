@@ -2549,14 +2549,7 @@ const RedeemModal: React.FC<{ data: any; onClose: () => void }> = ({ data, onClo
   const handleRedeem = () => {
     if (!client) return;
     if (mode === 'points') {
-      const code = redeemPoints(
-        client.id,
-        reward.title,
-        reward.pts,
-        reward.title?.includes('%') ? 'percent' : 'fixed',
-        10,
-        autoApplyInCheckout
-      );
+      const code = redeemPoints(client.id, reward.title, reward.pts, autoApplyInCheckout);
       if (code) {
         setGeneratedCode(code);
       }

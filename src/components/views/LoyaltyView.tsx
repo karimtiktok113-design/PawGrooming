@@ -191,7 +191,7 @@ export const LoyaltyView: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {redemptions.map((red) => {
                 const client = clients.find(c => c.id === red.clientId);
-                const isUsed = red.status === 'used';
+                const isUsed = red.used;
                 const isApplied = red.status === 'applied';
 
                 return (
@@ -221,7 +221,7 @@ export const LoyaltyView: React.FC = () => {
                     </div>
 
                     <div>
-                      <h4 className="font-extrabold text-xs text-[#240C0B]">{red.rewardTitle}</h4>
+                      <h4 className="font-extrabold text-xs text-[#240C0B]">{red.reward}</h4>
                       <div className="text-[11px] font-semibold text-[#2E8A81]">
                         {red.discountType === 'percent' ? `${red.discountValue}% Off Invoice` : `$${red.discountValue} Off Invoice`}
                       </div>
@@ -232,7 +232,7 @@ export const LoyaltyView: React.FC = () => {
 
                     <div className="pt-2 border-t border-[#D8D3C4]/60 flex items-center justify-between gap-2">
                       <span className="text-[10px] text-[#5C716C] font-semibold">
-                        {red.points > 0 ? `${red.points} pts redeemed` : 'Promotional Code'}
+                        {red.pts > 0 ? `${red.pts} pts redeemed` : 'Promotional Code'}
                       </span>
                       <div className="flex items-center gap-1.5">
                         {!isUsed && (
@@ -251,7 +251,7 @@ export const LoyaltyView: React.FC = () => {
                           onClick={() => {
                             confirmDelete({
                               title: 'Delete Promo Code',
-                              message: `Permanently remove promo code "${red.code}" (${red.rewardTitle}) from rewards?`,
+                              message: `Permanently remove promo code "${red.code}" (${red.reward}) from rewards?`,
                               confirmLabel: 'Delete Promo',
                               onConfirm: () => deletePromoCode(red.id),
                             });

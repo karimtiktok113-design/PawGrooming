@@ -288,67 +288,34 @@ export interface AdminNotification {
 }
 
 /**
- * Unified Online & Presence Detection Rules:
- *
- * Online presence window: 120,000 ms (2 minutes).
- * While active or browsing, clients send steady heartbeats every 10-15s,
- * plus throttled heartbeats upon user interactions (clicks, keypresses, scrolls, touch, navigation).
- *
- * Multi-device Clock Skew Tolerance:
- * When multiple devices (e.g. mobile phones, other computers) transmit heartbeats,
- * their clocks may be ahead of the current device's local clock (now - lastActiveMs < 0).
- * Any timestamp up to 10 minutes into the future is treated as a valid, immediate heartbeat.
- */
-export const PRESENCE_ONLINE_WINDOW_MS = 120_000; // 2 minutes (steady heartbeats every 10-15s)
-export const MAX_CLOCK_SKEW_FUTURE_MS = 600_000; // Up to 10 minutes future drift allowed
-
-export function isTimestampRecent(timestampStr?: string | null, windowMs = PRESENCE_ONLINE_WINDOW_MS): boolean {
-  if (!timestampStr) return false;
-  const timeMs = new Date(timestampStr).getTime();
-  if (isNaN(timeMs)) return false;
-  const diffMs = Date.now() - timeMs;
-  // If diffMs < 0: The device transmitting the heartbeat has a clock ahead of our local clock.
-  // As long as it is within the clock skew tolerance window, it was sent just now!
-  if (diffMs < 0) {
-    return Math.abs(diffMs) <= MAX_CLOCK_SKEW_FUTURE_MS;
-  }
-  return diffMs <= windowMs;
-}
-
-/**
  * Check if a client profile is currently online based on session status and recent heartbeat activity.
  * A client is considered online if:
- * 1. Account is not inactive/suspended, AND
- * 2. Either:
- *    a. isCurrentlyLoggedIn is true and lastActiveAt is recent (within online window or clock skew tolerance), OR
- *    b. Any active (non-banned) device session in activeSessions has transmitted a recent heartbeat.
+ * 1. isCurrentlyLoggedIn is true and lastActiveAt is within the last 60 seconds (fresh heartbeat), OR
+ * 2. Any active session in activeSessions has transmitted a heartbeat within the last 60 seconds.
  */
 export function isClientProfileOnline(profile?: ClientProfile | null): boolean {
-  if (!profile || profile.status === 'inactive') return false;
+  if (!profile) return false;
   
-  const bannedSet = new Set([
-    ...(profile.bannedDevices || []).map(d => d.toLowerCase()),
-    ...(profile.bannedDeviceRecords || []).map(r => r.deviceId.toLowerCase())
-  ]);
+  const now = Date.now();
+  const bannedSet = new Set((profile.bannedDevices || []).map(d => d.toLowerCase()));
 
-  // 1. Check profile-level heartbeat and logged-in flag
-  if (profile.isCurrentlyLoggedIn && isTimestampRecent(profile.lastActiveAt)) {
-    return true;
+  // 1. Check profile-level heartbeat and logged in flag
+  if (profile.isCurrentlyLoggedIn && profile.lastActiveAt) {
+    const lastActiveMs = new Date(profile.lastActiveAt).getTime();
+    if (!isNaN(lastActiveMs) && now - lastActiveMs >= 0 && now - lastActiveMs < 60000) {
+      return true;
+    }
   }
 
   // 2. Check individual active sessions
   if (Array.isArray(profile.activeSessions)) {
     const hasOnlineSession = profile.activeSessions.some(s => {
-      if (s.status !== 'active') return false;
-      if (s.deviceId && bannedSet.has(s.deviceId.toLowerCase())) return false;
-      return isTimestampRecent(s.lastActiveAt);
+      if (s.status !== 'active' || bannedSet.has(s.deviceId.toLowerCase())) return false;
+      if (!s.lastActiveAt) return false;
+      const sessMs = new Date(s.lastActiveAt).getTime();
+      return !isNaN(sessMs) && now - sessMs >= 0 && now - sessMs < 60000;
     });
     if (hasOnlineSession) return true;
-  }
-
-  // 3. Fallback: if lastActiveAt is recent within 60s, client is online even if isCurrentlyLoggedIn is syncing
-  if (isTimestampRecent(profile.lastActiveAt, 60_000)) {
-    return true;
   }
 
   return false;
@@ -360,8 +327,10 @@ export function isClientProfileOnline(profile?: ClientProfile | null): boolean {
 export function isDeviceSessionOnline(session?: ClientDeviceSession | null, profileIsOnline: boolean = false): boolean {
   if (!session || session.status !== 'active') return false;
   if (!session.lastActiveAt) return profileIsOnline;
-  if (isTimestampRecent(session.lastActiveAt)) return true;
-  return profileIsOnline;
+  const lastActiveMs = new Date(session.lastActiveAt).getTime();
+  if (isNaN(lastActiveMs)) return profileIsOnline;
+  const diffMs = Date.now() - lastActiveMs;
+  return diffMs >= 0 && diffMs < 60000;
 }
 
 /**
@@ -377,29 +346,17 @@ export function getProfileSessionCounts(profile?: ClientProfile | null): {
     return { activeCount: 0, onlineCount: 0, totalCount: 0, bannedCount: 0 };
   }
 
-  const bannedSet = new Set([
-    ...(profile.bannedDevices || []).map(d => d.toLowerCase()),
-    ...(profile.bannedDeviceRecords || []).map(r => r.deviceId.toLowerCase())
-  ]);
+  const bannedSet = new Set((profile.bannedDevices || []).map(d => d.toLowerCase()));
   const isOnline = isClientProfileOnline(profile);
   const rawSessions = Array.isArray(profile.activeSessions) ? profile.activeSessions : [];
 
-  const unbannedSessions = rawSessions.filter(s => !s.deviceId || !bannedSet.has(s.deviceId.toLowerCase()));
-  const activeSessions = unbannedSessions.filter(s => s.status === 'active');
-  const onlineSessions = activeSessions.filter(s => isDeviceSessionOnline(s, isOnline));
-
-  let activeCount = activeSessions.length;
-  let onlineCount = onlineSessions.length;
+  let activeCount = rawSessions.filter(s => s.status === 'active' && !bannedSet.has(s.deviceId.toLowerCase())).length;
+  let onlineCount = rawSessions.filter(s => s.status === 'active' && !bannedSet.has(s.deviceId.toLowerCase()) && isDeviceSessionOnline(s, isOnline)).length;
 
   // If profile is marked logged in or online, but sessions array is empty, count the live primary session
   if (activeCount === 0 && (profile.isCurrentlyLoggedIn || isOnline)) {
     activeCount = 1;
     if (isOnline) onlineCount = 1;
-  }
-
-  // If profile overall is online, ensure onlineCount is at least 1 when activeCount > 0
-  if (isOnline && onlineCount === 0 && activeCount > 0) {
-    onlineCount = 1;
   }
 
   const totalCount = Math.max(rawSessions.length, activeCount);

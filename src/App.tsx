@@ -32,13 +32,8 @@ import { ArrowLeft } from 'lucide-react';
 
 const MainApp: React.FC = () => {
   const { view, settings } = useApp();
-  const { currentProfile, isAdmin, returnToAdmin, updateSessionActivity } = useAuth();
+  const { currentProfile, isAdmin, returnToAdmin } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  // Refresh active presence heartbeat whenever client changes views / navigates
-  useEffect(() => {
-    updateSessionActivity().catch(() => {});
-  }, [view, updateSessionActivity]);
   
   // Persistent Sidebar Mode (expanded | collapsed | hidden)
   const [sidebarMode, setSidebarMode] = useState<SidebarMode>(() => {

@@ -335,8 +335,8 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
           id: a.id,
           date: a.date,
           time: a.start,
-          client: cl?.owner || 'Client',
-          pet: cl?.name || 'Pet',
+          client: cl?.owner || a.client || 'Client',
+          pet: cl?.name || a.petName || 'Pet',
           service: a.isRetailOnly ? 'Pure Retail Merchandise' : (svc?.name || a.packageName || 'Service'),
           staff: st?.name || 'Salon Team',
           groomPrice: inv.groomingRevenue,
@@ -422,8 +422,8 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
           id: a.id,
           date: a.date,
           time: a.start,
-          client: cl?.owner || 'Client',
-          pet: cl?.name || 'Pet',
+          client: cl?.owner || a.client || 'Client',
+          pet: cl?.name || a.petName || 'Pet',
           service: a.isRetailOnly ? 'Pure Retail Merchandise' : (svc?.name || a.packageName || 'Service'),
           staff: st?.name || 'Salon Team',
           groomPrice: inv.groomingRevenue,
@@ -769,7 +769,7 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
           {/* Executive Summary Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             
-            <div className="kpi-card p-4 space-y-1">
+            <div className="p-4 rounded-2xl bg-white border border-[#E6DFD5] space-y-1 shadow-2xs">
               <span className="text-[10px] font-black uppercase text-[#A08E8B] tracking-wider block">
                 Gross Invoiced
               </span>
@@ -784,7 +784,7 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
               </div>
             </div>
 
-            <div className="kpi-card p-4 space-y-1">
+            <div className="p-4 rounded-2xl bg-white border border-[#E6DFD5] space-y-1 shadow-2xs">
               <span className="text-[10px] font-black uppercase text-[#A08E8B] tracking-wider block">
                 Grooming Services
               </span>
@@ -796,8 +796,8 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
               </div>
             </div>
 
-            <div className="kpi-card-teal p-4 space-y-1">
-              <span className="text-[10px] font-black uppercase text-[#2E8A81] tracking-wider block">
+            <div className="p-4 rounded-2xl bg-white border border-[#E6DFD5] space-y-1 shadow-2xs">
+              <span className="text-[10px] font-black uppercase text-[#A08E8B] tracking-wider block">
                 Retail & Add-ons
               </span>
               <div className="text-xl sm:text-2xl font-black font-display text-[#2E8A81]">
@@ -808,8 +808,8 @@ export const PremiumReportModal: React.FC<PremiumReportModalProps> = ({
               </div>
             </div>
 
-            <div className="kpi-card-emerald p-4 space-y-1">
-              <span className="text-[10px] font-black uppercase text-emerald-800 tracking-wider block">
+            <div className="p-4 rounded-2xl bg-white border border-[#E6DFD5] space-y-1 shadow-2xs">
+              <span className="text-[10px] font-black uppercase text-[#A08E8B] tracking-wider block">
                 Net Operating Profit
               </span>
               <div className="text-xl sm:text-2xl font-black font-display text-emerald-700">
